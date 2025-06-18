@@ -17,22 +17,24 @@ public class Chess extends Application {
     private final String darkSquareColor = "#333333";
     private ChessBoard board;
 
+    private HBox root;
+    private Scene scene;
 
     public void init() {
         System.out.println("Test Init");
+
+        this.root = new HBox();
         this.board = new ChessBoard(boardSize, lightSquareColor, darkSquareColor);
+        root.getChildren().add(this.board.getCheckerboard());
+
+        this.scene = new Scene(root);
     }
     
     public void start(Stage stage) {
-        HBox root = new HBox();
-        Scene scene = new Scene(root);
-
         System.out.println("Test Start");
         
         stage.setTitle("Chess Application");
         stage.setScene(scene);
-
-        root.getChildren().add(this.board.getCheckerboard());
 
         stage.sizeToScene();
         stage.show();
