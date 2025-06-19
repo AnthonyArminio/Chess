@@ -6,7 +6,6 @@ import javafx.scene.image.Image;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.paint.Paint;
 import javafx.scene.paint.Color;
 
 public class Square {
@@ -14,14 +13,15 @@ public class Square {
     private Image image;
     private Point2D origin;
     private double size;
-    private Color color;
     private int file;
     private int rank;
 
     public Square(Point2D origin, double size, Color color, GridPane checkerboard, int file, int rank) {
+        this.file = file;
+        this.rank = rank;
+        
         this.origin = origin;
         this.size = size;
-        this.color = color;
 
         this.imageView = new ImageView();
         this.imageView.setX(origin.getX());
@@ -30,8 +30,6 @@ public class Square {
         this.imageView.setFitWidth(size);
         this.image = null;
 
-        this.file = file;
-        this.rank = rank;
         drawRectangle(checkerboard, color);
         checkerboard.add(this.imageView, file - 1, 8 - rank);
     }

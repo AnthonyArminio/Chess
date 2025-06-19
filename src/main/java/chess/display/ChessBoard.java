@@ -70,14 +70,6 @@ public class ChessBoard {
                                                               this.checkerboard, file, rank);
             }
         }
-
-        /*
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                checkerboard.add(new Rectangle(this.squareSize, this.squareSize, squareColors[(row + col) % 2]), col, row);
-            }
-        }
-        */
     }
 
     /**
