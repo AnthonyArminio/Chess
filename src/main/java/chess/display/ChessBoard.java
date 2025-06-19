@@ -49,6 +49,9 @@ public class ChessBoard {
         this.squareColors[1] = (Color) Paint.valueOf(darkSquareColor);
     }
 
+    /**
+     * Draws the squares in the appropriate locations for the checkerboard.
+     */
     private void makeSquares() {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
@@ -57,6 +60,9 @@ public class ChessBoard {
         }
     }
 
+    /**
+     * Loads the current position onto the board.
+     */
     private void loadPosition() {
         
     }
