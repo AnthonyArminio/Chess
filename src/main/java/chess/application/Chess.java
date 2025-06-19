@@ -2,6 +2,7 @@ package chess.application;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.Group;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -18,15 +19,18 @@ public class Chess extends Application {
     private final String darkSquareColor = "#333333";
     private ChessBoard board;
 
-    private HBox root;
+    private Group root;
+    private HBox layout;
     private Scene scene;
 
     public void init() {
         System.out.println("Test Init");
 
-        this.root = new HBox();
-        this.board = new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor);
-        root.getChildren().add(this.board.getCheckerboard());
+        this.root = new Group();
+        this.layout = new HBox();
+        this.board = new ChessBoard(this.root, Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor);
+        layout.getChildren().add(this.board.getCheckerboard());
+        root.getChildren().add(layout);
 
         this.scene = new Scene(root);
     }

@@ -3,16 +3,23 @@ package chess.display;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 
+import javafx.scene.Group;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 
 import javafx.event.Event;
+import javafx.scene.input.MouseEvent;
 import javafx.event.EventHandler;
 
+import chess.logic.piece.ChessPiece;
+
 public class Square {
+    private GridPane checkerboard;
+    private Group root;
     private Rectangle hitbox;
+    private ChessPiece piece;
     private ImageView imageView;
     private Image image;
     private Point2D origin;
@@ -20,12 +27,17 @@ public class Square {
     private int file;
     private int rank;
 
-    public Square(Point2D origin, double size, Color color, GridPane checkerboard, int file, int rank) {
+    public Square(Group root, Point2D origin, double size, Color color, GridPane checkerboard, int file, int rank) {
+        this.root = root;
+        this.checkerboard = checkerboard;
+
         this.file = file;
         this.rank = rank;
         
         this.origin = origin;
         this.size = size;
+
+        this.piece = null;
 
         this.imageView = new ImageView();
         this.imageView.setX(origin.getX());
@@ -34,7 +46,7 @@ public class Square {
         this.imageView.setFitWidth(size);
         this.image = null;
 
-        drawRectangle(checkerboard, color);
+        drawRectangle(color);
         checkerboard.add(this.imageView, file - 1, 8 - rank);
 
         // make hitbox for hearing mouse events
@@ -42,22 +54,65 @@ public class Square {
         this.hitbox.setOpacity(0);
         checkerboard.add(this.hitbox, this.file - 1, 8 - this.rank);
 
-        EventHandler<Event> eventHandler = (Event e) -> onMousePressed(e);
-        this.hitbox.setOnMousePressed(eventHandler);
+        this.hitbox.setOnMousePressed(e -> onMousePressed(e));
+        this.hitbox.setOnMouseDragged(e -> onMouseDragged(e));
+        this.hitbox.setOnMouseReleased(e -> onMouseReleased(e));
     }
 
-    private void drawRectangle(GridPane checkerboard, Color color) {
+    /**
+     * Draw the Rectangle that gives color to the square.
+     * @param color the color to draw
+     */
+    private void drawRectangle(Color color) {
         Rectangle rectangle = new Rectangle(origin.getX(), origin.getY(), size, size);
         rectangle.setFill(color);
-        checkerboard.add(rectangle, this.file - 1, 8 - this.rank);
+        this.checkerboard.add(rectangle, this.file - 1, 8 - this.rank);
     }
 
-    public void setImage(String imagePath) {
+    public void setPiece(ChessPiece piece) {
+        this.piece = piece;
+        setImage(piece.getImagePath());
+    }
+
+    private void setImage(String imagePath) {
         this.image = new Image(imagePath);
         this.imageView.setImage(this.image);
     }
 
-    private void onMousePressed(Event e) {
+    private void onMousePressed(MouseEvent e) {
         System.out.println("Mouse pressed on file " + this.file + " and rank " + this.rank + ".");
+
+        if (this.piece != null) {
+            this.checkerboard.getChildren().remove(this.imageView);
+            this.root.getChildren().add(this.imageView);
+            moveToMouse(e.getSceneX(), e.getSceneY());
+        }
+    }
+
+    private void onMouseDragged(MouseEvent e) {
+        System.out.println("Mouse dragged to (" + e.getX() + ", " + e.getY() + ").");
+        if (this.piece != null) {
+            moveToMouse(e.getSceneX(), e.getSceneY());
+        }
+    }
+
+    private void onMouseReleased(MouseEvent e) {
+        this.root.getChildren().remove(this.imageView);
+        System.out.println("Mouse released.");
+    }
+
+    private void moveToMouse(double x, double y) {
+        System.out.println("X: " + x);
+        System.out.println("Y: " + y);
+
+        this.imageView.setX(x);
+        this.imageView.setY(y);
+        this.imageView.toFront();
+
+        System.out.println("Moved image to " + this.imageView.getX() + ", " + this.imageView.getY());
+
+        this.hitbox.setX(x);
+        this.hitbox.setY(y);
+        this.hitbox.toFront();
     }
 }

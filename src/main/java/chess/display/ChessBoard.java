@@ -4,6 +4,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
 import javafx.geometry.Point2D;
 
+import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -19,6 +20,7 @@ import chess.logic.piece.ChessPiece;
  */
 public class ChessBoard {
 
+    private Group root;
     private GridPane checkerboard;
     private Square[][] squares;
     private ChessPosition chessPosition;
@@ -34,7 +36,8 @@ public class ChessBoard {
      * @param lightSquareColor the color of the light squares of the chess board
      * @param darkSquareColor the color of the dark squares of the chess board
      */
-    public ChessBoard(Point2D origin, double boardSize, String darkSquareColor, String lightSquareColor) {
+    public ChessBoard(Group root, Point2D origin, double boardSize, String darkSquareColor, String lightSquareColor) {
+        this.root = root;
         this.origin = origin;
         this.squareSize = boardSize / 8.0;
         checkerboard = new GridPane();
@@ -66,7 +69,7 @@ public class ChessBoard {
             for (int rank = 1; rank <= 8; rank++) {
                 Point2D squareOrigin = new Point2D(this.origin.getX() + this.squareSize * (file - 1), 
                                                    this.origin.getY() + this.squareSize * (8 - rank));
-                this.squares[file - 1][rank - 1] = new Square(squareOrigin, this.squareSize, this.squareColors[(file + rank) % 2], 
+                this.squares[file - 1][rank - 1] = new Square(this.root, squareOrigin, this.squareSize, this.squareColors[(file + rank) % 2], 
                                                               this.checkerboard, file, rank);
             }
         }
@@ -79,7 +82,7 @@ public class ChessBoard {
         for (int file = 1; file <= 8; file++) {
             for (int rank = 1; rank <= 8; rank++) {
                 if (this.chessPosition.getPieceAt(file, rank) != null) {                
-                    this.squares[file - 1][rank - 1].setImage(this.chessPosition.getPieceAt(file, rank).getImagePath());
+                    this.squares[file - 1][rank - 1].setPiece(this.chessPosition.getPieceAt(file, rank));
                 }
             }
         }
