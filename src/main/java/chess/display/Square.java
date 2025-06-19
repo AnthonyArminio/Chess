@@ -83,8 +83,7 @@ public class Square {
         System.out.println("Mouse pressed on file " + this.file + " and rank " + this.rank + ".");
 
         if (this.piece != null) {
-            this.checkerboard.getChildren().remove(this.imageView);
-            this.root.getChildren().add(this.imageView);
+            GridPane.clearConstraints(this.imageView);
             moveToMouse(e.getSceneX(), e.getSceneY());
         }
     }
@@ -97,7 +96,6 @@ public class Square {
     }
 
     private void onMouseReleased(MouseEvent e) {
-        this.root.getChildren().remove(this.imageView);
         System.out.println("Mouse released.");
     }
 
