@@ -4,6 +4,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
 import javafx.geometry.Point2D;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.Color;
 
@@ -16,9 +19,11 @@ import chess.logic.ChessPosition;
 public class ChessBoard {
 
     private GridPane checkerboard;
+    private Square[][] squares;
+    private ChessPosition chessPosition;
+
     private double squareSize;
     private Color[] squareColors;
-    private ChessPosition chessPosition;
     private Point2D origin;
 
     /**
@@ -53,18 +58,33 @@ public class ChessBoard {
      * Draws the squares in the appropriate locations for the checkerboard.
      */
     private void makeSquares() {
+
+        this.squares = new Square[8][8];
+
+        for (int file = 1; file <= 8; file++) {
+            for (int rank = 1; rank <= 8; rank++) {
+                
+            }
+        }
+
+        /*
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 checkerboard.add(new Rectangle(this.squareSize, this.squareSize, squareColors[(row + col) % 2]), col, row);
             }
         }
+        */
     }
 
     /**
      * Loads the current position onto the board.
      */
     private void loadPosition() {
-        
+        for (int file = 1; file <= 8; file++) {
+            for (int rank = 1; rank <= 8; rank++) {
+
+            }
+        }
     }
 
     public Point2D getOrigin() {

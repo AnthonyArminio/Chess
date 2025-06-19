@@ -1,5 +1,7 @@
 package chess.logic;
 
+import chess.logic.piece.ChessPiece;
+
 /**
  * Represents a chess position. Contains information about where each piece is in a compact form.
  */
@@ -36,6 +38,21 @@ public class ChessPosition {
         }
 
         return positionArray[index(file, rank)];
+    }
+
+    public ChessPiece getPieceAt(int file, int rank) {
+        if (file < 1 || file > 8 || rank < 1 || rank > 8) {
+            throw new IllegalArgumentException("getPieceAt: file and rank must be between 1 and 8, inclusive.");
+        }
+
+        int pieceID = positionArray[index(file, rank)];
+        if (pieceID > 0) {
+            return ChessPiece.WHITE_PIECES[pieceID - 1];
+        } else if (pieceID < 0) {
+            return ChessPiece.BLACK_PIECES[-1 * pieceID - 1];
+        } else {
+            return null;
+        }
     }
 
     /**
