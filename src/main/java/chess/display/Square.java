@@ -4,6 +4,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 
 import javafx.geometry.Point2D;
+import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.Color;
@@ -14,20 +15,35 @@ public class Square {
     private Point2D origin;
     private double size;
     private Color color;
-    private Rectangle rectangle;
+    private int file;
+    private int rank;
 
-    public Square(Point2D origin, double size, Color color) {
+    public Square(Point2D origin, double size, Color color, GridPane checkerboard, int file, int rank) {
         this.origin = origin;
         this.size = size;
         this.color = color;
-        this.imageView = null;
+
+        this.imageView = new ImageView();
+        this.imageView.setX(origin.getX());
+        this.imageView.setY(origin.getY());
+        this.imageView.setFitHeight(size);
+        this.imageView.setFitWidth(size);
         this.image = null;
 
-        this.rectangle = new Rectangle(origin.getX(), origin.getY(), size, size);
-        this.rectangle.setFill(color);
+        this.file = file;
+        this.rank = rank;
+        drawRectangle(checkerboard, color);
+        checkerboard.add(this.imageView, file - 1, 8 - rank);
     }
 
-    public void setImage(Image image) {
+    private void drawRectangle(GridPane checkerboard, Color color) {
+        Rectangle rectangle = new Rectangle(origin.getX(), origin.getY(), size, size);
+        rectangle.setFill(color);
+        checkerboard.add(rectangle, this.file - 1, 8 - this.rank);
+    }
 
+    public void setImage(String imagePath) {
+        this.image = new Image(imagePath);
+        this.imageView.setImage(this.image);
     }
 }

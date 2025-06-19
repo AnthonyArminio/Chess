@@ -25,7 +25,7 @@ public class Chess extends Application {
         System.out.println("Test Init");
 
         this.root = new HBox();
-        this.board = new ChessBoard(Point2D.ZERO, boardSize, lightSquareColor, darkSquareColor);
+        this.board = new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor);
         root.getChildren().add(this.board.getCheckerboard());
 
         this.scene = new Scene(root);

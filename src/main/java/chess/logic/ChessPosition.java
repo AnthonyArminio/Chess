@@ -1,6 +1,7 @@
 package chess.logic;
 
 import chess.logic.piece.ChessPiece;
+import chess.logic.util.GridMath;
 
 /**
  * Represents a chess position. Contains information about where each piece is in a compact form.
@@ -37,7 +38,7 @@ public class ChessPosition {
             throw new IllegalArgumentException("getPieceIDAt: file and rank must be between 1 and 8, inclusive.");
         }
 
-        return positionArray[index(file, rank)];
+        return positionArray[GridMath.index(file, rank)];
     }
 
     public ChessPiece getPieceAt(int file, int rank) {
@@ -45,7 +46,7 @@ public class ChessPosition {
             throw new IllegalArgumentException("getPieceAt: file and rank must be between 1 and 8, inclusive.");
         }
 
-        int pieceID = positionArray[index(file, rank)];
+        int pieceID = positionArray[GridMath.index(file, rank)];
         if (pieceID > 0) {
             return ChessPiece.WHITE_PIECES[pieceID - 1];
         } else if (pieceID < 0) {
@@ -53,19 +54,5 @@ public class ChessPosition {
         } else {
             return null;
         }
-    }
-
-    /**
-     * Returns the index (0-63) of the square referenced by a specified file and rank.
-     * @param file integer between 1 and 8, inclusive.
-     * @param rank integer between 1 and 8, inclusive.
-     * @return square index corresponding to the specified coordinates.
-     */
-    private int index(int file, int rank) {
-        if (file < 1 || file > 8 || rank < 1 || rank > 8) {
-            throw new IllegalArgumentException("squareIndexOf: file and rank must be between 1 and 8, inclusive.");
-        }
-
-        return 8 * (rank - 1) + file - 1;
     }
 }
