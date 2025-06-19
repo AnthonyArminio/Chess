@@ -7,6 +7,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.layout.GridPane;
+import javafx.geometry.Point2D;
 
 import chess.display.ChessBoard;
 
@@ -24,7 +25,7 @@ public class Chess extends Application {
         System.out.println("Test Init");
 
         this.root = new HBox();
-        this.board = new ChessBoard(boardSize, lightSquareColor, darkSquareColor);
+        this.board = new ChessBoard(Point2D.ZERO, boardSize, lightSquareColor, darkSquareColor);
         root.getChildren().add(this.board.getCheckerboard());
 
         this.scene = new Scene(root);
