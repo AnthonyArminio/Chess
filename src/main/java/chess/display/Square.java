@@ -9,16 +9,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 
-import javafx.event.Event;
-import javafx.scene.input.MouseEvent;
-import javafx.event.EventHandler;
-
 import chess.logic.piece.ChessPiece;
 
 public class Square {
     private GridPane checkerboard;
-    private Group root;
-    private Rectangle hitbox;
     private ChessPiece piece;
     private ImageView imageView;
     private Image image;
@@ -27,8 +21,7 @@ public class Square {
     private int file;
     private int rank;
 
-    public Square(Group root, Point2D origin, double size, Color color, GridPane checkerboard, int file, int rank) {
-        this.root = root;
+    public Square(Point2D origin, double size, Color color, GridPane checkerboard, int file, int rank) {
         this.checkerboard = checkerboard;
 
         this.file = file;
@@ -50,13 +43,13 @@ public class Square {
         checkerboard.add(this.imageView, file - 1, 8 - rank);
 
         // make hitbox for hearing mouse events
-        this.hitbox = new Rectangle(origin.getX(), origin.getY(), size, size);
-        this.hitbox.setOpacity(0);
-        checkerboard.add(this.hitbox, this.file - 1, 8 - this.rank);
+        //this.hitbox = new Rectangle(origin.getX(), origin.getY(), size, size);
+        //this.hitbox.setOpacity(0);
+        //checkerboard.add(this.hitbox, this.file - 1, 8 - this.rank);
 
-        this.hitbox.setOnMousePressed(e -> onMousePressed(e));
-        this.hitbox.setOnMouseDragged(e -> onMouseDragged(e));
-        this.hitbox.setOnMouseReleased(e -> onMouseReleased(e));
+        //this.hitbox.setOnMousePressed(e -> onMousePressed(e));
+        //this.hitbox.setOnMouseDragged(e -> onMouseDragged(e));
+        //this.hitbox.setOnMouseReleased(e -> onMouseReleased(e));
     }
 
     /**
@@ -74,43 +67,33 @@ public class Square {
         setImage(piece.getImagePath());
     }
 
-    private void setImage(String imagePath) {
+    public void setImage(String imagePath) {
         this.image = new Image(imagePath);
         this.imageView.setImage(this.image);
     }
 
-    private void onMousePressed(MouseEvent e) {
-        System.out.println("Mouse pressed on file " + this.file + " and rank " + this.rank + ".");
-
-        if (this.piece != null) {
-            GridPane.clearConstraints(this.imageView);
-            moveToMouse(e.getSceneX(), e.getSceneY());
-        }
+    public void removeImage() {
+        this.checkerboard.getChildren().remove(this.imageView);
+        this.image = null;
+        this.imageView = null;
     }
 
-    private void onMouseDragged(MouseEvent e) {
-        System.out.println("Mouse dragged to (" + e.getX() + ", " + e.getY() + ").");
-        if (this.piece != null) {
-            moveToMouse(e.getSceneX(), e.getSceneY());
-        }
+    public void reattachImage() {
+        this.imageView.setX(this.origin.getX());
+        this.imageView.setY(this.origin.getY());
+        this.checkerboard.add(this.imageView, file - 1, 8 - rank);
     }
 
-    private void onMouseReleased(MouseEvent e) {
-        System.out.println("Mouse released.");
+    public ImageView detachImage() {
+        this.checkerboard.getChildren().remove(this.imageView);
+        return this.imageView;
     }
 
-    private void moveToMouse(double x, double y) {
-        System.out.println("X: " + x);
-        System.out.println("Y: " + y);
+    public int getFile() {
+        return this.file;
+    }
 
-        this.imageView.setX(x);
-        this.imageView.setY(y);
-        this.imageView.toFront();
-
-        System.out.println("Moved image to " + this.imageView.getX() + ", " + this.imageView.getY());
-
-        this.hitbox.setX(x);
-        this.hitbox.setY(y);
-        this.hitbox.toFront();
+    public int getRank() {
+        return this.rank;
     }
 }

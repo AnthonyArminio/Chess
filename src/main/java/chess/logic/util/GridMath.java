@@ -1,5 +1,7 @@
 package chess.logic.util;
 
+import javafx.geometry.Point2D;
+
 public class GridMath {
     /**
      * Returns the index (0-63) of the square referenced by a specified file and rank.
@@ -13,5 +15,12 @@ public class GridMath {
         }
 
         return 8 * (rank - 1) + file - 1;
+    }
+
+    public static int findSquareIndex(double x, double y, Point2D origin, double squareSize) {
+        int file = (int) ((x - origin.getX()) / squareSize) + 1;
+        int rank = 8 - (int) ((y - origin.getY()) / squareSize);
+
+        return GridMath.index(file, rank);
     }
 }
