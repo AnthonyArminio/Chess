@@ -1,22 +1,17 @@
 package chess.display;
 
 import javafx.scene.layout.GridPane;
-import javafx.scene.shape.Rectangle;
 import javafx.geometry.Point2D;
 
 import javafx.scene.Group;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.Color;
 
-import javafx.event.Event;
 import javafx.scene.input.MouseEvent;
-import javafx.event.EventHandler;
 
 import chess.logic.ChessPosition;
-import chess.logic.piece.ChessPiece;
 import chess.logic.util.GridMath;
 
 /**
@@ -108,6 +103,9 @@ public class ChessBoard {
      */
     private void onMousePressed(MouseEvent e) {
         int selectedSquareIndex = GridMath.findSquareIndex(e.getX(), e.getY(), this.origin, this.squareSize);
+
+        System.out.println(e.getX() + " " + e.getY());
+
         if (selectedSquareIndex >= 0) {
             this.selectedSquare = squares[selectedSquareIndex];
 
@@ -115,7 +113,6 @@ public class ChessBoard {
 
             if (this.selectedSquare.getPiece() != null) {
                 attachImage(this.selectedSquare.detachImage());
-                System.out.println(e.getX() + " " + e.getY());
                 moveImageToMouse(e);
             } else {
                 System.out.println("No piece at that location.");

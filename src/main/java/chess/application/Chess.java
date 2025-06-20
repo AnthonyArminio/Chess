@@ -3,11 +3,8 @@ package chess.application;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.Group;
-import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.layout.GridPane;
 import javafx.geometry.Point2D;
 
 import chess.display.ChessBoard;

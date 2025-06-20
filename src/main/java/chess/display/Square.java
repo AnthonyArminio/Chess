@@ -3,7 +3,6 @@ package chess.display;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 
-import javafx.scene.Group;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
