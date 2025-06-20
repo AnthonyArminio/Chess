@@ -3,13 +3,8 @@ package chess.display;
 import javafx.scene.layout.GridPane;
 import javafx.geometry.Point2D;
 
-import javafx.scene.Group;
-import javafx.scene.image.ImageView;
-
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.Color;
-
-import javafx.scene.input.MouseEvent;
 
 import chess.logic.ChessPosition;
 import chess.logic.util.GridMath;
@@ -20,9 +15,7 @@ import chess.logic.util.GridMath;
  */
 public class ChessBoard {
 
-    private Group root;
     private GridPane checkerboard;
-    private ImageView mouseImageView;
     private Square[] squares;
     private Square selectedSquare;
     private ChessPosition chessPosition;
@@ -38,15 +31,11 @@ public class ChessBoard {
      * @param lightSquareColor the color of the light squares of the chess board
      * @param darkSquareColor the color of the dark squares of the chess board
      */
-    public ChessBoard(Group root, Point2D origin, double boardSize, String darkSquareColor, String lightSquareColor) {
-        this.root = root;
+    public ChessBoard(Point2D origin, double boardSize, String darkSquareColor, String lightSquareColor) {
         this.origin = origin;
         this.squareSize = boardSize / 8.0;
         checkerboard = new GridPane();
         checkerboard.setPrefSize(boardSize, boardSize);
-
-        this.mouseImageView = null;
-        this.selectedSquare = null;
 
         initializeColors(darkSquareColor, lightSquareColor);
 
@@ -55,10 +44,6 @@ public class ChessBoard {
         this.chessPosition = new ChessPosition();
 
         loadPosition();
-
-        this.root.setOnMousePressed(e -> onMousePressed(e));
-        this.root.setOnMouseDragged(e -> onMouseDragged(e));
-        this.root.setOnMouseReleased(e -> onMouseReleased(e));
     }
 
     private void initializeColors(String darkSquareColor, String lightSquareColor) {
@@ -97,78 +82,24 @@ public class ChessBoard {
         }
     }
 
-    /**
-     * Attaches the image associated with a square at the location of the mouse onto the mouse
-     * @param e
-     */
-    private void onMousePressed(MouseEvent e) {
-        int selectedSquareIndex = GridMath.findSquareIndex(e.getX(), e.getY(), this.origin, this.squareSize);
-
-        System.out.println(e.getX() + " " + e.getY());
-
-        if (selectedSquareIndex >= 0) {
-            this.selectedSquare = squares[selectedSquareIndex];
-
-            System.out.println("Mouse pressed on square " + selectedSquare.getFile() + " " + selectedSquare.getRank());
-
-            if (this.selectedSquare.getPiece() != null) {
-                attachImage(this.selectedSquare.detachImage());
-                moveImageToMouse(e);
-            } else {
-                System.out.println("No piece at that location.");
-            }
-        } else {
-            System.out.println("Clicked out of bounds of the chess board.");
-        }
+    public void setSelectedSquare(int index) {
+        this.selectedSquare = this.squares[index];
     }
 
-    private void onMouseDragged(MouseEvent e) {
-        if (this.mouseImageView != null) {
-            moveImageToMouse(e);
-        }
+    public Square getSelectedSquare() {
+        return this.selectedSquare;
     }
 
-    /**
-     * Returns ownership of the ImageView to the GridPane
-     * @param e
-     */
-    private void onMouseReleased(MouseEvent e) {
-        System.out.println("Mouse released");
-        if (this.mouseImageView != null) {
-            this.selectedSquare.reattachImage();
-            detachImage();
-        }
-    }
-
-    /**
-     * Moves a specified ImageView to the root Node so it can be moved by the mouse.
-     * @param imageView
-     */
-    private void attachImage(ImageView imageView) {
-        if (imageView != null) {
-            this.mouseImageView = imageView;
-            this.root.getChildren().add(this.mouseImageView);
-            System.out.println("ATTACHED IMAGE TO SCENE");
-        }
-    }
-
-    private void detachImage() {
-        if (this.mouseImageView != null) {
-            this.root.getChildren().remove(this.mouseImageView);
-            this.mouseImageView = null;
-            System.out.println("REMOVED IMAGE FROM SCENE");
-        }
-    }
-
-    private void moveImageToMouse(MouseEvent e) {
-        double offset = this.squareSize / 2;
-        this.mouseImageView.setX(e.getX() - offset);
-        this.mouseImageView.setY(e.getY() - offset);
-        this.mouseImageView.toFront();
+    public Square getSquareAtIndex(int index) {
+        return this.squares[index];
     }
 
     public Point2D getOrigin() {
         return this.origin;
+    }
+
+    public double getSquareSize() {
+        return this.squareSize;
     }
 
     public ChessPosition getChessPosition() {

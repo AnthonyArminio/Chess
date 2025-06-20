@@ -2,12 +2,16 @@ package chess.application;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
 import javafx.scene.Group;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.geometry.Point2D;
+import javafx.scene.input.MouseEvent;
 
 import chess.display.ChessBoard;
+import chess.logic.util.GridMath;
+import chess.display.Square;
 
 public class Chess extends Application {
 
@@ -15,6 +19,8 @@ public class Chess extends Application {
     private final String lightSquareColor = "#999999";
     private final String darkSquareColor = "#333333";
     private ChessBoard board;
+    private ChessBoard selectedBoard;
+    private ImageView mouseImageView;
 
     private Group root;
     private HBox layout;
@@ -25,9 +31,15 @@ public class Chess extends Application {
 
         this.root = new Group();
         this.layout = new HBox();
-        this.board = new ChessBoard(this.root, Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor);
+        this.board = new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor);
+        this.selectedBoard = this.board;
+        this.mouseImageView = null;
         layout.getChildren().add(this.board.getCheckerboard());
         root.getChildren().add(layout);
+
+        this.root.setOnMousePressed(e -> onMousePressed(e));
+        this.root.setOnMouseDragged(e -> onMouseDragged(e));
+        this.root.setOnMouseReleased(e -> onMouseReleased(e));
 
         this.scene = new Scene(root);
     }
@@ -40,5 +52,72 @@ public class Chess extends Application {
 
         stage.sizeToScene();
         stage.show();
+    }
+
+    private void onMousePressed(MouseEvent e) {
+        this.selectedBoard = this.board; // change this later when multiple boards can be displayed
+
+        int selectedSquareIndex = GridMath.findSquareIndex(e.getX(), e.getY(), 
+                                  this.selectedBoard.getOrigin(), this.selectedBoard.getSquareSize());
+        
+        System.out.println(e.getX() + " " + e.getY());
+
+        if (selectedSquareIndex >= 0) {
+            this.selectedBoard.setSelectedSquare(selectedSquareIndex);
+            Square selectedSquare = this.selectedBoard.getSelectedSquare();
+
+            System.out.println("Mouse pressed on square " + selectedSquare.getFile() + " " + selectedSquare.getRank());
+
+            if (selectedSquare.getPiece() != null) {
+                attachImage(selectedSquare.detachImage());
+                moveImageToMouse(e);
+            } else {
+                System.out.println("No piece at that location.");
+            }
+        } else {
+            System.out.println("Clicked out of bounds of the chess board.");
+        }
+
+    }
+
+    private void onMouseDragged(MouseEvent e) {
+        if (this.mouseImageView != null) {
+            moveImageToMouse(e);
+        }
+    }
+
+    private void onMouseReleased(MouseEvent e) {
+        System.out.println("Mouse released");
+        if (this.mouseImageView != null) {
+            this.selectedBoard.getSelectedSquare().reattachImage();
+            detachImage();
+        }
+    }
+
+    private void moveImageToMouse(MouseEvent e) {
+        double offset = this.selectedBoard.getSquareSize() / 2;
+        this.mouseImageView.setX(e.getX() - offset);
+        this.mouseImageView.setY(e.getY() - offset);
+        this.mouseImageView.toFront();
+    }
+
+    /**
+     * Moves a specified ImageView to the root Node so it can be moved by the mouse.
+     * @param imageView
+     */
+    public void attachImage(ImageView imageView) {
+        if (imageView != null) {
+            this.mouseImageView = imageView;
+            this.root.getChildren().add(this.mouseImageView);
+            System.out.println("ATTACHED IMAGE TO SCENE");
+        }
+    }
+
+    public void detachImage() {
+        if (this.mouseImageView != null) {
+            this.root.getChildren().remove(this.mouseImageView);
+            this.mouseImageView = null;
+            System.out.println("REMOVED IMAGE FROM SCENE");
+        }
     }
 }
