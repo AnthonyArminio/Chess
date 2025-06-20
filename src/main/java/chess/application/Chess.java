@@ -8,6 +8,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 
 import chess.display.ChessBoard;
 import chess.logic.util.GridMath;
@@ -15,7 +16,7 @@ import chess.display.Square;
 
 public class Chess extends Application {
 
-    private final double boardSize = 500.0;
+    private final double boardSize = 504.0;
     private final String lightSquareColor = "#999999";
     private final String darkSquareColor = "#333333";
     private ChessBoard board;
@@ -37,6 +38,7 @@ public class Chess extends Application {
         layout.getChildren().add(this.board.getCheckerboard());
         root.getChildren().add(layout);
 
+        // set up event handlers
         this.root.setOnMousePressed(e -> onMousePressed(e));
         this.root.setOnMouseDragged(e -> onMouseDragged(e));
         this.root.setOnMouseReleased(e -> onMouseReleased(e));
@@ -48,12 +50,13 @@ public class Chess extends Application {
         System.out.println("Test Start");
         
         stage.setTitle("Chess Application");
-        stage.setScene(scene);
+        stage.setScene(this.scene);
 
         stage.sizeToScene();
         stage.show();
     }
 
+    
     private void onMousePressed(MouseEvent e) {
         this.selectedBoard = this.board; // change this later when multiple boards can be displayed
 

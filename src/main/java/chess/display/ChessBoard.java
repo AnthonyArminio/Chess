@@ -36,6 +36,8 @@ public class ChessBoard {
         this.squareSize = boardSize / 8.0;
         checkerboard = new GridPane();
         checkerboard.setPrefSize(boardSize, boardSize);
+        checkerboard.setHgap(0);
+        checkerboard.setVgap(0);
 
         initializeColors(darkSquareColor, lightSquareColor);
 
