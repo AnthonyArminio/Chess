@@ -2,13 +2,11 @@ package chess.display;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
-
+import chess.logic.ChessPiece;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
-
-import chess.logic.piece.ChessPiece;
 
 public class Square {
     private GridPane checkerboard;

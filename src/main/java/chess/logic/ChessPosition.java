@@ -1,6 +1,5 @@
 package chess.logic;
 
-import chess.logic.piece.ChessPiece;
 import chess.logic.util.GridMath;
 
 /**
@@ -33,12 +32,35 @@ public class ChessPosition {
         this.positionArray = startingPosition;
     }
 
+    public int getPieceIDAt(int index) {
+        if (index < 0 || index >= 64) {
+            throw new IllegalArgumentException("getPieceIDAt: index must be between 0 and 63, inclusive.");
+        }
+
+        return positionArray[index];
+    }
+
     public int getPieceIDAt(int file, int rank) {
         if (file < 1 || file > 8 || rank < 1 || rank > 8) {
             throw new IllegalArgumentException("getPieceIDAt: file and rank must be between 1 and 8, inclusive.");
         }
 
         return positionArray[GridMath.index(file, rank)];
+    }
+
+    public ChessPiece getPieceAt(int index) {
+        if (index < 0 || index >= 64) {
+            throw new IllegalArgumentException("getPieceAt: index must be between 0 and 63, inclusive.");
+        }
+
+        int pieceID = positionArray[index];
+        if (pieceID > 0) {
+            return ChessPiece.WHITE_PIECES[pieceID - 1];
+        } else if (pieceID < 0) {
+            return ChessPiece.BLACK_PIECES[-1 * pieceID - 1];
+        } else {
+            return null;
+        }
     }
 
     public ChessPiece getPieceAt(int file, int rank) {
