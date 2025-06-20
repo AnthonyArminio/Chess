@@ -102,28 +102,49 @@ public class ChessBoard {
         }
     }
 
+    /**
+     * Attaches the image associated with a square at the location of the mouse onto the mouse
+     * @param e
+     */
     private void onMousePressed(MouseEvent e) {
-        this.selectedSquare = squares[GridMath.findSquareIndex(e.getX(), e.getY(), this.origin, this.squareSize)];
+        int selectedSquareIndex = GridMath.findSquareIndex(e.getX(), e.getY(), this.origin, this.squareSize);
+        if (selectedSquareIndex >= 0) {
+            this.selectedSquare = squares[selectedSquareIndex];
 
-        System.out.println("Mouse pressed on square " + selectedSquare.getFile() + " " + selectedSquare.getRank());
+            System.out.println("Mouse pressed on square " + selectedSquare.getFile() + " " + selectedSquare.getRank());
 
-        attachImage(this.selectedSquare.detachImage());
-        double offset = this.squareSize / 2;
-        System.out.println(e.getX() + " " + e.getY());
-        moveImage(e.getX() - offset, e.getY() - offset);
+            if (this.selectedSquare.getPiece() != null) {
+                attachImage(this.selectedSquare.detachImage());
+                System.out.println(e.getX() + " " + e.getY());
+                moveImageToMouse(e);
+            } else {
+                System.out.println("No piece at that location.");
+            }
+        } else {
+            System.out.println("Clicked out of bounds of the chess board.");
+        }
     }
 
     private void onMouseDragged(MouseEvent e) {
-        double offset = this.squareSize / 2;
-        moveImage(e.getX() - offset, e.getY() - offset);
+        moveImageToMouse(e);
     }
 
+    /**
+     * Returns ownership of the ImageView to the GridPane
+     * @param e
+     */
     private void onMouseReleased(MouseEvent e) {
         System.out.println("Mouse released");
-        this.selectedSquare.reattachImage();
-        detachImage();
+        if (this.mouseImageView != null) {
+            this.selectedSquare.reattachImage();
+            detachImage();
+        }
     }
 
+    /**
+     * Moves a specified ImageView to the root Node so it can be moved by the mouse.
+     * @param imageView
+     */
     private void attachImage(ImageView imageView) {
         if (imageView != null) {
             this.mouseImageView = imageView;
@@ -140,9 +161,10 @@ public class ChessBoard {
         }
     }
 
-    private void moveImage(double x, double y) {
-        this.mouseImageView.setX(x);
-        this.mouseImageView.setY(y);
+    private void moveImageToMouse(MouseEvent e) {
+        double offset = this.squareSize / 2;
+        this.mouseImageView.setX(e.getX() - offset);
+        this.mouseImageView.setY(e.getY() - offset);
         this.mouseImageView.toFront();
     }
 

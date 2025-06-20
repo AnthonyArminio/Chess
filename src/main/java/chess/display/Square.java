@@ -42,14 +42,6 @@ public class Square {
         drawRectangle(color);
         checkerboard.add(this.imageView, file - 1, 8 - rank);
 
-        // make hitbox for hearing mouse events
-        //this.hitbox = new Rectangle(origin.getX(), origin.getY(), size, size);
-        //this.hitbox.setOpacity(0);
-        //checkerboard.add(this.hitbox, this.file - 1, 8 - this.rank);
-
-        //this.hitbox.setOnMousePressed(e -> onMousePressed(e));
-        //this.hitbox.setOnMouseDragged(e -> onMouseDragged(e));
-        //this.hitbox.setOnMouseReleased(e -> onMouseReleased(e));
     }
 
     /**
@@ -67,23 +59,46 @@ public class Square {
         setImage(piece.getImagePath());
     }
 
+    /**
+     * Sets the value of this.piece equal to null. Not the same as capturing.
+     */
+    public void removePiece() {
+        this.piece = null;
+    }
+
+    public ChessPiece getPiece() {
+        return this.piece;
+    }
+
     public void setImage(String imagePath) {
         this.image = new Image(imagePath);
         this.imageView.setImage(this.image);
     }
 
+    /**
+     * Deletes the image currently stored in this square.
+     */
     public void removeImage() {
         this.checkerboard.getChildren().remove(this.imageView);
         this.image = null;
         this.imageView = null;
     }
 
+    /**
+     * Snaps the ImageView temporarily stored in memory back into position. Useful for when
+     * an illegal move is tried by the user.
+     */
     public void reattachImage() {
         this.imageView.setX(this.origin.getX());
         this.imageView.setY(this.origin.getY());
         this.checkerboard.add(this.imageView, file - 1, 8 - rank);
     }
 
+    /**
+     * Removes ownership of the ImageView from the checkerboard but keeps the ImageView in
+     * memory in case an illegal move is made.
+     * @return
+     */
     public ImageView detachImage() {
         this.checkerboard.getChildren().remove(this.imageView);
         return this.imageView;
