@@ -126,7 +126,9 @@ public class ChessBoard {
     }
 
     private void onMouseDragged(MouseEvent e) {
-        moveImageToMouse(e);
+        if (this.mouseImageView != null) {
+            moveImageToMouse(e);
+        }
     }
 
     /**
