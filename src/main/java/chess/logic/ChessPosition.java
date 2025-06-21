@@ -42,6 +42,10 @@ public class ChessPosition {
         this.positionArray = positionArray;
     }
 
+    /**
+     * Updates the positionArray based on a specified move.
+     * @param move the move to make
+     */
     public void makeMove(ChessMove move) {
         this.positionArray[move.getEnd()] = this.positionArray[move.getStart()];
         this.positionArray[move.getStart()] = 0;
@@ -79,13 +83,26 @@ public class ChessPosition {
         return position;
     }
 
-    private void advanceGame() {
-        if (this.positionArray[TO_MOVE] == 1) {
-            this.positionArray[TO_MOVE] = 0;
-        } else {
-            this.positionArray[TO_MOVE] = 1;
+    /**
+     * Passes the turn and advances the game.
+     */
+    public void advanceGame() {
+        passTurn();
+        if (this.positionArray[TO_MOVE] == 0) {
             // to do: increment move counter here.
         }
+    }
+
+    /**
+     * Changes the color to move without advancing the game.
+     * @return the new position after the turn has been passed
+     */
+    public ChessPosition passTurn() {
+        this.positionArray[TO_MOVE] = -1 * (this.positionArray[TO_MOVE] - 1);
+        System.out.println("It is now " + colorToMove() + " to move");
+
+
+        return this;
     }
 
     public char colorToMove() {

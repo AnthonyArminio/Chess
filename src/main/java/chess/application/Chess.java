@@ -103,9 +103,10 @@ public class Chess extends Application {
                                this.selectedBoard.getOrigin(), this.selectedBoard.getSquareSize());
             int startIndex = this.selectedBoard.getSelectedSquareIndex();
 
-            if (releaseIndex >= 0 && ChessLogic.isLegalMove(this.selectedBoard.getChessPosition(), startIndex, releaseIndex)) {
+            ChessMove move = new ChessMove(this.selectedBoard.getChessPosition(), startIndex, releaseIndex);
+
+            if (releaseIndex >= 0 && move.isLegal()) {
                 // move attempt succeeded; move the image and make the corresponsing move in the ChessPosition.
-                ChessMove move = new ChessMove(this.selectedBoard.getChessPosition(), startIndex, releaseIndex);
                 this.selectedBoard.makeMove(move);
                 System.out.println("Move: " + move.getStart() + " " + move.getEnd());
 
