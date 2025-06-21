@@ -86,23 +86,21 @@ public class Square {
     }
 
     /**
-     * Snaps the ImageView temporarily stored in memory back into position. Useful for when
+     * Puts the Image temporarily stored in memory back into this square's ImageView. Useful for when
      * an illegal move is tried by the user.
      */
     public void reattachImage() {
-        this.imageView.setX(this.origin.getX());
-        this.imageView.setY(this.origin.getY());
-        this.checkerboard.add(this.imageView, file - 1, 8 - rank);
+        this.imageView.setImage(this.image);
     }
 
     /**
-     * Removes ownership of the ImageView from the checkerboard but keeps the ImageView in
+     * Removes ownership of the Image from the checkerboard but keeps the Image in
      * memory in case an illegal move is made.
-     * @return
+     * @return the Image originally in this Square.
      */
-    public ImageView detachImage() {
-        this.checkerboard.getChildren().remove(this.imageView);
-        return this.imageView;
+    public Image detachImage() {
+        this.imageView.setImage(null);
+        return this.image;
     }
 
     public int getFile() {

@@ -2,6 +2,7 @@ package chess.application;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.Group;
 import javafx.scene.layout.HBox;
@@ -36,7 +37,10 @@ public class Chess extends Application {
         this.layout = new HBox();
         this.board = new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor);
         this.selectedBoard = null;
-        this.mouseImageView = null;
+
+        this.mouseImageView = new ImageView();
+        this.root.getChildren().add(this.mouseImageView);
+
         layout.getChildren().add(this.board.getCheckerboard());
         root.getChildren().add(layout);
 
@@ -65,13 +69,13 @@ public class Chess extends Application {
         int selectedSquareIndex = GridMath.findSquareIndex(e.getX(), e.getY(), 
                                   this.selectedBoard.getOrigin(), this.selectedBoard.getSquareSize());
         
-        System.out.println(e.getX() + " " + e.getY());
+        //System.out.println(e.getX() + " " + e.getY());
 
         if (selectedSquareIndex >= 0) {
             this.selectedBoard.setSelectedSquare(selectedSquareIndex);
             Square selectedSquare = this.selectedBoard.getSelectedSquare();
 
-            System.out.println("Mouse pressed on square " + selectedSquare.getFile() + " " + selectedSquare.getRank());
+            //System.out.println("Mouse pressed on square " + selectedSquare.getFile() + " " + selectedSquare.getRank());
 
             if (selectedSquare.getPiece() != null) {
                 attachImage(selectedSquare.detachImage());
@@ -80,7 +84,7 @@ public class Chess extends Application {
                 System.out.println("No piece at that location.");
             }
         } else {
-            System.out.println("Clicked out of bounds of the chess board.");
+            //System.out.println("Clicked out of bounds of the chess board.");
         }
 
     }
@@ -92,7 +96,7 @@ public class Chess extends Application {
     }
 
     private void onMouseReleased(MouseEvent e) {
-        System.out.println("Mouse released");
+        //System.out.println("Mouse released");
         if (this.mouseImageView != null) {
 
             int releaseIndex = GridMath.findSquareIndex(e.getX(), e.getY(), 
@@ -103,6 +107,7 @@ public class Chess extends Application {
                 // move attempt succeeded; move the image and make the corresponsing move in the ChessPosition.
                 ChessMove move = new ChessMove(this.selectedBoard.getChessPosition(), startIndex, releaseIndex);
                 this.selectedBoard.makeMove(move);
+                System.out.println("Move: " + move.getStart() + " " + move.getEnd());
 
             } else {
                 // move attempt failed; snap the image back.
@@ -121,23 +126,13 @@ public class Chess extends Application {
         this.mouseImageView.toFront();
     }
 
-    /**
-     * Moves a specified ImageView to the root Node so it can be moved by the mouse.
-     * @param imageView
-     */
-    public void attachImage(ImageView imageView) {
-        if (imageView != null) {
-            this.mouseImageView = imageView;
-            this.root.getChildren().add(this.mouseImageView);
-            System.out.println("ATTACHED IMAGE TO SCENE");
-        }
+    public void attachImage(Image image) {
+        this.mouseImageView.setImage(image);
+        //System.out.println("ATTACHED IMAGE TO SCENE");
     }
 
     public void detachImage() {
-        if (this.mouseImageView != null) {
-            this.root.getChildren().remove(this.mouseImageView);
-            this.mouseImageView = null;
-            System.out.println("REMOVED IMAGE FROM SCENE");
-        }
+        this.mouseImageView.setImage(null);
+        //System.out.println("REMOVED IMAGE FROM SCENE");
     }
 }
