@@ -39,7 +39,10 @@ public class ChessPosition {
     }
 
     public ChessPosition(int[] positionArray) {
-        this.positionArray = positionArray;
+        this.positionArray = new int[positionArray.length];
+        for (int i = 0; i < positionArray.length; i++) {
+            this.positionArray[i] = positionArray[i];
+        }
     }
 
     /**
@@ -99,9 +102,6 @@ public class ChessPosition {
      */
     public ChessPosition passTurn() {
         this.positionArray[TO_MOVE] = -1 * (this.positionArray[TO_MOVE] - 1);
-        System.out.println("It is now " + colorToMove() + " to move");
-
-
         return this;
     }
 
