@@ -103,11 +103,16 @@ public class Chess extends Application {
                 // move attempt succeeded; move the image and make the corresponsing move in the ChessPosition.
                 ChessMove move = new ChessMove(this.selectedBoard.getChessPosition(), startIndex, releaseIndex);
                 Square releaseSquare = this.selectedBoard.getSquareAt(releaseIndex);
+                if (move.isCapture()) {
+                    releaseSquare.removeImage();
+                }
+                releaseSquare.setImage(move.getPiece().getImagePath());
+                //this.selectedBoard.makeMove(move);
             } else {
                 // move attempt failed; snap the image back.
                 this.selectedBoard.getSelectedSquare().reattachImage();
-                detachImage();
             }
+            detachImage();
         }
     }
 

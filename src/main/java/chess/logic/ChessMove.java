@@ -24,4 +24,12 @@ public class ChessMove {
         this.isCapture = !position.isEmpty(end);
         this.isCheck = ChessLogic.isCheck(position, start, end);
     }
+
+    public ChessPiece getPiece() {
+        return this.piece;
+    }
+
+    public boolean isCapture() {
+        return this.isCapture;
+    }
 }
