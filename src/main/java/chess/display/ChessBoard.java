@@ -7,6 +7,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.paint.Color;
 
 import chess.logic.ChessPosition;
+import chess.logic.ChessMove;
 import chess.logic.util.GridMath;
 
 /**
@@ -46,6 +47,8 @@ public class ChessBoard {
         this.chessPosition = new ChessPosition();
 
         loadPosition();
+
+        this.selectedSquare = -1;
     }
 
     private void initializeColors(String darkSquareColor, String lightSquareColor) {
@@ -84,19 +87,48 @@ public class ChessBoard {
         }
     }
 
+    public void makeMove(ChessMove move) {
+        this.chessPosition.makeMove(move);
+        Square startSquare = getSquareAt(move.getStart());
+        Square releaseSquare = getSquareAt(move.getEnd());
+
+        startSquare.removePiece();
+        
+        if (move.isCapture()) {
+            releaseSquare.capture();
+        }
+        releaseSquare.setPiece(move.getPiece());
+    }
+
     public void setSelectedSquare(int index) {
+        if (index < 0 || index >= 64) {
+            throw new IllegalArgumentException("setSelectedSquare: index must be between 0 and 63, inclusive.");
+        }
         this.selectedSquare = index;
     }
+
+    //public void deselectSquare() {
+    //    this.selectedSquare = -1;
+    //}
 
     public int getSelectedSquareIndex() {
         return this.selectedSquare;
     }
 
+    /**
+     * Returns the currently selected Square. Returns null if no Square is selected.
+     */
     public Square getSelectedSquare() {
+        if (this.selectedSquare < 0) {
+            return null;
+        }
         return getSquareAt(this.selectedSquare);
     }
 
     public Square getSquareAt(int index) {
+        if (index < 0 || index >= 64) {
+            throw new IllegalArgumentException("getSquareAt: index must be between 0 and 63, inclusive.");
+        }
         return this.squares[index];
     }
 

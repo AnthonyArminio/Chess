@@ -32,4 +32,12 @@ public class ChessMove {
     public boolean isCapture() {
         return this.isCapture;
     }
+
+    public int getStart() {
+        return this.start;
+    }
+
+    public int getEnd() {
+        return this.end;
+    }
 }

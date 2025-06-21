@@ -51,6 +51,10 @@ public class Square {
         this.checkerboard.add(rectangle, this.file - 1, 8 - this.rank);
     }
 
+    public void capture() {
+        removePiece();
+    }
+
     public void setPiece(ChessPiece piece) {
         this.piece = piece;
         setImage(piece.getImagePath());
@@ -61,6 +65,7 @@ public class Square {
      */
     public void removePiece() {
         this.piece = null;
+        removeImage();
     }
 
     public ChessPiece getPiece() {
@@ -76,9 +81,8 @@ public class Square {
      * Deletes the image currently stored in this square.
      */
     public void removeImage() {
-        this.checkerboard.getChildren().remove(this.imageView);
+        this.imageView.setImage(null);
         this.image = null;
-        this.imageView = null;
     }
 
     /**

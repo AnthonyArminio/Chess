@@ -38,6 +38,25 @@ public class ChessPosition {
         this.positionArray = startingPosition;
     }
 
+    public void makeMove(ChessMove move) {
+        this.positionArray[move.getEnd()] = this.positionArray[move.getStart()];
+        this.positionArray[move.getStart()] = 0;
+
+        // to do: update castling rights here.
+
+        advanceGame();
+        
+    }
+
+    private void advanceGame() {
+        if (this.positionArray[TO_MOVE] == 1) {
+            this.positionArray[TO_MOVE] = 0;
+        } else {
+            this.positionArray[TO_MOVE] = 1;
+            // to do: increment move counter here.
+        }
+    }
+
     public char colorToMove() {
         if (this.positionArray[TO_MOVE] == 1) {
             return 'w';
