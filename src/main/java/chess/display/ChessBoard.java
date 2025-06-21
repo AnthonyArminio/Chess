@@ -17,7 +17,7 @@ public class ChessBoard {
 
     private GridPane checkerboard;
     private Square[] squares;
-    private Square selectedSquare;
+    private int selectedSquare;
     private ChessPosition chessPosition;
 
     private double squareSize;
@@ -85,14 +85,18 @@ public class ChessBoard {
     }
 
     public void setSelectedSquare(int index) {
-        this.selectedSquare = this.squares[index];
+        this.selectedSquare = index;
     }
 
-    public Square getSelectedSquare() {
+    public int getSelectedSquareIndex() {
         return this.selectedSquare;
     }
 
-    public Square getSquareAtIndex(int index) {
+    public Square getSelectedSquare() {
+        return getSquareAt(this.selectedSquare);
+    }
+
+    public Square getSquareAt(int index) {
         return this.squares[index];
     }
 

@@ -11,8 +11,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 import chess.display.ChessBoard;
-import chess.logic.util.GridMath;
 import chess.display.Square;
+import chess.logic.rules.ChessLogic;
+import chess.logic.ChessMove;
+import chess.logic.util.GridMath;
 
 public class Chess extends Application {
 
@@ -56,7 +58,7 @@ public class Chess extends Application {
         stage.show();
     }
 
-    
+
     private void onMousePressed(MouseEvent e) {
         this.selectedBoard = this.board; // change this later when multiple boards can be displayed
 
@@ -92,8 +94,20 @@ public class Chess extends Application {
     private void onMouseReleased(MouseEvent e) {
         System.out.println("Mouse released");
         if (this.mouseImageView != null) {
-            this.selectedBoard.getSelectedSquare().reattachImage();
-            detachImage();
+
+            int releaseIndex = GridMath.findSquareIndex(e.getX(), e.getY(), 
+                               this.selectedBoard.getOrigin(), this.selectedBoard.getSquareSize());
+            int startIndex = this.selectedBoard.getSelectedSquareIndex();
+
+            if (releaseIndex >= 0 && ChessLogic.isLegalMove(this.selectedBoard.getChessPosition(), startIndex, releaseIndex)) {
+                // move attempt succeeded; move the image and make the corresponsing move in the ChessPosition.
+                ChessMove move = new ChessMove(this.selectedBoard.getChessPosition(), startIndex, releaseIndex);
+                Square releaseSquare = this.selectedBoard.getSquareAt(releaseIndex);
+            } else {
+                // move attempt failed; snap the image back.
+                this.selectedBoard.getSelectedSquare().reattachImage();
+                detachImage();
+            }
         }
     }
 

@@ -7,24 +7,21 @@ public class ChessMove {
     private int start;
     private int end;
     private ChessPiece piece;
-    private boolean isLegal;
     private boolean isCapture;
     private boolean isCheck;
 
-    public ChessMove(int start, int end, ChessPosition position) {
+    /**
+     * Creates a new ChessMove. It is assumed that all ChessMoves instantiated using this constructor are legal.
+     * @param position the ChessPosition serving as the context of the move
+     * @param start index of the piece that is moving
+     * @param end index of the destination square
+     */
+    public ChessMove(ChessPosition position, int start, int end) {
         this.start = start;
         this.end = end;
         this.piece = position.getPieceAt(start);
-
-        // maybe don't do this, instead check to see if a move is legal before instantiating it.
-        this.isLegal = ChessLogic.isLegalMove(position, start, end);
         
-        if (this.isLegal) {
-            this.isCapture = !position.isEmpty(end);
-            this.isCheck = ChessLogic.isCheck(position, start, end);
-        } else {
-            this.isCapture = false;
-            this.isCheck = false;
-        }
+        this.isCapture = !position.isEmpty(end);
+        this.isCheck = ChessLogic.isCheck(position, start, end);
     }
 }
