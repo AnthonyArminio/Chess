@@ -38,6 +38,10 @@ public class ChessPosition {
         this.positionArray = startingPosition;
     }
 
+    public ChessPosition(int[] positionArray) {
+        this.positionArray = positionArray;
+    }
+
     public void makeMove(ChessMove move) {
         this.positionArray[move.getEnd()] = this.positionArray[move.getStart()];
         this.positionArray[move.getStart()] = 0;
@@ -45,7 +49,17 @@ public class ChessPosition {
         // to do: update castling rights here.
 
         advanceGame();
-        
+    }
+
+    /**
+     * Returns a copy of this position after a specified move is made.
+     * @param move the move to be made
+     * @return a ChessPosition representing the position after the move is made
+     */
+    public ChessPosition afterMove(ChessMove move) {
+        ChessPosition position = new ChessPosition(this.positionArray);
+        position.makeMove(move);
+        return position;
     }
 
     private void advanceGame() {
@@ -63,6 +77,23 @@ public class ChessPosition {
         } else {
             return 'b';
         }
+    }
+
+    public int findKing(char color) {
+        int targetID;
+        if (color == 'w') {
+            targetID = 6;
+        } else {
+            targetID = -6;
+        }
+
+        for (int i = 0; i < 64; i++) {
+            if (this.positionArray[i] == targetID) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     /**

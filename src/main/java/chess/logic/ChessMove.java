@@ -22,7 +22,7 @@ public class ChessMove {
         this.piece = position.getPieceAt(start);
         
         this.isCapture = !position.isEmpty(end);
-        this.isCheck = ChessLogic.isCheck(position, start, end);
+        this.isCheck = ChessLogic.isCheck(position.afterMove(this));
     }
 
     public ChessPiece getPiece() {

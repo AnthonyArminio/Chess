@@ -66,4 +66,12 @@ public class ChessPiece {
     public int[][] getBaseMovement() {
         return this.baseMovement;
     }
+
+    public static ChessPiece[] getArmy(char color) {
+        if (color == 'w') {
+            return WHITE_PIECES;
+        } else {
+            return BLACK_PIECES;
+        }
+    }
 }

@@ -3,8 +3,6 @@ package chess.logic.rules;
 import chess.logic.ChessPosition;
 import chess.logic.ChessPiece;
 
-import java.util.ArrayList;
-
 /**
  * Class with static functions to help with chess logic such as checks, legal moves, and checkmate.
  */
@@ -62,7 +60,7 @@ public class ChessLogic {
             // special pawn movement
         }
 
-        if (piece.getType() == 'K') {
+        else if (piece.getType() == 'K') {
             // special king movement
         }
 
@@ -73,7 +71,24 @@ public class ChessLogic {
         return true; // to do
     }
 
-    public static boolean isCheck(ChessPosition position, int start, int end) {
+    public static boolean isCheck(ChessPosition position) {
+        int kingLocation = position.findKing(position.colorToMove());
+
+        if (kingLocation == -1) {
+            return false;
+        }
+
+        ChessPiece[] opponentArmy = ChessPiece.getArmy(opponentOf(position.colorToMove()));
+
+        for(ChessPiece piece : opponentArmy) {
+            if (piece.getType() == 'P') {
+                // pawn movement is not symmetrical
+            } else {
+                
+            }
+        }
+
+
         return false; // to do
     }
 
@@ -82,7 +97,7 @@ public class ChessLogic {
      * out of the bounds of the chess board.
      * @param previous
      * @param next
-     * @return true if the step is out of bounds, false otherwise.
+     * @return true if the step walks out of bounds, false otherwise.
      */
     private static boolean isOutOfBounds(int previous, int next) {
         
@@ -97,5 +112,13 @@ public class ChessLogic {
         }
 
         return false;
+    }
+
+    private static char opponentOf(char color) {
+        if (color == 'w') {
+            return 'b';
+        } else {
+            return 'w';
+        }
     }
 }
