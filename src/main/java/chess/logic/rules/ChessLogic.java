@@ -2,6 +2,7 @@ package chess.logic.rules;
 
 import chess.logic.ChessPosition;
 import chess.logic.ChessPiece;
+import chess.logic.util.GridMath;
 
 /**
  * Class with static functions to help with chess logic such as checks, legal moves, and checkmate.
@@ -40,7 +41,7 @@ public class ChessLogic {
 
                 for (int displacement : line) {
                     if (!endInVision && !outOfBounds && !pieceOnLine) {
-                        if (isOutOfBounds(previous, start + displacement)) {
+                        if (GridMath.isOutOfBounds(previous, start + displacement)) {
                             outOfBounds = true;
                         } else {
                             if (!position.isEmpty(start + displacement)) {
@@ -84,34 +85,12 @@ public class ChessLogic {
             if (piece.getType() == 'P') {
                 // pawn movement is not symmetrical
             } else {
-                
+
             }
         }
 
 
         return false; // to do
-    }
-
-    /**
-     * Determines if the step between the square indices 'previous' and 'next' implies a movement
-     * out of the bounds of the chess board.
-     * @param previous
-     * @param next
-     * @return true if the step walks out of bounds, false otherwise.
-     */
-    private static boolean isOutOfBounds(int previous, int next) {
-        
-        // vertical bounds
-        if (next < 0 || next >= 64) {
-            return true;
-        }
-
-        // horizontal bounds
-        if ((next % 8) - (previous % 8) < -2 || (next % 8) - (previous % 8) > 2) {
-            return true;
-        }
-
-        return false;
     }
 
     private static char opponentOf(char color) {

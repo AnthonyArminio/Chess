@@ -40,4 +40,26 @@ public class GridMath {
 
         return GridMath.index(file, rank);
     }
+
+    /**
+     * Determines if the step between the square indices 'previous' and 'next' implies a movement
+     * out of the bounds of the chess board.
+     * @param previous
+     * @param next
+     * @return true if the step walks out of bounds, false otherwise.
+     */
+    public static boolean isOutOfBounds(int previous, int next) {
+        
+        // vertical bounds
+        if (next < 0 || next >= 64) {
+            return true;
+        }
+
+        // horizontal bounds
+        if ((next % 8) - (previous % 8) < -2 || (next % 8) - (previous % 8) > 2) {
+            return true;
+        }
+
+        return false;
+    }
 }

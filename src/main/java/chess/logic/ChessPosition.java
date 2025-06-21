@@ -51,6 +51,23 @@ public class ChessPosition {
         advanceGame();
     }
 
+    public int findKing(char color) {
+        int targetID;
+        if (color == 'w') {
+            targetID = 6;
+        } else {
+            targetID = -6;
+        }
+
+        for (int i = 0; i < 64; i++) {
+            if (this.positionArray[i] == targetID) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     /**
      * Returns a copy of this position after a specified move is made.
      * @param move the move to be made
@@ -77,23 +94,6 @@ public class ChessPosition {
         } else {
             return 'b';
         }
-    }
-
-    public int findKing(char color) {
-        int targetID;
-        if (color == 'w') {
-            targetID = 6;
-        } else {
-            targetID = -6;
-        }
-
-        for (int i = 0; i < 64; i++) {
-            if (this.positionArray[i] == targetID) {
-                return i;
-            }
-        }
-
-        return -1;
     }
 
     /**
