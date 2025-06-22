@@ -36,8 +36,11 @@ public class ChessLogic {
         }
 
         // must move according to the capabilities of each piece
-        boolean endInVision = false;
+        //boolean endInVision = false;
+        chess.logic.util.ChessCondition condition = (p, s, e) -> e == end;
+        boolean endInVision = searchVision(position, start, piece, condition);
 
+        /*
         for (int[] line : piece.getBaseMovement()) {
             if (!endInVision) {
 
@@ -62,6 +65,7 @@ public class ChessLogic {
                 }
             }
         }
+        */
 
         if (piece.getType() == 'P') {
             // special pawn movement
@@ -99,12 +103,21 @@ public class ChessLogic {
         // go through all possible piece types that could be checking the king and check to see if
         // a piece of that type can see the king.
         boolean foundThreat = false;
-        for(ChessPiece piece : opponentArmy) {
+        for (ChessPiece piece : opponentArmy) {
             if (!foundThreat) {
                 if (piece.getType() == 'P') {
                     // pawn movement is not symmetrical
                 } else {
                     // similar code to that used in isLegalMove. Is it possible to create a new method to reduce reused code?
+                    chess.logic.util.ChessCondition condition = (p, s, e) -> piece.equals(p.getPieceAt(e));
+
+                    foundThreat = searchVision(position, kingLocation, piece, condition);
+
+
+
+
+
+                    /* 
                     for (int[] line : piece.getBaseMovement()) {
                         if (!foundThreat) {
 
@@ -120,7 +133,7 @@ public class ChessLogic {
                                         if (!position.isEmpty(kingLocation + displacement)) {
                                             pieceOnLine = true;
                                             ChessPiece potentialThreat = position.getPieceAt(kingLocation + displacement);
-                                            if (potentialThreat.getType() == piece.getType() && potentialThreat.getColor() == piece.getColor()) {
+                                            if (potentialThreat.equals(piece)) {
                                                 foundThreat = true;
                                             }
                                         }
@@ -130,6 +143,7 @@ public class ChessLogic {
                             }
                         }
                     }
+                    */
                 }
             }
         }
@@ -147,5 +161,45 @@ public class ChessLogic {
         } else {
             return 'w';
         }
+    }
+
+    /**
+     * Searches the vision of a piece at a given location in a given context for a visible square that matches a specified
+     * condition.
+     * @param origin
+     * @param piece
+     * @param condition implements chess.logic.util.ChessCondition.
+     * @return
+     */
+    private static boolean searchVision(ChessPosition position, int origin, ChessPiece piece, chess.logic.util.ChessCondition condition) {
+        
+        boolean success = false;
+        
+        for (int[] line : piece.getBaseMovement()) {
+            if (!success) {
+
+                int previous = origin;
+                boolean pieceOnLine = false;
+                boolean outOfBounds = false;
+
+                for (int displacement : line) {
+                    if (!success && !outOfBounds && !pieceOnLine) {
+                        if (GridMath.isOutOfBounds(previous, origin + displacement)) {
+                            outOfBounds = true;
+                        } else {
+                            if (!position.isEmpty(origin + displacement)) {
+                                pieceOnLine = true;
+                            }
+                            if (condition.test(position, origin, origin + displacement)) {
+                                success = true;
+                            }
+                        }
+                        previous = origin + displacement;
+                    }
+                }
+            }
+        }
+
+        return success;
     }
 }

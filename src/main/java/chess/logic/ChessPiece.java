@@ -74,4 +74,11 @@ public class ChessPiece {
             return BLACK_PIECES;
         }
     }
+
+    public boolean equals(ChessPiece other) {
+        if (other == null) {
+            return false;
+        }
+        return this.getType() == other.getType() && this.getColor() == other.getColor();
+    }
 }
