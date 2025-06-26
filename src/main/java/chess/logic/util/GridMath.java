@@ -41,6 +41,14 @@ public class GridMath {
         return GridMath.index(file, rank);
     }
 
+    public static int getFile(int index) {
+        return (index % 8) + 1;
+    }
+
+    public static int getRank(int index) {
+        return (index / 8) + 1;
+    }
+
     /**
      * Determines if the step between the square indices 'previous' and 'next' implies a movement
      * out of the bounds of the chess board.

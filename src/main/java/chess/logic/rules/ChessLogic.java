@@ -40,7 +40,7 @@ public class ChessLogic {
         chess.logic.util.ChessCondition condition = (p, s, e) -> e == end;
         boolean endInVision = searchVision(position, start, piece, condition);
 
-        /*
+        /* OLD CODE
         for (int[] line : piece.getBaseMovement()) {
             if (!endInVision) {
 
@@ -174,6 +174,19 @@ public class ChessLogic {
     private static boolean searchVision(ChessPosition position, int origin, ChessPiece piece, chess.logic.util.ChessCondition condition) {
         
         boolean success = false;
+
+        int[][] movement = piece.getBaseMovement();
+        if (piece.getType() == 'P') {
+            if (piece.getColor() == 'w') {
+                if (GridMath.getRank(origin) == 2) {
+                    
+                }
+            } else {
+
+            }
+        } else {
+
+        }
         
         for (int[] line : piece.getBaseMovement()) {
             if (!success) {
