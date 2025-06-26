@@ -108,7 +108,7 @@ public class ChessLogic {
                 if (piece.getType() == 'P') {
                     // pawn movement is not symmetrical
                 } else {
-                    // similar code to that used in isLegalMove. Is it possible to create a new method to reduce reused code?
+                    
                     chess.logic.util.ChessCondition condition = (p, s, e) -> piece.equals(p.getPieceAt(e));
 
                     foundThreat = searchVision(position, kingLocation, piece, condition);
@@ -117,7 +117,7 @@ public class ChessLogic {
 
 
 
-                    /* 
+                    /* OLD CODE
                     for (int[] line : piece.getBaseMovement()) {
                         if (!foundThreat) {
 
@@ -174,19 +174,6 @@ public class ChessLogic {
     private static boolean searchVision(ChessPosition position, int origin, ChessPiece piece, chess.logic.util.ChessCondition condition) {
         
         boolean success = false;
-
-        int[][] movement = piece.getBaseMovement();
-        if (piece.getType() == 'P') {
-            if (piece.getColor() == 'w') {
-                if (GridMath.getRank(origin) == 2) {
-                    
-                }
-            } else {
-
-            }
-        } else {
-
-        }
         
         for (int[] line : piece.getBaseMovement()) {
             if (!success) {

@@ -81,4 +81,28 @@ public class ChessPiece {
         }
         return this.getType() == other.getType() && this.getColor() == other.getColor();
     }
+
+    /**
+     * Returns the movement pattern of this piece in context. For rooks, bishops, knights, and queens,
+     * this method is equivalent to getBaseMovement, but for kings and pawns, this method is necessary
+     * to account for special circumstances that alter the behaviour of the piece. This method does not
+     * account for out-of-bounds movement and may not account for blocked paths.
+     * @param position the chess position that is to be the context of this piece's movement.
+     * @param location the index of the square that contains this piece.
+     * @return the movement pattern of this piece in context.
+     */
+    public int[][] getMovement(ChessPosition position, int location) {
+        
+        if (this.getType() == 'P') {
+            return null;
+        
+        
+        } else if (this.getType() == 'K') {
+            return null;
+
+
+        } else {
+            return this.getBaseMovement();
+        }
+    }
 }
