@@ -1,5 +1,7 @@
 package chess.logic;
 
+import chess.logic.util.GridMath;
+
 public class ChessPiece {
 
     private static final int[][] BASE_PAWN_MOVEMENT = {{}};
@@ -94,11 +96,39 @@ public class ChessPiece {
     public int[][] getMovement(ChessPosition position, int location) {
         
         if (this.getType() == 'P') {
-            return null;
-        
+            int[][] movement = {{0}, {0, 0}, {0}};
+            if (this.getColor() == 'w') {
+                if (position.isEmpty(location + 8)) {
+                    movement[1][0] = 8;
+                    if (GridMath.getRank(location) == 2 && position.isEmpty(location + 16)) {
+                        movement[1][1] = 16;
+                    }
+                }
+                if (!position.isEmpty(location + 7) || position.getEnPassantOpportunity() == location + 7) {
+                    movement[0][0] = 7;
+                }
+                if (!position.isEmpty(location + 9) || position.getEnPassantOpportunity() == location + 9) {
+                    movement[2][0] = 9;
+                }
+            } else {
+                if (position.isEmpty(location - 8)) {
+                    movement[1][0] = -8;
+                    if (GridMath.getRank(location) == 7 && position.isEmpty(location - 16)) {
+                        movement[1][1] = -16;
+                    }
+                }
+                if (!position.isEmpty(location - 7) || position.getEnPassantOpportunity() == location - 7) {
+                    movement[0][0] = -7;
+                }
+                if (!position.isEmpty(location - 9) || position.getEnPassantOpportunity() == location - 9) {
+                    movement[2][0] = -9;
+                }
+            }
+            return movement;
         
         } else if (this.getType() == 'K') {
-            return null;
+            int[][] movement = {{}};
+            return BASE_KING_MOVEMENT;
 
 
         } else {

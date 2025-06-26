@@ -113,23 +113,29 @@ public class ChessPosition {
         }
     }
 
+    public int getEnPassantOpportunity() {
+        return this.positionArray[EN_PASSANT];
+    }
+
     /**
-     * Returns true if the square at a specified index is empty, and false otherwise.
+     * Returns true if the square at a specified index is empty, and false otherwise. Returns true
+     * if the specified index is out out bounds.
      */
     public boolean isEmpty(int index) {
         if (index < 0 || index >= 64) {
-            throw new IllegalArgumentException("isEmpty: index must be between 0 and 63, inclusive.");
+            return true;
         }
 
         return this.positionArray[index] == 0;
     }
 
     /**
-     * Returns true if the square at the specified file and rank is empty, and false otherwise.
+     * Returns true if the square at the specified file and rank is empty, and false otherwise. Returns
+     * true if the specified coordinates are out of bounds.
      */
     public boolean isEmpty(int file, int rank) {
         if (file < 1 || file > 8 || rank < 1 || rank > 8) {
-            throw new IllegalArgumentException("isEmpty: file and rank must be between 1 and 8, inclusive.");
+            return true;
         }
 
         return this.positionArray[GridMath.index(file, rank)] == 0;

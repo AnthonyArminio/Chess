@@ -175,7 +175,7 @@ public class ChessLogic {
         
         boolean success = false;
         
-        for (int[] line : piece.getBaseMovement()) {
+        for (int[] line : piece.getMovement(position, origin)) {
             if (!success) {
 
                 int previous = origin;
