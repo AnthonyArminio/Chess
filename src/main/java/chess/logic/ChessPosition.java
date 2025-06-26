@@ -135,6 +135,7 @@ public class ChessPosition {
      */
     public boolean isEmpty(int file, int rank) {
         if (file < 1 || file > 8 || rank < 1 || rank > 8) {
+            // out of bounds
             return true;
         }
 

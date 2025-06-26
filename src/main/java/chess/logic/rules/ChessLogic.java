@@ -36,46 +36,8 @@ public class ChessLogic {
         }
 
         // must move according to the capabilities of each piece
-        //boolean endInVision = false;
         chess.logic.util.ChessCondition condition = (p, s, e) -> e == end;
-        boolean endInVision = searchVision(position, start, piece, condition);
-
-        /* OLD CODE
-        for (int[] line : piece.getBaseMovement()) {
-            if (!endInVision) {
-
-                int previous = start;
-                boolean pieceOnLine = false;
-                boolean outOfBounds = false;
-
-                for (int displacement : line) {
-                    if (!endInVision && !outOfBounds && !pieceOnLine) {
-                        if (GridMath.isOutOfBounds(previous, start + displacement)) {
-                            outOfBounds = true;
-                        } else {
-                            if (!position.isEmpty(start + displacement)) {
-                                pieceOnLine = true;
-                            }
-                            if (start + displacement == end) {
-                                endInVision = true;
-                            }
-                        }
-                        previous = start + displacement;
-                    }
-                }
-            }
-        }
-        */
-
-        if (piece.getType() == 'P') {
-            // special pawn movement
-        }
-
-        else if (piece.getType() == 'K') {
-            // special king movement
-        }
-
-        if (!endInVision) {
+        if (!searchVision(position, start, piece, condition)) {
             return false;
         }
 
@@ -102,54 +64,32 @@ public class ChessLogic {
 
         // go through all possible piece types that could be checking the king and check to see if
         // a piece of that type can see the king.
-        boolean foundThreat = false;
         for (ChessPiece piece : opponentArmy) {
-            if (!foundThreat) {
-                if (piece.getType() == 'P') {
-                    // pawn movement is not symmetrical
-                } else {
-                    
-                    chess.logic.util.ChessCondition condition = (p, s, e) -> piece.equals(p.getPieceAt(e));
-
-                    foundThreat = searchVision(position, kingLocation, piece, condition);
-
-
-
-
-
-                    /* OLD CODE
-                    for (int[] line : piece.getBaseMovement()) {
-                        if (!foundThreat) {
-
-                            int previous = kingLocation;
-                            boolean pieceOnLine = false;
-                            boolean outOfBounds = false;
-
-                            for (int displacement : line) {
-                                if (!foundThreat && !outOfBounds && !pieceOnLine) {
-                                    if (GridMath.isOutOfBounds(previous, kingLocation + displacement)) {
-                                        outOfBounds = true;
-                                    } else {
-                                        if (!position.isEmpty(kingLocation + displacement)) {
-                                            pieceOnLine = true;
-                                            ChessPiece potentialThreat = position.getPieceAt(kingLocation + displacement);
-                                            if (potentialThreat.equals(piece)) {
-                                                foundThreat = true;
-                                            }
-                                        }
-                                    }
-                                    previous = kingLocation + displacement;
-                                }
-                            }
-                        }
+            if (piece.getType() == 'P') {
+                // pawn movement is not symmetrical
+                if (piece.getColor() == 'w') {
+                    if (!GridMath.isOutOfBounds(kingLocation, kingLocation - 7) && piece.equals(position.getPieceAt(kingLocation - 7))) {
+                        return true;
                     }
-                    */
+                    if (!GridMath.isOutOfBounds(kingLocation, kingLocation - 9) && piece.equals(position.getPieceAt(kingLocation - 9))) {
+                        return true;
+                    }
+                } else {
+                    if (!GridMath.isOutOfBounds(kingLocation, kingLocation + 7) && piece.equals(position.getPieceAt(kingLocation + 7))) {
+                        return true;
+                    }
+                    if (!GridMath.isOutOfBounds(kingLocation, kingLocation + 9) && piece.equals(position.getPieceAt(kingLocation + 9))) {
+                        return true;
+                    }
+                }
+            } else {
+                
+                chess.logic.util.ChessCondition condition = (p, s, e) -> piece.equals(p.getPieceAt(e));
+                
+                if (searchVision(position, kingLocation, piece, condition)) {
+                    return true;
                 }
             }
-        }
-
-        if (foundThreat) {
-            return true;
         }
 
         return false;
@@ -169,7 +109,7 @@ public class ChessLogic {
      * @param origin
      * @param piece
      * @param condition implements chess.logic.util.ChessCondition.
-     * @return
+     * @return true if a square matching the condition was found, false otherwise.
      */
     private static boolean searchVision(ChessPosition position, int origin, ChessPiece piece, chess.logic.util.ChessCondition condition) {
         
@@ -183,7 +123,7 @@ public class ChessLogic {
                 boolean outOfBounds = false;
 
                 for (int displacement : line) {
-                    if (!success && !outOfBounds && !pieceOnLine) {
+                    if (displacement != 0 && !success && !outOfBounds && !pieceOnLine) {
                         if (GridMath.isOutOfBounds(previous, origin + displacement)) {
                             outOfBounds = true;
                         } else {

@@ -103,13 +103,18 @@ public class Chess extends Application {
                                this.selectedBoard.getOrigin(), this.selectedBoard.getSquareSize());
             int startIndex = this.selectedBoard.getSelectedSquareIndex();
 
-            ChessMove move = new ChessMove(this.selectedBoard.getChessPosition(), startIndex, releaseIndex);
+            if (releaseIndex >= 0) {
+                ChessMove move = new ChessMove(this.selectedBoard.getChessPosition(), startIndex, releaseIndex);
 
-            if (releaseIndex >= 0 && move.isLegal()) {
-                // move attempt succeeded; move the image and make the corresponsing move in the ChessPosition.
-                this.selectedBoard.makeMove(move);
-                System.out.println("Move: " + move.getStart() + " " + move.getEnd());
-
+                if (move.isLegal()) {
+                    // move attempt succeeded; move the image and make the corresponsing move in the ChessPosition.
+                    this.selectedBoard.makeMove(move);
+                    System.out.println("Move: " + move.getStart() + " " + move.getEnd());
+                    
+                } else {
+                    // move attempt failed; snap the image back.
+                    this.selectedBoard.getSelectedSquare().reattachImage();
+                }
             } else {
                 // move attempt failed; snap the image back.
                 this.selectedBoard.getSelectedSquare().reattachImage();
