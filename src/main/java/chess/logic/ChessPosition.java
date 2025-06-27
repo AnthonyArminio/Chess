@@ -53,6 +53,17 @@ public class ChessPosition {
         this.positionArray[move.getEnd()] = this.positionArray[move.getStart()];
         this.positionArray[move.getStart()] = 0;
 
+        if (move.isEnPassant()) {
+            if (move.getColor() == 'w') {
+                this.positionArray[move.getEnd() - 8] = 0;
+            } else {
+                this.positionArray[move.getEnd() + 8] = 0;
+            }
+        }
+
+        this.positionArray[EN_PASSANT] = move.enPassantValue();
+        System.out.println("EPO: " + this.getEnPassantOpportunity());
+
         // to do: update castling rights here.
 
         advanceGame();

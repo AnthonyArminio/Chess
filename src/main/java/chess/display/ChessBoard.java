@@ -97,6 +97,14 @@ public class ChessBoard {
         if (move.isCapture()) {
             releaseSquare.capture();
         }
+        if (move.isEnPassant()) {
+            if (move.getColor() == 'w') {
+                getSquareAt(move.getEnd() - 8).capture();
+            } else {
+                getSquareAt(move.getEnd() + 8).capture();
+            }
+        }
+        
         releaseSquare.setPiece(move.getPiece());
     }
 

@@ -20,24 +20,22 @@ public class ChessLogic {
             return false;
         }
 
-        ChessPiece piece = move.getPiece();
-
         // cannot move if it is not your turn
-        if (piece.getColor() != position.colorToMove()) {
+        if (move.getColor() != position.colorToMove()) {
             System.out.println("piece does not match color to move.");
             return false;
         }
 
         // cannot move onto your own piece
         if (!position.isEmpty(end)) {
-            if (piece.getColor() == position.getPieceAt(end).getColor()) {
+            if (move.getColor() == position.getPieceAt(end).getColor()) {
                 return false;
             }
         }
 
         // must move according to the capabilities of each piece
         chess.logic.util.ChessCondition condition = (p, s, e) -> e == end;
-        if (!searchVision(position, start, piece, condition)) {
+        if (!searchVision(position, start, move.getPiece(), condition)) {
             return false;
         }
 
@@ -93,6 +91,10 @@ public class ChessLogic {
         }
 
         return false;
+    }
+
+    public static boolean isEnPassant(ChessPosition position, ChessMove move) {
+        return move.getPieceType() == 'P' && move.getEnd() == position.getEnPassantOpportunity();
     }
 
     private static char opponentOf(char color) {
