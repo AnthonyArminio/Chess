@@ -96,8 +96,8 @@ public class ChessPiece {
      */
     public int[][] getMovement(ChessPosition position, int location) {
         
-        int[][] movement = this.getBaseMovement();
         if (this.getType() == 'P') {
+            int[][] movement = {{0}, {0, 0}, {0}};
             if (this.getColor() == 'w') {
                 if (position.isEmpty(location + 8)) {
                     movement[1][0] = 8;
@@ -125,8 +125,10 @@ public class ChessPiece {
                     movement[2][0] = -9;
                 }
             }
+            return movement;
         
         } else if (this.getType() == 'K') {
+            int[][] movement = {{1, 0},{7},{8},{9},{-1, 0},{-7},{-8},{-9}};
             if (position.hasCastlingRights(this.getColor(), 'K')) {
                 if (true) {
                     movement[0][1] = 2;
@@ -137,8 +139,9 @@ public class ChessPiece {
                     movement[4][1] = -2;
                 }
             }
+            return movement;
         }
 
-        return movement;
+        return this.getBaseMovement();
     }
 }

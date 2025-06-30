@@ -25,6 +25,7 @@ public class Chess extends Application {
     private ChessBoard board;
     private ChessBoard selectedBoard;
     private ImageView mouseImageView;
+    private boolean pieceInMouse;
 
     private Group root;
     private HBox layout;
@@ -39,6 +40,7 @@ public class Chess extends Application {
         this.selectedBoard = null;
 
         this.mouseImageView = new ImageView();
+        this.pieceInMouse = false;
         this.root.getChildren().add(this.mouseImageView);
 
         layout.getChildren().add(this.board.getCheckerboard());
@@ -97,7 +99,7 @@ public class Chess extends Application {
 
     private void onMouseReleased(MouseEvent e) {
         //System.out.println("Mouse released");
-        if (this.mouseImageView != null) {
+        if (this.pieceInMouse) {
 
             int releaseIndex = GridMath.findSquareIndex(e.getX(), e.getY(), 
                                this.selectedBoard.getOrigin(), this.selectedBoard.getSquareSize());
@@ -134,11 +136,11 @@ public class Chess extends Application {
 
     public void attachImage(Image image) {
         this.mouseImageView.setImage(image);
-        //System.out.println("ATTACHED IMAGE TO SCENE");
+        this.pieceInMouse = true;
     }
 
     public void detachImage() {
         this.mouseImageView.setImage(null);
-        //System.out.println("REMOVED IMAGE FROM SCENE");
+        this.pieceInMouse = false;
     }
 }

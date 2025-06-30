@@ -91,13 +91,20 @@ public class ChessPosition {
         }
 
         this.positionArray[EN_PASSANT] = move.enPassantValue();
-        System.out.println("EPO: " + this.getEnPassantOpportunity());
 
         // move the rook after castling
         if (move.isKingsideCastle()) {
-            makeAlteration(7, 5);
+            if (move.getColor() == 'w') {
+                makeAlteration(7, 5);
+            } else {
+                makeAlteration(63, 61);
+            }
         } else if (move.isQueensideCastle()) {
-            makeAlteration(0, 3);
+            if (move.getColor() == 'w') {
+                makeAlteration(0, 3);
+            } else {
+                makeAlteration(56, 59);
+            }
         }
 
         // update castling rights

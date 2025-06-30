@@ -108,13 +108,13 @@ public class ChessBoard {
             if (move.getColor() == 'w') {
                 getSquareAt(5).setPiece(getSquareAt(7).removePiece());
             } else {
-                getSquareAt(63).setPiece(getSquareAt(61).removePiece());
+                getSquareAt(61).setPiece(getSquareAt(63).removePiece());
             }
         } else if (move.isQueensideCastle()) {
             if (move.getColor() == 'w') {
-                getSquareAt(0).setPiece(getSquareAt(3).removePiece());
+                getSquareAt(3).setPiece(getSquareAt(0).removePiece());
             } else {
-                getSquareAt(56).setPiece(getSquareAt(59).removePiece());
+                getSquareAt(59).setPiece(getSquareAt(56).removePiece());
             }
         }
         
