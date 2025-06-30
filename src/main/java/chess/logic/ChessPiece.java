@@ -1,5 +1,6 @@
 package chess.logic;
 
+import chess.logic.rules.ChessLogic;
 import chess.logic.util.GridMath;
 
 public class ChessPiece {
@@ -128,16 +129,12 @@ public class ChessPiece {
         } else if (this.getType() == 'K') {
             if (position.hasKingsideCastlingRights(this.getColor())) {
                 if (true) {
-                    if (!(ChessLogic.isCheck(position) || ChessLogic.isCheck(position.afterAlteration(location, location + 1)))) {
-                        movement[0][1] = 2;
-                    }
+                    movement[0][1] = 2;
                 }
             }
             if (position.hasQueensideCastlingRights(this.getColor())) {
                 if (position.isEmpty(location - 3)) {
-                    if (!(ChessLogic.isCheck(position) || ChessLogic.isCheck(position.afterAlteration(location, location - 1)))) {
-                        movement[4][1] = -2;
-                    }
+                    movement[4][1] = -2;
                 }
             }
         }

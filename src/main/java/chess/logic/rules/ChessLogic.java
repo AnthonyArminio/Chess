@@ -45,6 +45,16 @@ public class ChessLogic {
             return false;
         }
 
+        // cannot castle through or out of check
+        if (move.isKingsideCastle() && 
+            (ChessLogic.isCheck(position) || ChessLogic.isCheck(position.afterAlteration(move.getStart(), move.getStart() + 1)))) {
+            return false;
+        }
+        if (move.isQueensideCastle() && 
+            (ChessLogic.isCheck(position) || ChessLogic.isCheck(position.afterAlteration(move.getStart(), move.getStart() - 1)))) {
+            return false;
+        }
+
         return true; // to do
     }
 
