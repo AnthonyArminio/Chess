@@ -87,7 +87,7 @@ public class ChessPosition {
     }
 
     /**
-     * Returns a copy of this position after a specified move is made.
+     * Returns a copy of this position after a specified move is made. The move is assumed to be legal.
      * @param move the move to be made
      * @return a ChessPosition representing the position after the move is made
      */
@@ -126,6 +126,22 @@ public class ChessPosition {
 
     public int getEnPassantOpportunity() {
         return this.positionArray[EN_PASSANT];
+    }
+
+    public boolean hasKingsideCastlingRights(char color) {
+        if (color == 'w') {
+            return this.positionArray[W_CASTLING_RIGHTS] % 2 == 0;
+        } else {
+            return this.positionArray[B_CASTLING_RIGHTS] % 2 == 0;
+        }
+    }
+
+    public boolean hasQueensideCastlingRights(char color) {
+        if (color == 'w') {
+            return this.positionArray[W_CASTLING_RIGHTS] % 3 == 0;
+        } else {
+            return this.positionArray[B_CASTLING_RIGHTS] % 3 == 0;
+        }
     }
 
     /**
