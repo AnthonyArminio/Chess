@@ -97,6 +97,16 @@ public class ChessLogic {
         return move.getPieceType() == 'P' && move.getEnd() == position.getEnPassantOpportunity();
     }
 
+    public static boolean isKingsideCastle(ChessPosition position, ChessMove move) {
+        return move.getPieceType() == 'K' && position.hasKingsideCastlingRights(move.getColor()) && 
+               move.getEnd() == ChessPosition.getCastlingDestination(move.getColor(), 'K');
+    }
+
+    public static boolean isQueensideCastle(ChessPosition position, ChessMove move) {
+        return move.getPieceType() == 'K' && position.hasQueensideCastlingRights(move.getColor()) &&
+               move.getEnd() == ChessPosition.getCastlingDestination(move.getColor(), 'Q');
+    }
+
     private static char opponentOf(char color) {
         if (color == 'w') {
             return 'b';

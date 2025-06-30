@@ -4,7 +4,7 @@ import chess.logic.util.GridMath;
 
 public class ChessPiece {
 
-    private static final int[][] BASE_PAWN_MOVEMENT = {{}};
+    private static final int[][] BASE_PAWN_MOVEMENT = {{0}, {0, 0}, {0}};
     private static final int[][] BASE_BISHOP_MOVEMENT = {{7, 14, 21, 28, 35, 42, 49}, 
                                                          {9, 18, 27, 36, 45, 54, 63},
                                                          {-7,-14,-21,-28,-35,-42,-49},
@@ -22,7 +22,7 @@ public class ChessPiece {
                                                         {8, 16, 24, 32, 40, 48, 56},
                                                         {-1,-2,-3,-4,-5,-6,-7},
                                                         {-8,-16,-24,-32,-40,-48,-56}};
-    private static final int[][] BASE_KING_MOVEMENT = {{1},{7},{8},{9},{-1},{-7},{-8},{-9}};
+    private static final int[][] BASE_KING_MOVEMENT = {{1, 0},{7},{8},{9},{-1, 0},{-7},{-8},{-9}};
 
     public static final ChessPiece W_PAWN = new ChessPiece("file:assets/sprites/White_Pawn.png", 'P', 'w', BASE_PAWN_MOVEMENT);
     public static final ChessPiece W_BISHOP = new ChessPiece("file:assets/sprites/White_Bishop.png", 'B', 'w', BASE_BISHOP_MOVEMENT);
@@ -95,8 +95,8 @@ public class ChessPiece {
      */
     public int[][] getMovement(ChessPosition position, int location) {
         
+        int[][] movement = this.getBaseMovement();
         if (this.getType() == 'P') {
-            int[][] movement = {{0}, {0, 0}, {0}};
             if (this.getColor() == 'w') {
                 if (position.isEmpty(location + 8)) {
                     movement[1][0] = 8;
@@ -124,15 +124,24 @@ public class ChessPiece {
                     movement[2][0] = -9;
                 }
             }
-            return movement;
         
         } else if (this.getType() == 'K') {
-            int[][] movement = {{}};
-            return BASE_KING_MOVEMENT;
-
-
-        } else {
-            return this.getBaseMovement();
+            if (position.hasKingsideCastlingRights(this.getColor())) {
+                if (true) {
+                    if (!(ChessLogic.isCheck(position) || ChessLogic.isCheck(position.afterMove(location, location + 1).passTurn()))) {
+                        movement[0][1] = 2;
+                    }
+                }
+            }
+            if (position.hasQueensideCastlingRights(this.getColor())) {
+                if (position.isEmpty(location - 3)) {
+                    if (!(ChessLogic.isCheck(position) || ChessLogic.isCheck(position.afterMove(location, location - 1).passTurn()))) {
+                        movement[4][1] = -2;
+                    }
+                }
+            }
         }
+
+        return movement;
     }
 }

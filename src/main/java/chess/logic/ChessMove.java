@@ -12,6 +12,8 @@ public class ChessMove {
     private boolean isLegal;
     private boolean isCapture;
     private boolean isEnPassant;
+    private boolean isKingsideCastle;
+    private boolean isQueensideCastle;
     private boolean isCheck;
 
     /**
@@ -30,6 +32,8 @@ public class ChessMove {
         this.isLegal = ChessLogic.isLegalMove(position, this);
         
         this.isEnPassant = ChessLogic.isEnPassant(position, this);
+        this.isKingsideCastle = ChessLogic.isKingsideCastle(position, this);
+        this.isQueensideCastle = ChessLogic.isQueensideCastle(position, this);
         this.isCapture = !position.isEmpty(end) || this.isEnPassant;
         this.isCheck = ChessLogic.isCheck(position.afterMove(this));
     }
@@ -53,6 +57,14 @@ public class ChessMove {
 
     public boolean isEnPassant() {
         return this.isEnPassant;
+    }
+
+    public boolean isKingsideCastle() {
+        return this.isKingsideCastle;
+    }
+
+    public boolean isQueensideCastle() {
+        return this.isQueensideCastle;
     }
 
     public boolean isLegal() {
