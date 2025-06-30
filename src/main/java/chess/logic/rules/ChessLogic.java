@@ -108,12 +108,12 @@ public class ChessLogic {
     }
 
     public static boolean isKingsideCastle(ChessPosition position, ChessMove move) {
-        return move.getPieceType() == 'K' && position.hasKingsideCastlingRights(move.getColor()) && 
+        return move.getPieceType() == 'K' && position.hasCastlingRights(move.getColor(), 'K') && 
                move.getEnd() == ChessPosition.getCastlingDestination(move.getColor(), 'K');
     }
 
     public static boolean isQueensideCastle(ChessPosition position, ChessMove move) {
-        return move.getPieceType() == 'K' && position.hasQueensideCastlingRights(move.getColor()) &&
+        return move.getPieceType() == 'K' && position.hasCastlingRights(move.getColor(), 'Q') &&
                move.getEnd() == ChessPosition.getCastlingDestination(move.getColor(), 'Q');
     }
 

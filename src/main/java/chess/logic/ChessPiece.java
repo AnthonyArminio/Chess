@@ -127,12 +127,12 @@ public class ChessPiece {
             }
         
         } else if (this.getType() == 'K') {
-            if (position.hasKingsideCastlingRights(this.getColor())) {
+            if (position.hasCastlingRights(this.getColor(), 'K')) {
                 if (true) {
                     movement[0][1] = 2;
                 }
             }
-            if (position.hasQueensideCastlingRights(this.getColor())) {
+            if (position.hasCastlingRights(this.getColor(), 'Q')) {
                 if (position.isEmpty(location - 3)) {
                     movement[4][1] = -2;
                 }

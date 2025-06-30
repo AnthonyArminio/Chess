@@ -8,16 +8,18 @@ import chess.logic.util.GridMath;
 public class ChessPosition {
 
     private static final int EN_PASSANT = 64;
-    private static final int W_CASTLING_RIGHTS = 65;
-    private static final int B_CASTLING_RIGHTS = 66;
-    private static final int TO_MOVE = 67;
+    private static final int W_K_CASTLING_RIGHTS = 65;
+    private static final int W_Q_CASTLING_RIGHTS = 66;
+    private static final int B_K_CASTLING_RIGHTS = 67;
+    private static final int B_Q_CASTLING_RIGHTS = 68;
+    private static final int TO_MOVE = 69;
 
-    // The current state of the board represented as a list of 68 integers. The first 64
+    // The current state of the board represented as a list of 70 integers. The first 64
     // represent the pieces at each square starting from the bottom-left. positionArray[64]
     // represents the index where en passant is available, or -1 otherwise.
-    // positionArray[65 & 66] represent castling rights for white and black, respectively (starts
-    // at 6, kingside/queenside castling is encoded as divisibility by 2 and 3, respectively).
-    // positionArray[67] represents whose turn it is (0 for black, 1 for white).
+    // positionArray[65-68] represent castling rights (white kingside, white queenside, black
+    // kingside, and black queenside, respectively). positionArray[67] represents whose turn it
+    // is (0 for black, 1 for white).
     private int[] positionArray;
 
     /**
@@ -33,7 +35,7 @@ public class ChessPosition {
                                   0, 0, 0, 0, 0, 0, 0, 0,
                                   -1,-1,-1,-1,-1,-1,-1,-1,
                                   -4,-3,-2,-5,-6,-2,-3,-4,
-                                  -1, 6, 6, 1};
+                                  -1, 1, 1, 1, 1, 1};
 
         this.positionArray = startingPosition;
     }
@@ -91,9 +93,41 @@ public class ChessPosition {
         this.positionArray[EN_PASSANT] = move.enPassantValue();
         System.out.println("EPO: " + this.getEnPassantOpportunity());
 
-        // to do: update castling rights here.
+        // move the rook after castling
+        if (move.isKingsideCastle()) {
+            makeAlteration(7, 5);
+        } else if (move.isQueensideCastle()) {
+            makeAlteration(0, 3);
+        }
+
+        // update castling rights
+        if (castlingRightsExist()) {
+            handleCastlingRights(move);
+        }
 
         advanceGame();
+    }
+
+    private void handleCastlingRights(ChessMove move) {
+        int start = move.getStart();
+        int end = move.getEnd();
+
+        if (move.getPieceType() == 'K') {
+            removeCastlingRights(move.getColor());
+        } else {
+            if (hasCastlingRights('w', 'K') && (start == 7 || end == 7)) {
+                removeCastlingRights('w', 'K');
+            }
+            else if (hasCastlingRights('w', 'Q') && (start == 0 || end == 0)) {
+                removeCastlingRights('w', 'Q');
+            }
+            if (hasCastlingRights('b', 'K') && (start == 63 || end == 63)) {
+                removeCastlingRights('b', 'K');
+            }
+            else if (hasCastlingRights('b', 'Q') && (start == 56 || end == 56)) {
+                removeCastlingRights('b', 'Q');
+            }
+        }
     }
 
     public int findKing(char color) {
@@ -164,19 +198,52 @@ public class ChessPosition {
         return this.positionArray[EN_PASSANT];
     }
 
-    public boolean hasKingsideCastlingRights(char color) {
+    public boolean hasCastlingRights(char color, char side) {
         if (color == 'w') {
-            return this.positionArray[W_CASTLING_RIGHTS] % 2 == 0;
+            if (side == 'K') {
+                return this.positionArray[W_K_CASTLING_RIGHTS] == 1;
+            } else {
+                return this.positionArray[W_Q_CASTLING_RIGHTS] == 1;
+            }
         } else {
-            return this.positionArray[B_CASTLING_RIGHTS] % 2 == 0;
+            if (side == 'K') {
+                return this.positionArray[B_K_CASTLING_RIGHTS] == 1;
+            } else {
+                return this.positionArray[B_Q_CASTLING_RIGHTS] == 1;
+            }
         }
     }
 
-    public boolean hasQueensideCastlingRights(char color) {
+    public boolean castlingRightsExist() {
+        return this.positionArray[W_K_CASTLING_RIGHTS] == 1 ||
+               this.positionArray[W_Q_CASTLING_RIGHTS] == 1 ||
+               this.positionArray[B_K_CASTLING_RIGHTS] == 1 ||
+               this.positionArray[B_Q_CASTLING_RIGHTS] == 1;
+    }
+
+    public void removeCastlingRights(char color, char side) {
         if (color == 'w') {
-            return this.positionArray[W_CASTLING_RIGHTS] % 3 == 0;
+            if (side == 'K') {
+                this.positionArray[W_K_CASTLING_RIGHTS] = 0;
+            } else {
+                this.positionArray[W_Q_CASTLING_RIGHTS] = 0;
+            }
         } else {
-            return this.positionArray[B_CASTLING_RIGHTS] % 3 == 0;
+            if (side == 'K') {
+                this.positionArray[B_K_CASTLING_RIGHTS] = 0;
+            } else {
+                this.positionArray[B_Q_CASTLING_RIGHTS] = 0;
+            }
+        }
+    }
+
+    public void removeCastlingRights(char color) {
+        if (color == 'w') {
+            this.positionArray[W_K_CASTLING_RIGHTS] = 0;
+            this.positionArray[W_Q_CASTLING_RIGHTS] = 0;
+        } else {
+            this.positionArray[B_K_CASTLING_RIGHTS] = 0;
+            this.positionArray[B_Q_CASTLING_RIGHTS] = 0;
         }
     }
 

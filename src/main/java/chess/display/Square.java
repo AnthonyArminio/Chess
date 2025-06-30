@@ -51,8 +51,8 @@ public class Square {
         this.checkerboard.add(rectangle, this.file - 1, 8 - this.rank);
     }
 
-    public void capture() {
-        removePiece();
+    public ChessPiece capture() {
+        return removePiece();
     }
 
     public void setPiece(ChessPiece piece) {
@@ -63,9 +63,11 @@ public class Square {
     /**
      * Sets the value of this.piece equal to null. Not the same as capturing.
      */
-    public void removePiece() {
+    public ChessPiece removePiece() {
+        ChessPiece piece = this.piece;
         this.piece = null;
         removeImage();
+        return piece;
     }
 
     public ChessPiece getPiece() {
