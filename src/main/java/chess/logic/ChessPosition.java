@@ -46,12 +46,39 @@ public class ChessPosition {
     }
 
     /**
+     * Returns the index corresponding to the castling destination (where the king lands) for a given
+     * color and side. ('K' for kingside castling, 'Q' for queenside castling)
+     */
+    public static int getCastlingDestination(char color, char side) {
+        if (color == 'w') {
+            if (side == 'K') {
+                return 6;
+            } else {
+                return 2;
+            }
+        } else {
+            if (side == 'K') {
+                return 62;
+            } else {
+                return 58;
+            }
+        }
+    }
+
+    /**
+     * Moves a piece from one location to another but otherwise does nothing; does not advance the game.
+     */
+    public void makeAlteration(int start, int end) {
+        this.positionArray[end] = this.positionArray[start];
+        this.positionArray[start] = 0;
+    }
+
+    /**
      * Updates the positionArray based on a specified move.
      * @param move the move to make
      */
     public void makeMove(ChessMove move) {
-        this.positionArray[move.getEnd()] = this.positionArray[move.getStart()];
-        this.positionArray[move.getStart()] = 0;
+        makeAlteration(move.getStart(), move.getEnd());
 
         if (move.isEnPassant()) {
             if (move.getColor() == 'w') {
@@ -84,6 +111,15 @@ public class ChessPosition {
         }
 
         return -1;
+    }
+
+    /**
+     * Returns a copy of this position after a specified alteration is made.
+     */
+    public ChessPosition afterAlteration(int start, int end) {
+        ChessPosition position = new ChessPosition(this.positionArray);
+        position.makeAlteration(start, end);
+        return position;
     }
 
     /**
