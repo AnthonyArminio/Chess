@@ -70,6 +70,26 @@ public class ChessPiece {
         return this.baseMovement;
     }
 
+    public static ChessPiece getPiece(char color, char type) {
+        ChessPiece[] army = getArmy(color);
+        
+        if (type == 'P') {
+            return army[0];
+        } else if (type == 'B') {
+            return army[1];
+        } else if (type == 'N') {
+            return army[2];
+        } else if (type == 'R') {
+            return army[3];
+        } else if (type == 'Q') {
+            return army[4];
+        } else if (type == 'K') {
+            return army[5];
+        }
+
+        return null;
+    }
+
     public static ChessPiece[] getArmy(char color) {
         if (color == 'w') {
             return WHITE_PIECES;

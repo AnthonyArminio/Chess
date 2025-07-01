@@ -107,6 +107,10 @@ public class ChessLogic {
         return move.getPieceType() == 'P' && move.getEnd() == position.getEnPassantOpportunity();
     }
 
+    public static boolean isPromotion(ChessMove move) {
+        return move.getPieceType() == 'P' && (GridMath.getRank(move.getEnd()) == 8 || GridMath.getRank(move.getEnd()) == 1);
+    }
+
     public static boolean isKingsideCastle(ChessPosition position, ChessMove move) {
         return move.getPieceType() == 'K' && position.hasCastlingRights(move.getColor(), 'K') && 
                move.getEnd() == ChessPosition.getCastlingDestination(move.getColor(), 'K');

@@ -35,10 +35,10 @@ public class ChessBoard {
     public ChessBoard(Point2D origin, double boardSize, String darkSquareColor, String lightSquareColor) {
         this.origin = origin;
         this.squareSize = boardSize / 8.0;
-        checkerboard = new GridPane();
-        checkerboard.setPrefSize(boardSize, boardSize);
-        checkerboard.setHgap(0);
-        checkerboard.setVgap(0);
+        this.checkerboard = new GridPane();
+        this.checkerboard.setPrefSize(boardSize, boardSize);
+        this.checkerboard.setHgap(0);
+        this.checkerboard.setVgap(0);
 
         initializeColors(darkSquareColor, lightSquareColor);
 
