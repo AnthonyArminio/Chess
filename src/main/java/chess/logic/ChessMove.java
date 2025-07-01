@@ -12,6 +12,7 @@ public class ChessMove {
     private boolean isLegal;
     private boolean isCapture;
     private boolean isEnPassant;
+    private boolean isPromotion;
     private boolean isKingsideCastle;
     private boolean isQueensideCastle;
     private boolean isCheck;
@@ -35,6 +36,8 @@ public class ChessMove {
         this.isLegal = ChessLogic.isLegalMove(position, this);
         
         this.isEnPassant = ChessLogic.isEnPassant(position, this);
+        this.isPromotion = ChessLogic.isPromotion(this);
+
         this.isCapture = !position.isEmpty(end) || this.isEnPassant;
         this.isCheck = ChessLogic.isCheck(position.afterMove(this));
     }
@@ -54,6 +57,10 @@ public class ChessMove {
             }
         }
         return -1;
+    }
+
+    public void promoteTo(char type) {
+        this.piece = ChessPiece.getPiece(this.getColor(), type);
     }
 
     public boolean isEnPassant() {
