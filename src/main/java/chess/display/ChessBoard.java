@@ -192,12 +192,12 @@ public class ChessBoard {
 
     public void openPromotionUI(ChessMove move) {
         this.promotionUI = new PromotionUI(this, move);
-        this.chessBoard.getChildren().add(this.promotionUI.getPanel());
+        this.chessBoard.getChildren().add(this.promotionUI.getDisplay());
     }
 
     public void closePromotionUI() {
         if (this.promotionUI != null) {
-            this.chessBoard.getChildren().remove(this.promotionUI.getPanel());
+            this.chessBoard.getChildren().remove(this.promotionUI.getDisplay());
             this.promotionUI = null;
             this.waitingForPromotion = false;
         }

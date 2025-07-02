@@ -20,8 +20,8 @@ import chess.logic.util.GridMath;
 
 public class PromotionUI {
 
-    private static final String WHITE_PANEL_HEX = "#ffffff";
-    private static final String BLACK_PANEL_HEX = "#000000";
+    private static final String WHITE_PANEL_HEX = "#dddddd";
+    private static final String BLACK_PANEL_HEX = "#222222";
     private static final Color WHITE_PANEL_COLOR = (Color) Paint.valueOf(WHITE_PANEL_HEX);
     private static final Color BLACK_PANEL_COLOR = (Color) Paint.valueOf(BLACK_PANEL_HEX);
 
@@ -30,7 +30,7 @@ public class PromotionUI {
     private static final ChessPiece[] BLACK_PROMOTION_CANDIDATES = 
         {ChessPiece.B_BISHOP, ChessPiece.B_ROOK, ChessPiece.B_KNIGHT, ChessPiece.B_QUEEN};
 
-    private Group panelGroup;
+    private Group display;
     private ChessBoard chessBoard;
     private ChessMove move;
     private Point2D origin;
@@ -44,8 +44,13 @@ public class PromotionUI {
     private double width;
     private double height;
 
+    /**
+     * Creates a new PromotionUI that allows the user to select a piece to promote to.
+     * @param chessBoard the board that this UI is part of
+     * @param move the move that prompted this UI
+     */
     public PromotionUI(ChessBoard chessBoard, ChessMove move) {
-        this.panelGroup = new Group();
+        this.display = new Group();
         this.panel = new VBox();
 
         this.chessBoard = chessBoard;
@@ -69,11 +74,6 @@ public class PromotionUI {
 
         this.imageViews = new ImageView[this.numPromotionCandidates];
         this.images = new Image[this.numPromotionCandidates];
-
-        for (int i = 0; i < this.numPromotionCandidates; i++) {
-            this.imageViews[i] = new ImageView();
-            this.images[i] = new Image(promotionCandidates[i].getImagePath());
-        }
 
         this.width = this.chessBoard.getSquareSize();
         this.height = this.numPromotionCandidates * this.chessBoard.getSquareSize();
@@ -101,33 +101,45 @@ public class PromotionUI {
         }
     }
 
+    /**
+     * Sets up the display for this UI
+     */
     private void draw() {
+        // draw background
         drawRectangle(this.panelColor);
 
-        for (int i = 0; i < this.imageViews.length; i++) {
-            this.imageViews[i].setImage(this.images[i]);
-            this.imageViews[i].setFitWidth(width);
-            this.imageViews[i].setFitHeight(width);
-            this.panel.getChildren().add(this.imageViews[i]);
+        for (int i = 0; i < this.numPromotionCandidates; i++) {
+            this.images[i] = new Image(promotionCandidates[i].getImagePath());
+
+            ImageView iv = new ImageView();
+            iv.setImage(this.images[i]);
+            iv.setFitWidth(width);
+            iv.setFitHeight(width);
+            this.imageViews[i] = iv;
+            this.panel.getChildren().add(iv);
         }
 
         this.panel.setLayoutX(origin.getX());
         this.panel.setLayoutY(origin.getY());
 
-        this.panelGroup.getChildren().add(this.panel);
-        this.panelGroup.toFront();
+        this.display.getChildren().add(this.panel);
+        this.display.toFront();
     }
 
+    /**
+     * Draws the background for this display
+     * @param color the Color to use for the background
+     */
     private void drawRectangle(Color color) {
         Rectangle rectangle = new Rectangle(origin.getX(), origin.getY(), width, height);
         rectangle.setFill(color);
         rectangle.setArcHeight(10);
         rectangle.setArcWidth(10);
-        this.panelGroup.getChildren().add(rectangle);
+        this.display.getChildren().add(rectangle);
     }
 
-    public Group getPanel() {
-        return this.panelGroup;
+    public Group getDisplay() {
+        return this.display;
     }
 
     private void onMouseClicked(MouseEvent e) {
