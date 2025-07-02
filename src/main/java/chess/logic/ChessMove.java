@@ -7,7 +7,6 @@ public class ChessMove {
     private int start;
     private int end;
     private ChessPiece piece;
-    private char pieceType;
     private char color;
     private boolean isLegal;
     private boolean isCapture;
@@ -27,7 +26,6 @@ public class ChessMove {
         this.start = start;
         this.end = end;
         this.piece = position.getPieceAt(start);
-        this.pieceType = this.piece.getType();
         this.color = this.piece.getColor();
 
         this.isKingsideCastle = ChessLogic.isKingsideCastle(position, this);
@@ -37,6 +35,34 @@ public class ChessMove {
         
         this.isEnPassant = ChessLogic.isEnPassant(position, this);
         this.isPromotion = ChessLogic.isPromotion(this);
+
+        this.isCapture = !position.isEmpty(end) || this.isEnPassant;
+        this.isCheck = ChessLogic.isCheck(position.afterMove(this));
+    }
+
+    /**
+     * Creates a new ChessMove.
+     * @param position the ChessPosition serving as the context of the move
+     * @param start index of the piece that is moving
+     * @param end index of the destination square
+     * @param promotionType the type of piece to promote to, if applicable.
+     */
+    public ChessMove(ChessPosition position, int start, int end, char promotionType) {
+        this.start = start;
+        this.end = end;
+        this.piece = position.getPieceAt(start);
+        this.color = this.piece.getColor();
+
+        this.isKingsideCastle = ChessLogic.isKingsideCastle(position, this);
+        this.isQueensideCastle = ChessLogic.isQueensideCastle(position, this);
+
+        this.isLegal = ChessLogic.isLegalMove(position, this);
+        
+        this.isEnPassant = ChessLogic.isEnPassant(position, this);
+        this.isPromotion = ChessLogic.isPromotion(this);
+        if (this.isPromotion) {
+            promoteTo(promotionType);
+        }
 
         this.isCapture = !position.isEmpty(end) || this.isEnPassant;
         this.isCheck = ChessLogic.isCheck(position.afterMove(this));
@@ -67,6 +93,10 @@ public class ChessMove {
         return this.isEnPassant;
     }
 
+    public boolean isPromotion() {
+        return this.isPromotion;
+    }
+
     public boolean isKingsideCastle() {
         return this.isKingsideCastle;
     }
@@ -88,7 +118,11 @@ public class ChessMove {
     }
 
     public char getPieceType() {
-        return this.pieceType;
+        return this.piece.getType();
+    }
+
+    public int getPieceID() {
+        return this.piece.getID();
     }
 
     public boolean isCapture() {

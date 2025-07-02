@@ -1,5 +1,6 @@
 package chess.display;
 
+import javafx.scene.Group;
 import javafx.scene.layout.GridPane;
 import javafx.geometry.Point2D;
 
@@ -16,6 +17,7 @@ import chess.logic.util.GridMath;
  */
 public class ChessBoard {
 
+    private Group chessBoard;
     private GridPane checkerboard;
     private Square[] squares;
     private int selectedSquare;
@@ -24,6 +26,9 @@ public class ChessBoard {
     private double squareSize;
     private Color[] squareColors;
     private Point2D origin;
+
+    private boolean waitingForPromotion;
+    private PromotionUI promotionUI;
 
     /**
      * Initializes a new chess board.
@@ -35,10 +40,14 @@ public class ChessBoard {
     public ChessBoard(Point2D origin, double boardSize, String darkSquareColor, String lightSquareColor) {
         this.origin = origin;
         this.squareSize = boardSize / 8.0;
+
+        this.chessBoard = new Group();
         this.checkerboard = new GridPane();
+        this.chessBoard.getChildren().add(this.checkerboard);
         this.checkerboard.setPrefSize(boardSize, boardSize);
         this.checkerboard.setHgap(0);
         this.checkerboard.setVgap(0);
+        this.promotionUI = null;
 
         initializeColors(darkSquareColor, lightSquareColor);
 
@@ -103,8 +112,10 @@ public class ChessBoard {
             } else {
                 getSquareAt(move.getEnd() + 8).capture();
             }
-        }
-        if (move.isKingsideCastle()) {
+        } else if (move.isPromotion()) {
+            // special effects, if desired
+
+        } else if (move.isKingsideCastle()) {
             if (move.getColor() == 'w') {
                 getSquareAt(5).setPiece(getSquareAt(7).removePiece());
             } else {
@@ -117,6 +128,8 @@ public class ChessBoard {
                 getSquareAt(59).setPiece(getSquareAt(56).removePiece());
             }
         }
+
+        System.out.println("move.getPieceType() == " + move.getPieceType());
         
         releaseSquare.setPiece(move.getPiece());
     }
@@ -165,7 +178,28 @@ public class ChessBoard {
         return this.chessPosition;
     }
 
-    public GridPane getCheckerboard() {
-        return this.checkerboard;
+    public Group getBoard() {
+        return this.chessBoard;
+    }
+
+    public void waitForPromotion() {
+        this.waitingForPromotion = true;
+    }
+
+    public boolean isWaitingForPromotion() {
+        return this.waitingForPromotion;
+    }
+
+    public void openPromotionUI(ChessMove move) {
+        this.promotionUI = new PromotionUI(this, move);
+        this.chessBoard.getChildren().add(this.promotionUI.getPanel());
+    }
+
+    public void closePromotionUI() {
+        if (this.promotionUI != null) {
+            this.chessBoard.getChildren().remove(this.promotionUI.getPanel());
+            this.promotionUI = null;
+            this.waitingForPromotion = false;
+        }
     }
 }

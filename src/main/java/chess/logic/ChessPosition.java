@@ -81,8 +81,11 @@ public class ChessPosition {
      */
     public void makeMove(ChessMove move) {
         makeAlteration(move.getStart(), move.getEnd());
+        if (move.isPromotion()) {
+            this.positionArray[move.getEnd()] = move.getPieceID();
+        }
 
-        if (move.isEnPassant()) {
+        else if (move.isEnPassant()) {
             if (move.getColor() == 'w') {
                 this.positionArray[move.getEnd() - 8] = 0;
             } else {
@@ -90,10 +93,8 @@ public class ChessPosition {
             }
         }
 
-        this.positionArray[EN_PASSANT] = move.enPassantValue();
-
         // move the rook after castling
-        if (move.isKingsideCastle()) {
+        else if (move.isKingsideCastle()) {
             if (move.getColor() == 'w') {
                 makeAlteration(7, 5);
             } else {
@@ -106,6 +107,8 @@ public class ChessPosition {
                 makeAlteration(56, 59);
             }
         }
+
+        this.positionArray[EN_PASSANT] = move.enPassantValue();
 
         // update castling rights
         if (castlingRightsExist()) {

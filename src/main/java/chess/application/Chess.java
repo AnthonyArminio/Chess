@@ -13,6 +13,7 @@ import javafx.scene.paint.Color;
 
 import chess.display.ChessBoard;
 import chess.display.Square;
+import chess.display.PromotionUI;
 import chess.logic.rules.ChessLogic;
 import chess.logic.ChessMove;
 import chess.logic.util.GridMath;
@@ -43,7 +44,7 @@ public class Chess extends Application {
         this.pieceInMouse = false;
         this.root.getChildren().add(this.mouseImageView);
 
-        layout.getChildren().add(this.board.getCheckerboard());
+        layout.getChildren().add(this.board.getBoard());
         root.getChildren().add(layout);
 
         // set up event handlers
@@ -68,38 +69,40 @@ public class Chess extends Application {
     private void onMousePressed(MouseEvent e) {
         this.selectedBoard = this.board; // change this later when multiple boards can be displayed
 
-        int selectedSquareIndex = GridMath.findSquareIndex(e.getX(), e.getY(), 
-                                  this.selectedBoard.getOrigin(), this.selectedBoard.getSquareSize());
-        
-        //System.out.println(e.getX() + " " + e.getY());
+        if (!this.selectedBoard.isWaitingForPromotion()) {
 
-        if (selectedSquareIndex >= 0) {
-            this.selectedBoard.setSelectedSquare(selectedSquareIndex);
-            Square selectedSquare = this.selectedBoard.getSelectedSquare();
+            int selectedSquareIndex = GridMath.findSquareIndex(e.getX(), e.getY(), 
+                                    this.selectedBoard.getOrigin(), this.selectedBoard.getSquareSize());
+            
+            //System.out.println(e.getX() + " " + e.getY());
 
-            //System.out.println("Mouse pressed on square " + selectedSquare.getFile() + " " + selectedSquare.getRank());
+            if (selectedSquareIndex >= 0) {
+                this.selectedBoard.setSelectedSquare(selectedSquareIndex);
+                Square selectedSquare = this.selectedBoard.getSelectedSquare();
 
-            if (selectedSquare.getPiece() != null) {
-                attachImage(selectedSquare.detachImage());
-                moveImageToMouse(e);
+                //System.out.println("Mouse pressed on square " + selectedSquare.getFile() + " " + selectedSquare.getRank());
+
+                if (selectedSquare.getPiece() != null) {
+                    attachImage(selectedSquare.detachImage());
+                    moveImageToMouse(e);
+                } else {
+                    System.out.println("No piece at that location.");
+                }
             } else {
-                System.out.println("No piece at that location.");
+                //System.out.println("Clicked out of bounds of the chess board.");
             }
-        } else {
-            //System.out.println("Clicked out of bounds of the chess board.");
         }
-
     }
 
     private void onMouseDragged(MouseEvent e) {
-        if (this.mouseImageView != null) {
+        if (this.pieceInMouse && !this.selectedBoard.isWaitingForPromotion()) {
             moveImageToMouse(e);
         }
     }
 
     private void onMouseReleased(MouseEvent e) {
         //System.out.println("Mouse released");
-        if (this.pieceInMouse) {
+        if (this.pieceInMouse && !this.selectedBoard.isWaitingForPromotion()) {
 
             int releaseIndex = GridMath.findSquareIndex(e.getX(), e.getY(), 
                                this.selectedBoard.getOrigin(), this.selectedBoard.getSquareSize());
@@ -110,7 +113,12 @@ public class Chess extends Application {
 
                 if (move.isLegal()) {
                     // move attempt succeeded; move the image and make the corresponsing move in the ChessPosition.
-                    this.selectedBoard.makeMove(move);
+                    if (!move.isPromotion()) {
+                        this.selectedBoard.makeMove(move);
+                    } else {
+                        this.selectedBoard.openPromotionUI(move);
+                        this.selectedBoard.waitForPromotion();
+                    }
                     System.out.println("Move: " + move.getStart() + " " + move.getEnd());
                     
                 } else {
