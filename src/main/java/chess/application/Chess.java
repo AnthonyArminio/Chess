@@ -119,7 +119,6 @@ public class Chess extends Application {
                         this.selectedBoard.openPromotionUI(move);
                         this.selectedBoard.waitForPromotion();
                     }
-                    System.out.println("Move: " + move.getStart() + " " + move.getEnd());
                     
                 } else {
                     // move attempt failed; snap the image back.

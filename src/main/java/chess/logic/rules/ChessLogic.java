@@ -106,6 +106,10 @@ public class ChessLogic {
         return false;
     }
 
+    public static boolean isCheckmate(ChessPosition position) {
+        return ChessLogic.generateLegalMoves(position).size() == 0;
+    }
+
     public static boolean isEnPassant(ChessPosition position, ChessMove move) {
         return move.getPieceType() == 'P' && move.getEnd() == position.getEnPassantOpportunity();
     }

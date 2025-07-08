@@ -157,6 +157,10 @@ public class ChessPosition {
         return -1;
     }
 
+    public ChessPosition copy() {
+        return new ChessPosition(this.positionArray);
+    }
+
     /**
      * Returns a copy of this position after a specified alteration is made.
      */

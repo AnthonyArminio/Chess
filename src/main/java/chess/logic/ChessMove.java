@@ -1,20 +1,22 @@
 package chess.logic;
 
+import java.util.ArrayList;
+
 import chess.logic.util.GridMath;
 import chess.logic.rules.ChessLogic;
 
 public class ChessMove {
+
+    private final char[] FILE_SYMBOLS = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+    private final char[] RANK_SYMBOLS = {'1', '2', '3', '4', '5', '6', '7', '8'};
+
     private int start;
     private int end;
     private ChessPiece piece;
     private char color;
     private boolean isLegal;
-    private boolean isCapture;
-    private boolean isEnPassant;
     private boolean isPromotion;
-    private boolean isKingsideCastle;
-    private boolean isQueensideCastle;
-    private boolean isCheck;
+    private ChessPosition position;
 
     /**
      * Creates a new ChessMove.
@@ -23,21 +25,16 @@ public class ChessMove {
      * @param end index of the destination square
      */
     public ChessMove(ChessPosition position, int start, int end) {
+        this.position = position.copy();
+
         this.start = start;
         this.end = end;
         this.piece = position.getPieceAt(start);
         this.color = this.piece.getColor();
 
-        this.isKingsideCastle = ChessLogic.isKingsideCastle(position, this);
-        this.isQueensideCastle = ChessLogic.isQueensideCastle(position, this);
-
         this.isLegal = ChessLogic.isLegalMove(position, this);
         
-        this.isEnPassant = ChessLogic.isEnPassant(position, this);
         this.isPromotion = ChessLogic.isPromotion(this);
-
-        this.isCapture = !position.isEmpty(end) || this.isEnPassant;
-        this.isCheck = ChessLogic.isCheck(position.afterMove(this));
     }
 
     /**
@@ -48,24 +45,19 @@ public class ChessMove {
      * @param promotionType the type of piece to promote to, if applicable.
      */
     public ChessMove(ChessPosition position, int start, int end, char promotionType) {
+        this.position = position.copy();
+
         this.start = start;
         this.end = end;
         this.piece = position.getPieceAt(start);
         this.color = this.piece.getColor();
 
-        this.isKingsideCastle = ChessLogic.isKingsideCastle(position, this);
-        this.isQueensideCastle = ChessLogic.isQueensideCastle(position, this);
-
         this.isLegal = ChessLogic.isLegalMove(position, this);
         
-        this.isEnPassant = ChessLogic.isEnPassant(position, this);
         this.isPromotion = ChessLogic.isPromotion(this);
         if (this.isPromotion) {
             promoteTo(promotionType);
         }
-
-        this.isCapture = !position.isEmpty(end) || this.isEnPassant;
-        this.isCheck = ChessLogic.isCheck(position.afterMove(this));
     }
 
     /**
@@ -90,7 +82,7 @@ public class ChessMove {
     }
 
     public boolean isEnPassant() {
-        return this.isEnPassant;
+        return ChessLogic.isEnPassant(position, this);
     }
 
     public boolean isPromotion() {
@@ -98,11 +90,11 @@ public class ChessMove {
     }
 
     public boolean isKingsideCastle() {
-        return this.isKingsideCastle;
+        return ChessLogic.isKingsideCastle(position, this);
     }
 
     public boolean isQueensideCastle() {
-        return this.isQueensideCastle;
+        return ChessLogic.isQueensideCastle(position, this);
     }
 
     public boolean isLegal() {
@@ -126,11 +118,15 @@ public class ChessMove {
     }
 
     public boolean isCapture() {
-        return this.isCapture;
+        return !position.isEmpty(end) || this.isEnPassant();
     }
 
     public boolean isCheck() {
-        return this.isCheck;
+        return ChessLogic.isCheck(position.afterMove(this));
+    }
+
+    public boolean isCheckmate() {
+        return ChessLogic.isCheckmate(position.afterMove(this));
     }
 
     public int getStart() {
@@ -142,29 +138,75 @@ public class ChessMove {
     }
 
     public void printMove() {
-        System.out.println(getStart() + " " + getEnd());
+        System.out.println(this.getNotation());
     }
 
     /**
      * Returns the algebraic notation of this move in the context of a specified ChessPosition. If
      * the move is illegal, this method returns null.
-     * @param position the context of the move
      * @return the notation, as a String, or null if the move is illegal.
      */
-    public String getNotation(ChessPosition position) {
+    public String getNotation() {
+
         if (this.isLegal) {
             String body;
-            if (this.isKingsideCastle) {
+            if (this.isKingsideCastle()) {
                 body = "O-O";
-            } else if (this.isQueensideCastle) {
+            } else if (this.isQueensideCastle()) {
                 body = "O-O-O";
             } else {
-                body = "" + this.getPieceType();
-                if (this.isCapture) {
+                body = "";
+                if (this.getPieceType() == 'P' || this.isPromotion()) {
+                    if (this.isCapture()) {
+                        body += FILE_SYMBOLS[GridMath.getFile(this.getStart()) - 1];
+                    }
+                } else {
+                    body += this.getPieceType();
+
+                    // handle disambiguation
+                    boolean fileDisambiguate = false;
+                    boolean rankDisambiguate = false;
+                    ArrayList<ChessMove> legalMoves = ChessLogic.generateLegalMoves(this.position);
+                    for (ChessMove move : legalMoves) {
+                        if (this.getEnd() == move.getEnd() && this.getPieceType() == move.getPieceType() && this.getStart() != move.getStart()) {
+                            if (GridMath.getFile(this.getStart()) == GridMath.getFile(move.getStart())) {
+                                rankDisambiguate = true;
+                            } else {
+                                fileDisambiguate = true;
+                            }
+                        }
+                    }
+                    if (fileDisambiguate) {
+                        body += FILE_SYMBOLS[GridMath.getFile(this.getStart()) - 1];
+                    }
+                    if (rankDisambiguate) {
+                        body += RANK_SYMBOLS[GridMath.getRank(this.getStart()) - 1];
+                    }
+                }
+
+                if (this.isCapture()) {
                     body += 'x';
                 }
+
+                body += FILE_SYMBOLS[GridMath.getFile(this.getEnd()) - 1];
+                body += RANK_SYMBOLS[GridMath.getRank(this.getEnd()) - 1];
+
+                if (this.isPromotion()) {
+                    body += '=';
+                    body += this.getPieceType();
+                }
             }
-            return null;
+
+            if (this.isCheck()) {
+                if (this.isCheckmate()) {
+                    body += '#';
+                } else {
+                    body += '+';
+                }
+            }
+
+            return body;
+
         } else {
             return null;
         }
