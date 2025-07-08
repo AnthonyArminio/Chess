@@ -140,4 +140,28 @@ public class ChessMove {
     public int getEnd() {
         return this.end;
     }
+
+    /**
+     * Returns the algebraic notation of this move in the context of a specified ChessPosition. If
+     * the move is illegal, this method returns null.
+     * @param position the context of the move
+     * @return the notation, as a String, or null if the move is illegal.
+     */
+    public String getNotation(ChessPosition position) {
+        if (this.isLegal) {
+            String body;
+            if (this.isKingsideCastle) {
+                body = "O-O";
+            } else if (this.isQueensideCastle) {
+                body = "O-O-O";
+            } else {
+                body = "" + this.getPieceType();
+                if (this.isCapture) {
+                    body += 'x';
+                }
+            }
+        } else {
+            return null;
+        }
+    }
 }
