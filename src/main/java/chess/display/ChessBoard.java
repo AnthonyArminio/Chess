@@ -128,8 +128,6 @@ public class ChessBoard {
                 getSquareAt(59).setPiece(getSquareAt(56).removePiece());
             }
         }
-
-        System.out.println("move.getPieceType() == " + move.getPieceType());
         
         releaseSquare.setPiece(move.getPiece());
     }

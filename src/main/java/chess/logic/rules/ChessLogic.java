@@ -2,6 +2,9 @@ package chess.logic.rules;
 
 import chess.logic.ChessPosition;
 import chess.logic.ChessPiece;
+
+import java.util.ArrayList;
+
 import chess.logic.ChessMove;
 import chess.logic.util.GridMath;
 
@@ -22,7 +25,7 @@ public class ChessLogic {
 
         // cannot move if it is not your turn
         if (move.getColor() != position.colorToMove()) {
-            System.out.println("piece does not match color to move.");
+            System.out.println("Piece does not match color to move.");
             return false;
         }
 
@@ -153,11 +156,11 @@ public class ChessLogic {
                         if (GridMath.isOutOfBounds(previous, origin + displacement)) {
                             outOfBounds = true;
                         } else {
-                            if (!position.isEmpty(origin + displacement)) {
-                                pieceOnLine = true;
-                            }
                             if (condition.test(position, origin, origin + displacement)) {
                                 success = true;
+                            }
+                            if (!position.isEmpty(origin + displacement)) {
+                                pieceOnLine = true;
                             }
                         }
                         previous = origin + displacement;
@@ -167,5 +170,53 @@ public class ChessLogic {
         }
 
         return success;
+    }
+
+    /**
+     * Determines all of the legal moves in a given position and returns an ArrayList of ChessMoves
+     * representing those moves.
+     * @param position the context of the moves
+     * @return An ArrayList of all of the legal moves in the position.
+     */
+    public static ArrayList<ChessMove> generateLegalMoves(ChessPosition position) {
+        System.out.println("Generating legal moves...");
+
+        ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
+        char colorToMove = position.colorToMove();
+
+        for (int i = 0; i < 64; i++) {
+            ChessPiece piece = position.getPieceAt(i);
+            if (piece != null && piece.getColor() == colorToMove) {
+
+                for (int[] line : piece.getMovement(position, i)) {
+
+                    int previous = i;
+                    boolean pieceOnLine = false;
+                    boolean outOfBounds = false;
+
+                    for (int displacement : line) {
+
+                        if (displacement != 0 && !outOfBounds && !pieceOnLine) {
+                            if (GridMath.isOutOfBounds(previous, i + displacement)) {
+                                outOfBounds = true;
+                            } else {
+                                ChessMove move = new ChessMove(position, i, i + displacement);
+                                if (move.isLegal()) {
+                                    moves.add(move);
+                                }
+                                if (!position.isEmpty(i + displacement)) {
+                                    pieceOnLine = true;
+                                }
+                            }
+                            previous = i + displacement;
+                        }
+                    }
+                }
+            }
+        }
+
+        System.out.println("Found " + moves.size() + " legal moves.");
+
+        return moves;
     }
 }

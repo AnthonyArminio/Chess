@@ -154,7 +154,6 @@ public class PromotionUI {
             }
                 
             move.promoteTo(this.promotionCandidates[candidateIndex].getType());
-            System.out.println("promotion successful");
 
             this.chessBoard.makeMove(move);
 

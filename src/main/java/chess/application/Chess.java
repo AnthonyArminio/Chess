@@ -103,7 +103,7 @@ public class Chess extends Application {
     private void onMouseReleased(MouseEvent e) {
         //System.out.println("Mouse released");
         if (this.pieceInMouse && !this.selectedBoard.isWaitingForPromotion()) {
-
+            
             int releaseIndex = GridMath.findSquareIndex(e.getX(), e.getY(), 
                                this.selectedBoard.getOrigin(), this.selectedBoard.getSquareSize());
             int startIndex = this.selectedBoard.getSelectedSquareIndex();

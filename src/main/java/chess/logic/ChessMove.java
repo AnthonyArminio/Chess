@@ -141,6 +141,10 @@ public class ChessMove {
         return this.end;
     }
 
+    public void printMove() {
+        System.out.println(getStart() + " " + getEnd());
+    }
+
     /**
      * Returns the algebraic notation of this move in the context of a specified ChessPosition. If
      * the move is illegal, this method returns null.
@@ -160,6 +164,7 @@ public class ChessMove {
                     body += 'x';
                 }
             }
+            return null;
         } else {
             return null;
         }

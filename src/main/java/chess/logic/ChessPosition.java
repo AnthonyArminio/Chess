@@ -47,10 +47,6 @@ public class ChessPosition {
         }
     }
 
-    public ChessMove[] generateLegalMoves() {
-        
-    }
-
     /**
      * Returns the index corresponding to the castling destination (where the king lands) for a given
      * color and side. ('K' for kingside castling, 'Q' for queenside castling)
