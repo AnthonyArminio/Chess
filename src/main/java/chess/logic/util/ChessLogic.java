@@ -1,4 +1,4 @@
-package chess.logic.rules;
+package chess.logic.util;
 
 import chess.logic.ChessPosition;
 import chess.logic.ChessPiece;
@@ -6,7 +6,6 @@ import chess.logic.ChessPiece;
 import java.util.ArrayList;
 
 import chess.logic.ChessMove;
-import chess.logic.util.GridMath;
 
 /**
  * Class with static functions to help with chess logic such as checks, legal moves, and checkmate.

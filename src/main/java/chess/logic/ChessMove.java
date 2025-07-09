@@ -2,8 +2,8 @@ package chess.logic;
 
 import java.util.ArrayList;
 
+import chess.logic.util.ChessLogic;
 import chess.logic.util.GridMath;
-import chess.logic.rules.ChessLogic;
 
 public class ChessMove {
 
@@ -33,7 +33,7 @@ public class ChessMove {
         this.color = this.piece.getColor();
 
         this.isLegal = ChessLogic.isLegalMove(position, this);
-        
+
         this.isPromotion = ChessLogic.isPromotion(this);
     }
 

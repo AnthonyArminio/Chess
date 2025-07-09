@@ -2,6 +2,7 @@ package chess.intel;
 
 import chess.logic.ChessPosition;
 import chess.logic.util.ChessLogic;
+import chess.intel.strategies.Strategy;
 import chess.logic.ChessMove;
 
 import java.util.ArrayList;

@@ -14,7 +14,6 @@ import javafx.scene.input.MouseEvent;
 
 import chess.logic.ChessPiece;
 import chess.logic.ChessMove;
-import chess.display.ChessBoard;
 
 import chess.logic.util.GridMath;
 

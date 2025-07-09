@@ -1,4 +1,4 @@
-package chess.intel;
+package chess.intel.strategies;
 
 import chess.logic.ChessPosition;
 

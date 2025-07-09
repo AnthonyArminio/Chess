@@ -9,12 +9,9 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 
 import chess.display.ChessBoard;
 import chess.display.Square;
-import chess.display.PromotionUI;
-import chess.logic.rules.ChessLogic;
 import chess.logic.ChessMove;
 import chess.logic.util.GridMath;
 
