@@ -1,6 +1,5 @@
 package chess.logic;
 
-import chess.logic.util.ChessLogic;
 import chess.logic.util.GridMath;
 
 public class ChessPiece {
