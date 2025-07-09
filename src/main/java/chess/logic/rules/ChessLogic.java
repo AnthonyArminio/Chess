@@ -128,7 +128,7 @@ public class ChessLogic {
                move.getEnd() == ChessPosition.getCastlingDestination(move.getColor(), 'Q');
     }
 
-    private static char opponentOf(char color) {
+    public static char opponentOf(char color) {
         if (color == 'w') {
             return 'b';
         } else {
