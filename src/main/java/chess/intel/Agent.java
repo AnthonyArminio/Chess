@@ -1,8 +1,10 @@
 package chess.intel;
 
 import chess.logic.ChessPosition;
-import chess.logic.rules.ChessLogic;
+import chess.logic.util.ChessLogic;
 import chess.logic.ChessMove;
+
+import java.util.ArrayList;
 
 /**
  * Class that represents a computer player.
@@ -36,7 +38,9 @@ public class Agent {
                     bestMove = move;
                 }
             }
+
             return bestMove;
+
         } else {
             double bestEval = Double.POSITIVE_INFINITY;
             ChessMove bestMove = null;
@@ -47,6 +51,8 @@ public class Agent {
                     bestMove = move;
                 }
             }
+
+            return bestMove;
         }
     }
 
@@ -57,8 +63,8 @@ public class Agent {
      * @param color the color to play for ('w' to maximize, 'b' to minimize).
      * @param depth the depth to search (ply)
      * @param alphabeta the best achieved value of the siblings of this instance of the method call.
-     * @return A double value representing how advantageous the given position is for one player (positive for white,
-     * negative for black).
+     * @return A double value representing how advantageous the given position is for one player (positive for White,
+     * negative for Black).
      */
     private double minimaxEvaluate(ChessPosition position, char color, int depth, double alphabeta) {
         if (depth == 0) {
