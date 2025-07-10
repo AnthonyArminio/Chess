@@ -15,28 +15,39 @@ public class ChessGame {
     private ChessPosition position;
     private ChessBoard board;
     private Player playerToMove;
+    private boolean isIdle;
     
     public ChessGame(Player whitePlayer, Player blackPlayer) {
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
         this.position = new ChessPosition();
-        this.board = null;
         this.playerToMove = null;
+
+        this.board = null;
+
+        this.isIdle = true;
+
+        start(); //
     }
 
     public ChessGame(Player whitePlayer, Player blackPlayer, ChessBoard board) {
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
         this.position = new ChessPosition();
-        this.board = board;
         this.playerToMove = null;
+
+        this.board = board;
+        this.board.loadGame(this);
+
+        this.isIdle = true;
+
+        start(); //
     }
 
     public void start() {
+        this.isIdle = false;
         this.playerToMove = this.whitePlayer;
-        while (!this.isWaitingForPlayer) {
-
-        }
+        this.playerToMove.alertToMove(this);
     }
 
     public void makeMove(ChessMove move) {
@@ -44,6 +55,23 @@ public class ChessGame {
             this.board.makeMove(move);
         }
         this.position.makeMove(move);
+
+        advanceGame();
+    }
+
+    private void advanceGame() {
+        passTurn();
+        // increment move counter here
+        this.playerToMove.alertToMove(this);
+
+    }
+
+    private void passTurn() {
+        if (this.playerToMove == this.whitePlayer) {
+            this.playerToMove = this.blackPlayer;
+        } else {
+            this.playerToMove = this.whitePlayer;
+        }
     }
 
     public Player getPlayerToMove() {
@@ -60,5 +88,9 @@ public class ChessGame {
 
     public ChessBoard getBoard() {
         return this.board;
+    }
+
+    public boolean isIdle() {
+        return this.isIdle;
     }
 }

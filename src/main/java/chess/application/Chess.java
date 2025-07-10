@@ -13,6 +13,9 @@ import javafx.scene.input.MouseEvent;
 import chess.display.ChessBoard;
 import chess.display.Square;
 import chess.intel.Player;
+import chess.intel.Agent;
+import chess.intel.strategy.Strategy;
+import chess.intel.strategy.MaterialisticStrategy;
 import chess.logic.ChessMove;
 import chess.logic.util.GridMath;
 
@@ -35,8 +38,8 @@ public class Chess extends Application {
 
         this.root = new Group();
         this.layout = new HBox();
-        loadGame(new ChessGame(new Player('w'), new Player('b'), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
-
+        //loadGame(new ChessGame(new Player('w'), new Player('b'), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
+        loadGame(new ChessGame(new Player('w'), new Agent('b', new MaterialisticStrategy(), 4), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
         this.mouseImageView = new ImageView();
         this.pieceInMouse = false;
         this.root.getChildren().add(this.mouseImageView);
@@ -71,9 +74,9 @@ public class Chess extends Application {
 
 
     private void onMousePressed(MouseEvent e) {
-        this.selectedBoard = this.displayedGame.getBoard(); // change this later when multiple boards can be displayed
+        this.selectedBoard = this.displayedGame.getBoard();
 
-        if (!this.selectedBoard.isWaitingForPromotion()) {
+        if (!this.displayedGame.isIdle() && !this.selectedBoard.isWaitingForPromotion()) {
 
             int selectedSquareIndex = GridMath.findSquareIndex(e.getX(), e.getY(), 
                                     this.selectedBoard.getOrigin(), this.selectedBoard.getSquareSize());
@@ -99,26 +102,26 @@ public class Chess extends Application {
     }
 
     private void onMouseDragged(MouseEvent e) {
-        if (this.pieceInMouse && !this.selectedBoard.isWaitingForPromotion()) {
+        if (this.pieceInMouse && !this.displayedGame.isIdle() && !this.selectedBoard.isWaitingForPromotion()) {
             moveImageToMouse(e);
         }
     }
 
     private void onMouseReleased(MouseEvent e) {
         //System.out.println("Mouse released");
-        if (this.pieceInMouse && !this.selectedBoard.isWaitingForPromotion()) {
+        if (this.pieceInMouse && !this.displayedGame.isIdle() && !this.selectedBoard.isWaitingForPromotion()) {
             
             int releaseIndex = GridMath.findSquareIndex(e.getX(), e.getY(), 
                                this.selectedBoard.getOrigin(), this.selectedBoard.getSquareSize());
             int startIndex = this.selectedBoard.getSelectedSquareIndex();
 
             if (releaseIndex >= 0) {
-                ChessMove move = new ChessMove(this.selectedBoard.getChessPosition(), startIndex, releaseIndex);
+                ChessMove move = new ChessMove(this.displayedGame.getPosition(), startIndex, releaseIndex);
 
                 if (move.isLegal()) {
                     // move attempt succeeded; move the image and make the corresponsing move in the ChessPosition.
                     if (!move.isPromotion()) {
-                        this.selectedBoard.makeMove(move);
+                        this.displayedGame.getPlayerToMove().makeMove(move);
                     } else {
                         this.selectedBoard.openPromotionUI(move);
                         this.selectedBoard.waitForPromotion();

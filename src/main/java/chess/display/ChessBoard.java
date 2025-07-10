@@ -7,6 +7,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.Color;
 
+import chess.application.ChessGame;
 import chess.logic.ChessPosition;
 import chess.logic.ChessMove;
 import chess.logic.util.GridMath;
@@ -21,7 +22,7 @@ public class ChessBoard {
     private GridPane checkerboard;
     private Square[] squares;
     private int selectedSquare;
-    private ChessPosition chessPosition;
+    private ChessGame game;
 
     private double squareSize;
     private Color[] squareColors;
@@ -53,10 +54,6 @@ public class ChessBoard {
 
         makeSquares();
 
-        this.chessPosition = new ChessPosition();
-
-        loadPosition();
-
         this.selectedSquare = -1;
     }
 
@@ -83,21 +80,24 @@ public class ChessBoard {
         }
     }
 
+    public void loadGame(ChessGame game) {
+        this.game = game;
+        loadPosition(game.getPosition());
+    }
+
     /**
-     * Loads the current position onto the board.
+     * Loads a given position onto the board.
      */
-    private void loadPosition() {
+    private void loadPosition(ChessPosition position) {
         for (int file = 1; file <= 8; file++) {
-            for (int rank = 1; rank <= 8; rank++) {
-                if (this.chessPosition.getPieceAt(file, rank) != null) {                
-                    this.squares[GridMath.index(file, rank)].setPiece(this.chessPosition.getPieceAt(file, rank));
-                }
+            for (int rank = 1; rank <= 8; rank++) {                
+                this.squares[GridMath.index(file, rank)].setPiece(position.getPieceAt(file, rank));
             }
         }
     }
 
     public void makeMove(ChessMove move) {
-        
+
         Square startSquare = getSquareAt(move.getStart());
         Square releaseSquare = getSquareAt(move.getEnd());
 
@@ -174,8 +174,8 @@ public class ChessBoard {
         return this.squareSize;
     }
 
-    public ChessPosition getChessPosition() {
-        return this.chessPosition;
+    public ChessPosition getPosition() {
+        return this.game.getPosition();
     }
 
     public Group getBoard() {
@@ -198,6 +198,7 @@ public class ChessBoard {
     public void closePromotionUI() {
         if (this.promotionUI != null) {
             this.chessBoard.getChildren().remove(this.promotionUI.getDisplay());
+            this.game.makeMove(this.promotionUI.getMove());
             this.promotionUI = null;
             this.waitingForPromotion = false;
         }

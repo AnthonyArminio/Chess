@@ -141,6 +141,10 @@ public class PromotionUI {
         return this.display;
     }
 
+    public ChessMove getMove() {
+        return this.move;
+    }
+
     private void onMouseClicked(MouseEvent e) {
 
         if (this.chessBoard.isWaitingForPromotion()) {
@@ -153,8 +157,6 @@ public class PromotionUI {
             }
                 
             move.promoteTo(this.promotionCandidates[candidateIndex].getType());
-
-            this.chessBoard.makeMove(move);
 
             this.chessBoard.closePromotionUI();
         }

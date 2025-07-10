@@ -57,7 +57,11 @@ public class Square {
 
     public void setPiece(ChessPiece piece) {
         this.piece = piece;
-        setImage(piece.getImagePath());
+        if (piece != null) {
+            setImage(piece.getImagePath());
+        } else {
+            removePiece();
+        }
     }
 
     /**

@@ -14,6 +14,7 @@ public class Player {
 
     public Player(char color) {
         this.color = color;
+        this.hasTurn = false;
     }
 
     public void alertToMove(ChessGame game) {
@@ -25,8 +26,6 @@ public class Player {
         if (this.hasTurn) {
             this.hasTurn = false;
             this.currentGame.makeMove(move);
-        } else {
-            throw new IllegalStateException("makeMove: it is not this player's turn.");
         }
     }
 
