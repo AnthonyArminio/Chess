@@ -1,8 +1,9 @@
 package chess.intel;
 
+import chess.application.ChessGame;
 import chess.logic.ChessPosition;
 import chess.logic.util.ChessLogic;
-import chess.intel.strategies.Strategy;
+import chess.intel.strategy.Strategy;
 import chess.logic.ChessMove;
 
 import java.util.ArrayList;
@@ -10,15 +11,20 @@ import java.util.ArrayList;
 /**
  * Class that represents a computer player.
  */
-public class Agent {
-    private char color;
+public class Agent extends Player {
     private Strategy strategy;
     private int depth;
 
     public Agent(char color, Strategy s, int depth) {
-        this.color = color;
+        super(color);
         this.strategy = s;
         this.depth = depth;
+    }
+
+    @Override public void alertToMove(ChessGame game) {
+        this.currentGame = game;
+        this.hasTurn = true;
+        makeMove(findBestMove(game.getPosition()));
     }
 
     /**

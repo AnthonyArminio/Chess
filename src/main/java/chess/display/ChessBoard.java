@@ -97,7 +97,7 @@ public class ChessBoard {
     }
 
     public void makeMove(ChessMove move) {
-        this.chessPosition.makeMove(move);
+        
         Square startSquare = getSquareAt(move.getStart());
         Square releaseSquare = getSquareAt(move.getEnd());
 

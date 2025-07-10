@@ -12,6 +12,7 @@ import javafx.scene.input.MouseEvent;
 
 import chess.display.ChessBoard;
 import chess.display.Square;
+import chess.intel.Player;
 import chess.logic.ChessMove;
 import chess.logic.util.GridMath;
 
@@ -20,7 +21,7 @@ public class Chess extends Application {
     private final double boardSize = 504.0;
     private final String lightSquareColor = "#999999";
     private final String darkSquareColor = "#333333";
-    private ChessBoard board;
+    private ChessGame displayedGame;
     private ChessBoard selectedBoard;
     private ImageView mouseImageView;
     private boolean pieceInMouse;
@@ -34,14 +35,12 @@ public class Chess extends Application {
 
         this.root = new Group();
         this.layout = new HBox();
-        this.board = new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor);
-        this.selectedBoard = null;
+        loadGame(new ChessGame(new Player('w'), new Player('b'), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
 
         this.mouseImageView = new ImageView();
         this.pieceInMouse = false;
         this.root.getChildren().add(this.mouseImageView);
 
-        layout.getChildren().add(this.board.getBoard());
         root.getChildren().add(layout);
 
         // set up event handlers
@@ -62,9 +61,17 @@ public class Chess extends Application {
         stage.show();
     }
 
+    private void loadGame(ChessGame game) {
+        if (this.displayedGame != null) {
+            layout.getChildren().remove(this.displayedGame.getBoard().getBoard());
+        }
+        layout.getChildren().add(game.getBoard().getBoard());
+        this.displayedGame = game;
+    }
+
 
     private void onMousePressed(MouseEvent e) {
-        this.selectedBoard = this.board; // change this later when multiple boards can be displayed
+        this.selectedBoard = this.displayedGame.getBoard(); // change this later when multiple boards can be displayed
 
         if (!this.selectedBoard.isWaitingForPromotion()) {
 
