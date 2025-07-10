@@ -11,6 +11,7 @@ import chess.application.ChessGame;
 import chess.logic.ChessPosition;
 import chess.logic.ChessMove;
 import chess.logic.util.GridMath;
+import chess.intel.Player;
 
 /**
  * Represents a grid of squares contained within a Pane object. The light square color and dark
@@ -178,7 +179,7 @@ public class ChessBoard {
         return this.game.getPosition();
     }
 
-    public Group getBoard() {
+    public Group getRoot() {
         return this.chessBoard;
     }
 
@@ -198,7 +199,10 @@ public class ChessBoard {
     public void closePromotionUI() {
         if (this.promotionUI != null) {
             this.chessBoard.getChildren().remove(this.promotionUI.getDisplay());
-            this.game.makeMove(this.promotionUI.getMove());
+            Player player = this.game.getPlayerToMove();
+            if (player.isUser()) {
+                player.makeMove(this.promotionUI.getMove());
+            }
             this.promotionUI = null;
             this.waitingForPromotion = false;
         }

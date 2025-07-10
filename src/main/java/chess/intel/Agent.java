@@ -17,6 +17,7 @@ public class Agent extends Player {
 
     public Agent(char color, Strategy s, int depth) {
         super(color);
+        this.isUser = false;
         this.strategy = s;
         this.depth = depth;
     }
@@ -24,20 +25,27 @@ public class Agent extends Player {
     @Override public void alertToMove(ChessGame game) {
         this.currentGame = game;
         this.hasTurn = true;
-        makeMove(findBestMove(game.getPosition()));
+
+        Thread t = new Thread(() -> makeMove(findBestMove(game.getPosition())));
+        t.setDaemon(true);
+        t.start();
     }
 
     /**
-     * Returns what this Agent perceives as the best move in a given ChessPosition
+     * Returns what this Agent perceives as the best move in a given ChessPosition. The ChessPosition is assumed not
+     * to be checkmate already.
      * @param position the position to analyze
      * @return the best ChessMove for this Agent
      */
     public ChessMove findBestMove(ChessPosition position) {
         ArrayList<ChessMove> possibleMoves = ChessLogic.generateLegalMoves(position);
+        if (possibleMoves.size() == 0) {
+            return null;
+        }
 
         if (this.color == 'w') {
             double bestEval = Double.NEGATIVE_INFINITY;
-            ChessMove bestMove = null;
+            ChessMove bestMove = possibleMoves.get(0);
             for (ChessMove move : possibleMoves) {
                 double eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), this.depth - 1, bestEval);
                 if (eval > bestEval) {
@@ -50,7 +58,7 @@ public class Agent extends Player {
 
         } else {
             double bestEval = Double.POSITIVE_INFINITY;
-            ChessMove bestMove = null;
+            ChessMove bestMove = possibleMoves.get(0);
             for (ChessMove move : possibleMoves) {
                 double eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);
                 if (eval < bestEval) {

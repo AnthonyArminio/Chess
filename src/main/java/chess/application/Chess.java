@@ -28,6 +28,7 @@ public class Chess extends Application {
     private ChessBoard selectedBoard;
     private ImageView mouseImageView;
     private boolean pieceInMouse;
+    private Player user;
 
     private Group root;
     private HBox layout;
@@ -38,8 +39,12 @@ public class Chess extends Application {
 
         this.root = new Group();
         this.layout = new HBox();
+
+        this.user = new Player('w');
+
         //loadGame(new ChessGame(new Player('w'), new Player('b'), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
-        loadGame(new ChessGame(new Player('w'), new Agent('b', new MaterialisticStrategy(), 4), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
+        loadGame(new ChessGame(this.user, new Agent('b', new MaterialisticStrategy(), 4), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
+
         this.mouseImageView = new ImageView();
         this.pieceInMouse = false;
         this.root.getChildren().add(this.mouseImageView);
@@ -66,9 +71,9 @@ public class Chess extends Application {
 
     private void loadGame(ChessGame game) {
         if (this.displayedGame != null) {
-            layout.getChildren().remove(this.displayedGame.getBoard().getBoard());
+            layout.getChildren().remove(this.displayedGame.getBoard().getRoot());
         }
-        layout.getChildren().add(game.getBoard().getBoard());
+        layout.getChildren().add(game.getBoard().getRoot());
         this.displayedGame = game;
     }
 
@@ -115,13 +120,16 @@ public class Chess extends Application {
                                this.selectedBoard.getOrigin(), this.selectedBoard.getSquareSize());
             int startIndex = this.selectedBoard.getSelectedSquareIndex();
 
+            detachImage();
+
             if (releaseIndex >= 0) {
                 ChessMove move = new ChessMove(this.displayedGame.getPosition(), startIndex, releaseIndex);
+                Player player = this.displayedGame.getPlayerToMove();
 
-                if (move.isLegal()) {
+                if (player.isUser() && move.isLegal()) {
                     // move attempt succeeded; move the image and make the corresponsing move in the ChessPosition.
                     if (!move.isPromotion()) {
-                        this.displayedGame.getPlayerToMove().makeMove(move);
+                        player.makeMove(move);
                     } else {
                         this.selectedBoard.openPromotionUI(move);
                         this.selectedBoard.waitForPromotion();
@@ -135,7 +143,6 @@ public class Chess extends Application {
                 // move attempt failed; snap the image back.
                 this.selectedBoard.getSelectedSquare().reattachImage();
             }
-            detachImage();
             //this.selectedBoard.deselectSquare();
             this.selectedBoard = null;
         }

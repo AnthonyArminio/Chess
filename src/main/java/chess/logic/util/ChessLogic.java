@@ -106,7 +106,7 @@ public class ChessLogic {
     }
 
     public static boolean isCheckmate(ChessPosition position) {
-        return ChessLogic.generateLegalMoves(position).size() == 0;
+        return ChessLogic.isCheck(position) && ChessLogic.generateLegalMoves(position).size() == 0;
     }
 
     public static boolean isEnPassant(ChessPosition position, ChessMove move) {
@@ -205,7 +205,14 @@ public class ChessLogic {
                             } else {
                                 ChessMove move = new ChessMove(position, i, i + displacement);
                                 if (move.isLegal()) {
-                                    moves.add(move);
+                                    if (move.isPromotion()) {
+                                        moves.add(new ChessMove(position, i, i + displacement, 'Q'));
+                                        moves.add(new ChessMove(position, i, i + displacement, 'N'));
+                                        moves.add(new ChessMove(position, i, i + displacement, 'R'));
+                                        moves.add(new ChessMove(position, i, i + displacement, 'B'));
+                                    } else {
+                                        moves.add(move);
+                                    }
                                 }
                                 if (!position.isEmpty(i + displacement)) {
                                     pieceOnLine = true;

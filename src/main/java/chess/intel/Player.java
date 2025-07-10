@@ -11,10 +11,12 @@ public class Player {
     protected char color;
     protected ChessGame currentGame;
     protected boolean hasTurn;
+    protected boolean isUser;
 
     public Player(char color) {
         this.color = color;
         this.hasTurn = false;
+        this.isUser = true;
     }
 
     public void alertToMove(ChessGame game) {
@@ -31,5 +33,9 @@ public class Player {
 
     public ChessGame getCurrentGame() {
         return this.currentGame;
+    }
+
+    public boolean isUser() {
+        return this.isUser;
     }
 }
