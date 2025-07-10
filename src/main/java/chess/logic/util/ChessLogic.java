@@ -43,7 +43,7 @@ public class ChessLogic {
 
         // cannot put own king in check
         if (ChessLogic.isCheck(position.afterMove(move).passTurn())) {
-            System.out.println("Cannot put own king in check.");
+            //System.out.println("Cannot put own king in check.");
             return false;
         }
 
@@ -182,7 +182,7 @@ public class ChessLogic {
      * @return An ArrayList of all of the legal moves in the position.
      */
     public static ArrayList<ChessMove> generateLegalMoves(ChessPosition position) {
-        System.out.println("Generating legal moves...");
+        //System.out.println("Generating legal moves...");
 
         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
         char colorToMove = position.colorToMove();
@@ -225,7 +225,7 @@ public class ChessLogic {
             }
         }
 
-        System.out.println("Found " + moves.size() + " legal moves.");
+        //System.out.println("Found " + moves.size() + " legal moves.");
 
         return moves;
     }
