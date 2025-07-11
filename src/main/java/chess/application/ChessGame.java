@@ -17,6 +17,7 @@ public class ChessGame {
     private ChessPosition position;
     private ChessBoard board;
     private Player playerToMove;
+    private int moveNumber;
     private boolean isIdle;
     
     public ChessGame(Player whitePlayer, Player blackPlayer) {
@@ -26,6 +27,8 @@ public class ChessGame {
         this.playerToMove = null;
 
         this.board = null;
+
+        this.moveNumber = 0;
 
         this.isIdle = true;
 
@@ -41,6 +44,8 @@ public class ChessGame {
         this.board = board;
         this.board.loadGame(this);
 
+        this.moveNumber = 0;
+
         this.isIdle = true;
 
         start(); //
@@ -48,15 +53,27 @@ public class ChessGame {
 
     public void start() {
         this.isIdle = false;
+        this.moveNumber = 1;
         this.playerToMove = this.whitePlayer;
         this.playerToMove.alertToMove(this);
     }
 
+    /**
+     * Makes a move and advances the game. The move is assumed to be legal.
+     * @param move the ChessMove to make
+     */
     public void makeMove(ChessMove move) {
         if (this.board != null) {
             this.board.makeMove(move);
         }
         this.position.makeMove(move);
+
+        if (this.position.colorToMove() == 'b') {
+            System.out.printf("%d. %s ", this.moveNumber, move.getNotation());
+        } else {
+            System.out.printf("%s\n", move.getNotation());
+            this.moveNumber ++;
+        }
 
         if (!handleGameEnd()) {
             advanceGame();

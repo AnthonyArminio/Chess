@@ -43,7 +43,7 @@ public class Chess extends Application {
         this.user = new Player('w', true);
 
         //loadGame(new ChessGame(new Player('w'), new Player('b'), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
-        loadGame(new ChessGame(this.user, new Agent('b', new MaterialisticStrategy(), 5), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
+        loadGame(new ChessGame(this.user, new Agent('b', new MaterialisticStrategy(), 4), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
 
         this.mouseImageView = new ImageView();
         this.pieceInMouse = false;
@@ -91,6 +91,9 @@ public class Chess extends Application {
             if (selectedSquareIndex >= 0) {
                 this.selectedBoard.setSelectedSquare(selectedSquareIndex);
                 Square selectedSquare = this.selectedBoard.getSelectedSquare();
+
+                this.mouseImageView.setFitWidth(selectedSquare.getSize());
+                this.mouseImageView.setFitHeight(selectedSquare.getSize());
 
                 //System.out.println("Mouse pressed on square " + selectedSquare.getFile() + " " + selectedSquare.getRank());
 

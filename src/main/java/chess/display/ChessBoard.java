@@ -131,8 +131,6 @@ public class ChessBoard {
         }
         
         releaseSquare.setPiece(move.getPiece());
-
-        move.printMove();
     }
 
     public void setSelectedSquare(int index) {

@@ -109,6 +109,10 @@ public class Square {
         return this.image;
     }
 
+    public double getSize() {
+        return this.size;
+    }
+
     public int getFile() {
         return this.file;
     }

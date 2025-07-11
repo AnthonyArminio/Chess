@@ -1,16 +1,29 @@
 package chess.intel.strategy;
 
+import chess.logic.util.ChessLogic;
 import chess.logic.ChessPiece;
 import chess.logic.ChessPosition;
 
 public class MaterialisticStrategy extends Strategy {
 
-    public double evaluate(ChessPosition position) {
-        double sum = 0;
+    public Evaluation evaluate(ChessPosition position) {
+
+        // standard evaluation
+        if (ChessLogic.isCheckmate(position)) {
+            if (position.colorToMove() == 'b') {
+                return Evaluation.CHECKMATE_FOR_WHITE;
+            } else {
+                return Evaluation.CHECKMATE_FOR_BLACK;
+            }
+        } else if (ChessLogic.isStalemate(position)) {
+            return Evaluation.DRAW;
+        }
+
+        float sum = 0;
         for (int i = 0; i < 64; i++) {
             sum += materialValue(position.getPieceAt(i));
         }
-        return sum;
+        return new Evaluation(sum);
     }
 
     private static double materialValue(ChessPiece piece) {

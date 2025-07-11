@@ -3,7 +3,11 @@ package chess.intel.strategy;
 /**
  * Represents an evaluation of a ChessPosition
  */
-public class Evaluation {
+public class Evaluation implements Comparable<Evaluation> {
+
+    public static final Evaluation CHECKMATE_FOR_WHITE = new Evaluation(Float.POSITIVE_INFINITY, 0);
+    public static final Evaluation CHECKMATE_FOR_BLACK = new Evaluation(Float.NEGATIVE_INFINITY, 0);
+    public static final Evaluation DRAW = new Evaluation(0);
 
     // raw value of the position (positive means advantageous for White, negative means advantageous for Black).
     public float value;
@@ -36,7 +40,7 @@ public class Evaluation {
      * @param other the Evaluation to compare
      * @return 1 if this Evaluation is better for White, -1 if it is better for Black, or 0 otherwise
      */
-    public int compare(Evaluation other) {
+    public int compareTo(Evaluation other) {
         if (this.clock < 0) {
             if (other.clock < 0) {
                 if (this.value > other.value) {

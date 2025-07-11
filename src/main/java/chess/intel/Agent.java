@@ -4,6 +4,7 @@ import chess.application.ChessGame;
 import chess.logic.ChessPosition;
 import chess.logic.util.ChessLogic;
 import chess.intel.strategy.Strategy;
+import chess.intel.strategy.Evaluation;
 import chess.logic.ChessMove;
 
 import java.util.ArrayList;
@@ -43,11 +44,13 @@ public class Agent extends Player {
         }
 
         if (this.color == 'w') {
-            double bestEval = Double.NEGATIVE_INFINITY;
+
+            Evaluation bestEval = Evaluation.CHECKMATE_FOR_BLACK;
+            Evaluation eval = null;
             ChessMove bestMove = possibleMoves.get(0);
             for (ChessMove move : possibleMoves) {
-                double eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), this.depth - 1, bestEval);
-                if (eval > bestEval) {
+                eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), this.depth - 1, bestEval);
+                if (eval.compareTo(bestEval) > 0) {
                     bestEval = eval;
                     bestMove = move;
                 }
@@ -56,11 +59,13 @@ public class Agent extends Player {
             return bestMove;
 
         } else {
-            double bestEval = Double.POSITIVE_INFINITY;
+
+            Evaluation bestEval = Evaluation.CHECKMATE_FOR_WHITE;
+            Evaluation eval = null;
             ChessMove bestMove = possibleMoves.get(0);
             for (ChessMove move : possibleMoves) {
-                double eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);
-                if (eval < bestEval) {
+                eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);
+                if (eval.compareTo(bestEval) < 0) {
                     bestEval = eval;
                     bestMove = move;
                 }
@@ -77,10 +82,11 @@ public class Agent extends Player {
      * @param color the color to play for ('w' to maximize, 'b' to minimize).
      * @param depth the depth to search (ply)
      * @param alphabeta the best achieved value of the siblings of this instance of the method call.
-     * @return A double value representing how advantageous the given position is for one player (positive for White,
-     * negative for Black).
+     * @return An Evaluation representing how advantageous the given position is for one player
      */
-    private double minimaxEvaluate(ChessPosition position, char color, int depth, double alphabeta) {
+    private Evaluation minimaxEvaluate(ChessPosition position, char color, int depth, Evaluation alphabeta) {
+
+        // base case
         if (depth == 0) {
             return this.strategy.evaluate(position);
         }
@@ -90,16 +96,17 @@ public class Agent extends Player {
         if (color == 'w') { 
             // maximizing case
 
-            double bestEval = Double.NEGATIVE_INFINITY;
+            Evaluation bestEval = Evaluation.CHECKMATE_FOR_BLACK;
+            Evaluation eval = null;
             for (ChessMove move : possibleMoves) {
-                double eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);
+                eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);
 
                 // alpha-beta pruning
-                if (eval > alphabeta) {
+                if (eval.compareTo(alphabeta) > 0) {
                     return eval;
                 }
 
-                if (eval > bestEval) {
+                if (eval.compareTo(bestEval) > 0) {
                     bestEval = eval;
                 }
             }
@@ -109,16 +116,17 @@ public class Agent extends Player {
         } else { 
             // minimizing case
 
-            double bestEval = Double.POSITIVE_INFINITY;
+            Evaluation bestEval = Evaluation.CHECKMATE_FOR_WHITE;
+            Evaluation eval = null;
             for (ChessMove move : possibleMoves) {
-                double eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);
+                eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);
 
                 // alpha-beta pruning
-                if (eval < alphabeta) {
+                if (eval.compareTo(alphabeta) < 0) {
                     return eval;
                 }
 
-                if (eval < bestEval) {
+                if (eval.compareTo(bestEval) < 0) {
                     bestEval = eval;
                 }
             }
