@@ -5,6 +5,8 @@ import chess.logic.ChessMove;
 import chess.logic.ChessPosition;
 import chess.display.ChessBoard;
 
+import chess.logic.util.ChessLogic;
+
 /**
  * Class that manages a game between two Players.
  */
@@ -56,7 +58,9 @@ public class ChessGame {
         }
         this.position.makeMove(move);
 
-        advanceGame();
+        if (!handleGameEnd()) {
+            advanceGame();
+        }
     }
 
     private void advanceGame() {
@@ -72,6 +76,27 @@ public class ChessGame {
         } else {
             this.playerToMove = this.whitePlayer;
         }
+    }
+
+    /**
+     * Evaluates the position to determine if the game should end and executes the corresponding method. 
+     * Returns false if the game is not over.
+     * @return true if the game is over, and false otherwise.
+     */
+    private boolean handleGameEnd() {
+        if (ChessLogic.isCheckmate(this.position)) {
+            if (this.position.colorToMove() == 'w') {
+                //onWinForWhite();
+            } else {
+                //onWinForBlack();
+            }
+            return true;
+        } else if (ChessLogic.isStalemate(this.position)) {
+            //onDraw();
+            return true;
+        }
+
+        return false;
     }
 
     public Player getPlayerToMove() {

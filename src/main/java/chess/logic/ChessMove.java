@@ -129,6 +129,10 @@ public class ChessMove {
         return ChessLogic.isCheckmate(position.afterMove(this));
     }
 
+    public boolean isStalemate() {
+        return ChessLogic.isStalemate(position.afterMove(this));
+    }
+
     public int getStart() {
         return this.start;
     }

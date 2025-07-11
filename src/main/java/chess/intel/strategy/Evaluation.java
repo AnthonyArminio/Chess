@@ -1,0 +1,66 @@
+package chess.intel.strategy;
+
+/**
+ * Represents an evaluation of a ChessPosition
+ */
+public class Evaluation {
+
+    // raw value of the position (positive means advantageous for White, negative means advantageous for Black).
+    public float value;
+    // checkmate clock (number of ply until checkmate). If this is not equal to -1, value should be infinite.
+    public int clock;
+
+    public Evaluation(float value) {
+        this.value = value;
+        this.clock = -1;
+    }
+
+    public Evaluation(float value, int clock) {
+        if (clock >= 0) {
+            this.clock = clock;
+            if (value >= 0) {
+                this.value = Float.POSITIVE_INFINITY;
+            } else {
+                this.value = Float.NEGATIVE_INFINITY;
+            }
+        } else {
+            this.clock = -1;
+            this.value = value;
+        }
+    }
+
+    /**
+     * Compares this Evaluation to a specified other Evaluation. If this Evaluation is more advantageous
+     * for White, this returns 1. If it is more advantageous for Black, this returns -1. Otherwise, this
+     * returns 0.
+     * @param other the Evaluation to compare
+     * @return 1 if this Evaluation is better for White, -1 if it is better for Black, or 0 otherwise
+     */
+    public int compare(Evaluation other) {
+        if (this.clock < 0) {
+            if (other.clock < 0) {
+                if (this.value > other.value) {
+                    return 1;
+                } else if (this.value < other.value) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            } else {
+                return -1;
+            }
+        } else {
+            if (other.clock < 0) {
+                return 1;
+            } else {
+                if (this.clock < other.clock) {
+                    return 1;
+                } else if (this.clock > other.clock) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        }
+    }
+}

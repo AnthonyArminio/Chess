@@ -16,8 +16,7 @@ public class Agent extends Player {
     private int depth;
 
     public Agent(char color, Strategy s, int depth) {
-        super(color);
-        this.isUser = false;
+        super(color, false);
         this.strategy = s;
         this.depth = depth;
     }

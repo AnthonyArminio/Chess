@@ -13,10 +13,10 @@ public class Player {
     protected boolean hasTurn;
     protected boolean isUser;
 
-    public Player(char color) {
+    public Player(char color, boolean isUser) {
         this.color = color;
         this.hasTurn = false;
-        this.isUser = true;
+        this.isUser = isUser;
     }
 
     public void alertToMove(ChessGame game) {

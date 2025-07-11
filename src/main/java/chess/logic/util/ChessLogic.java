@@ -106,7 +106,11 @@ public class ChessLogic {
     }
 
     public static boolean isCheckmate(ChessPosition position) {
-        return ChessLogic.isCheck(position) && ChessLogic.generateLegalMoves(position).size() == 0;
+        return ChessLogic.isCheck(position) && !ChessLogic.canMove(position);
+    }
+
+    public static boolean isStalemate(ChessPosition position) {
+        return !ChessLogic.isCheck(position) && !ChessLogic.canMove(position);
     }
 
     public static boolean isEnPassant(ChessPosition position, ChessMove move) {
@@ -228,5 +232,42 @@ public class ChessLogic {
         //System.out.println("Found " + moves.size() + " legal moves.");
 
         return moves;
+    }
+
+    public static boolean canMove(ChessPosition position) {
+
+        char colorToMove = position.colorToMove();
+        
+        for (int i = 0; i < 64; i++) {
+            ChessPiece piece = position.getPieceAt(i);
+            if (piece != null && piece.getColor() == colorToMove) {
+                for (int[] line : piece.getMovement(position, i)) {
+
+                    int previous = i;
+                    boolean pieceOnLine = false;
+                    boolean outOfBounds = false;
+
+                    for (int displacement : line) {
+
+                        if (displacement != 0 && !outOfBounds && !pieceOnLine) {
+                            if (GridMath.isOutOfBounds(previous, i + displacement)) {
+                                outOfBounds = true;
+                            } else {
+                                ChessMove move = new ChessMove(position, i, i + displacement);
+                                if (move.isLegal()) {
+                                    return true;
+                                }
+                                if (!position.isEmpty(i + displacement)) {
+                                    pieceOnLine = true;
+                                }
+                            }
+                            previous = i + displacement;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }
