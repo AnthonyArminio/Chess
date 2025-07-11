@@ -26,13 +26,13 @@ public class MaterialisticStrategy extends Strategy {
         return new Evaluation(sum);
     }
 
-    private static double materialValue(ChessPiece piece) {
+    private static float materialValue(ChessPiece piece) {
 
         if (piece == null) {
             return 0;
         }
 
-        double value = 0;
+        float value = 0;
 
         if (piece.getType() == 'P') {
             value = 1;

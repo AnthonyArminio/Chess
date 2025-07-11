@@ -10,9 +10,9 @@ public class Evaluation implements Comparable<Evaluation> {
     public static final Evaluation DRAW = new Evaluation(0);
 
     // raw value of the position (positive means advantageous for White, negative means advantageous for Black).
-    public float value;
+    private float value;
     // checkmate clock (number of ply until checkmate). If this is not equal to -1, value should be infinite.
-    public int clock;
+    private int clock;
 
     public Evaluation(float value) {
         this.value = value;
@@ -51,11 +51,19 @@ public class Evaluation implements Comparable<Evaluation> {
                     return 0;
                 }
             } else {
-                return -1;
+                if (other.value >= 0) {
+                    return -1;
+                } else {
+                    return 1;
+                }
             }
         } else {
             if (other.clock < 0) {
-                return 1;
+                if (this.value >= 0) {
+                    return 1;
+                } else {
+                    return -1;
+                }
             } else {
                 if (this.clock < other.clock) {
                     return 1;
