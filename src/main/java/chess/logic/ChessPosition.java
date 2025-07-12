@@ -2,6 +2,8 @@ package chess.logic;
 
 import chess.logic.util.GridMath;
 
+import java.util.ArrayList;
+
 /**
  * Represents a chess position. Contains information about where each piece is in a compact form.
  */
@@ -14,12 +16,7 @@ public class ChessPosition {
     private static final int B_Q_CASTLING_RIGHTS = 4;
     private static final int TO_MOVE = 5;
 
-    // The current state of the board represented as a list of 70 integers. The first 64
-    // represent the pieces at each square starting from the bottom-left. positionArray[64]
-    // represents the index where en passant is available, or -1 otherwise.
-    // positionArray[65-68] represent castling rights (white kingside, white queenside, black
-    // kingside, and black queenside, respectively). positionArray[67] represents whose turn it
-    // is (0 for black, 1 for white).
+    // The current state of the board represented as a list of 64 integers.
     private int[] positionArray;
 
     // The metadata associated with the position is stored here. stateArray[0] represents the index
@@ -27,6 +24,12 @@ public class ChessPosition {
     // (white kingside, white queenside, black kingside, and black queenside, respectively.) stateArray[5]
     // represents whose turn it is (0 for white, 1 for black).
     private int[] stateArray;
+
+    // The compressed version of this position.
+    private CompressedPosition compressedPosition;
+
+    // A list of all the positions reached for the purpose of detecting threefold repetition.
+    private ArrayList<CompressedPosition> reachedPositions;
 
     /**
      * The default constructor. Creates the default starting position.
@@ -46,6 +49,10 @@ public class ChessPosition {
 
         this.positionArray = startingPosition;
         this.stateArray = startingState;
+
+        this.compressedPosition = new CompressedPosition(this);
+        this.reachedPositions = new ArrayList<CompressedPosition>();
+        this.reachedPositions.add(this.compressedPosition);
     }
 
     public ChessPosition(int[] positionArray, int[] stateArray) {
@@ -57,6 +64,10 @@ public class ChessPosition {
         for (int i = 0; i < stateArray.length; i++) {
             this.stateArray[i] = stateArray[i];
         }
+
+        this.compressedPosition = new CompressedPosition(this);
+        this.reachedPositions = new ArrayList<CompressedPosition>();
+        this.reachedPositions.add(this.compressedPosition);
     }
 
     /**
@@ -210,6 +221,20 @@ public class ChessPosition {
     public ChessPosition passTurn() {
         this.stateArray[TO_MOVE] = -1 * (this.stateArray[TO_MOVE] - 1);
         return this;
+    }
+
+    /**
+     * Returns a reference to this position's positionArray.
+     */
+    public int[] getPositionArray() {
+        return this.positionArray;
+    }
+
+    /**
+     * Returns a reference to this position's stateArray.
+     */
+    public int[] getStateArray() {
+        return this.stateArray;
     }
 
     public char colorToMove() {
