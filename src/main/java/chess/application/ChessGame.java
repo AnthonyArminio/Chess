@@ -72,7 +72,7 @@ public class ChessGame {
             System.out.printf("%d. %s ", this.moveNumber, move.getNotation());
         } else {
             System.out.printf("%s\n", move.getNotation());
-            this.moveNumber ++;
+            this.moveNumber++;
         }
 
         if (!handleGameEnd()) {

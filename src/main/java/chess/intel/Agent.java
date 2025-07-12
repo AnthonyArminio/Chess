@@ -104,7 +104,7 @@ public class Agent extends Player {
 
                 // alpha-beta pruning
                 if (eval.compareTo(alphabeta) > 0) {
-                    return eval;
+                    return eval.step();
                 }
 
                 if (eval.compareTo(bestEval) > 0) {
@@ -112,7 +112,7 @@ public class Agent extends Player {
                 }
             }
 
-            return bestEval;
+            return bestEval.step();
 
         } else { 
             // minimizing case
@@ -124,7 +124,7 @@ public class Agent extends Player {
 
                 // alpha-beta pruning
                 if (eval.compareTo(alphabeta) < 0) {
-                    return eval;
+                    return eval.step();
                 }
 
                 if (eval.compareTo(bestEval) < 0) {
@@ -132,7 +132,7 @@ public class Agent extends Player {
                 }
             }
 
-            return bestEval;
+            return bestEval.step();
         }
     }
 }

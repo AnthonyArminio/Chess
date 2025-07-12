@@ -7,12 +7,12 @@ import chess.logic.util.GridMath;
  */
 public class ChessPosition {
 
-    private static final int EN_PASSANT = 64;
-    private static final int W_K_CASTLING_RIGHTS = 65;
-    private static final int W_Q_CASTLING_RIGHTS = 66;
-    private static final int B_K_CASTLING_RIGHTS = 67;
-    private static final int B_Q_CASTLING_RIGHTS = 68;
-    private static final int TO_MOVE = 69;
+    private static final int EN_PASSANT = 0;
+    private static final int W_K_CASTLING_RIGHTS = 1;
+    private static final int W_Q_CASTLING_RIGHTS = 2;
+    private static final int B_K_CASTLING_RIGHTS = 3;
+    private static final int B_Q_CASTLING_RIGHTS = 4;
+    private static final int TO_MOVE = 5;
 
     // The current state of the board represented as a list of 70 integers. The first 64
     // represent the pieces at each square starting from the bottom-left. positionArray[64]
@@ -21,6 +21,12 @@ public class ChessPosition {
     // kingside, and black queenside, respectively). positionArray[67] represents whose turn it
     // is (0 for black, 1 for white).
     private int[] positionArray;
+
+    // The metadata associated with the position is stored here. stateArray[0] represents the index
+    // where en passant is available, or -1 otherwise. stateArray[1-4] represent castling rights
+    // (white kingside, white queenside, black kingside, and black queenside, respectively.) stateArray[5]
+    // represents whose turn it is (0 for white, 1 for black).
+    private int[] stateArray;
 
     /**
      * The default constructor. Creates the default starting position.
@@ -34,16 +40,22 @@ public class ChessPosition {
                                   0, 0, 0, 0, 0, 0, 0, 0,
                                   0, 0, 0, 0, 0, 0, 0, 0,
                                   -1,-1,-1,-1,-1,-1,-1,-1,
-                                  -4,-3,-2,-5,-6,-2,-3,-4,
-                                  -1, 1, 1, 1, 1, 1};
+                                  -4,-3,-2,-5,-6,-2,-3,-4};
+
+        int[] startingState = {-1, 1, 1, 1, 1, 1};
 
         this.positionArray = startingPosition;
+        this.stateArray = startingState;
     }
 
-    public ChessPosition(int[] positionArray) {
+    public ChessPosition(int[] positionArray, int[] stateArray) {
         this.positionArray = new int[positionArray.length];
+        this.stateArray = new int[stateArray.length];
         for (int i = 0; i < positionArray.length; i++) {
             this.positionArray[i] = positionArray[i];
+        }
+        for (int i = 0; i < stateArray.length; i++) {
+            this.stateArray[i] = stateArray[i];
         }
     }
 
@@ -108,7 +120,7 @@ public class ChessPosition {
             }
         }
 
-        this.positionArray[EN_PASSANT] = move.enPassantValue();
+        this.stateArray[EN_PASSANT] = move.enPassantValue();
 
         // update castling rights
         if (castlingRightsExist()) {
@@ -158,14 +170,14 @@ public class ChessPosition {
     }
 
     public ChessPosition copy() {
-        return new ChessPosition(this.positionArray);
+        return new ChessPosition(this.positionArray, this.stateArray);
     }
 
     /**
      * Returns a copy of this position after a specified alteration is made.
      */
     public ChessPosition afterAlteration(int start, int end) {
-        ChessPosition position = new ChessPosition(this.positionArray);
+        ChessPosition position = this.copy();
         position.makeAlteration(start, end);
         return position;
     }
@@ -176,7 +188,7 @@ public class ChessPosition {
      * @return a ChessPosition representing the position after the move is made
      */
     public ChessPosition afterMove(ChessMove move) {
-        ChessPosition position = new ChessPosition(this.positionArray);
+        ChessPosition position = this.copy();
         position.makeMove(move);
         return position;
     }
@@ -186,7 +198,7 @@ public class ChessPosition {
      */
     public void advanceGame() {
         passTurn();
-        if (this.positionArray[TO_MOVE] == 0) {
+        if (this.stateArray[TO_MOVE] == 0) {
             // to do: increment move counter here.
         }
     }
@@ -196,12 +208,12 @@ public class ChessPosition {
      * @return the new position after the turn has been passed
      */
     public ChessPosition passTurn() {
-        this.positionArray[TO_MOVE] = -1 * (this.positionArray[TO_MOVE] - 1);
+        this.stateArray[TO_MOVE] = -1 * (this.stateArray[TO_MOVE] - 1);
         return this;
     }
 
     public char colorToMove() {
-        if (this.positionArray[TO_MOVE] == 1) {
+        if (this.stateArray[TO_MOVE] == 0) {
             return 'w';
         } else {
             return 'b';
@@ -209,55 +221,55 @@ public class ChessPosition {
     }
 
     public int getEnPassantOpportunity() {
-        return this.positionArray[EN_PASSANT];
+        return this.stateArray[EN_PASSANT];
     }
 
     public boolean hasCastlingRights(char color, char side) {
         if (color == 'w') {
             if (side == 'K') {
-                return this.positionArray[W_K_CASTLING_RIGHTS] == 1;
+                return this.stateArray[W_K_CASTLING_RIGHTS] == 1;
             } else {
-                return this.positionArray[W_Q_CASTLING_RIGHTS] == 1;
+                return this.stateArray[W_Q_CASTLING_RIGHTS] == 1;
             }
         } else {
             if (side == 'K') {
-                return this.positionArray[B_K_CASTLING_RIGHTS] == 1;
+                return this.stateArray[B_K_CASTLING_RIGHTS] == 1;
             } else {
-                return this.positionArray[B_Q_CASTLING_RIGHTS] == 1;
+                return this.stateArray[B_Q_CASTLING_RIGHTS] == 1;
             }
         }
     }
 
     public boolean castlingRightsExist() {
-        return this.positionArray[W_K_CASTLING_RIGHTS] == 1 ||
-               this.positionArray[W_Q_CASTLING_RIGHTS] == 1 ||
-               this.positionArray[B_K_CASTLING_RIGHTS] == 1 ||
-               this.positionArray[B_Q_CASTLING_RIGHTS] == 1;
+        return this.stateArray[W_K_CASTLING_RIGHTS] == 1 ||
+               this.stateArray[W_Q_CASTLING_RIGHTS] == 1 ||
+               this.stateArray[B_K_CASTLING_RIGHTS] == 1 ||
+               this.stateArray[B_Q_CASTLING_RIGHTS] == 1;
     }
 
     public void removeCastlingRights(char color, char side) {
         if (color == 'w') {
             if (side == 'K') {
-                this.positionArray[W_K_CASTLING_RIGHTS] = 0;
+                this.stateArray[W_K_CASTLING_RIGHTS] = 0;
             } else {
-                this.positionArray[W_Q_CASTLING_RIGHTS] = 0;
+                this.stateArray[W_Q_CASTLING_RIGHTS] = 0;
             }
         } else {
             if (side == 'K') {
-                this.positionArray[B_K_CASTLING_RIGHTS] = 0;
+                this.stateArray[B_K_CASTLING_RIGHTS] = 0;
             } else {
-                this.positionArray[B_Q_CASTLING_RIGHTS] = 0;
+                this.stateArray[B_Q_CASTLING_RIGHTS] = 0;
             }
         }
     }
 
     public void removeCastlingRights(char color) {
         if (color == 'w') {
-            this.positionArray[W_K_CASTLING_RIGHTS] = 0;
-            this.positionArray[W_Q_CASTLING_RIGHTS] = 0;
+            this.stateArray[W_K_CASTLING_RIGHTS] = 0;
+            this.stateArray[W_Q_CASTLING_RIGHTS] = 0;
         } else {
-            this.positionArray[B_K_CASTLING_RIGHTS] = 0;
-            this.positionArray[B_Q_CASTLING_RIGHTS] = 0;
+            this.stateArray[B_K_CASTLING_RIGHTS] = 0;
+            this.stateArray[B_Q_CASTLING_RIGHTS] = 0;
         }
     }
 

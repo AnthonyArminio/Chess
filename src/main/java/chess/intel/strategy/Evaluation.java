@@ -33,6 +33,11 @@ public class Evaluation implements Comparable<Evaluation> {
         }
     }
 
+    public Evaluation step() {
+        this.clock++;
+        return this;
+    }
+
     /**
      * Compares this Evaluation to a specified other Evaluation. If this Evaluation is more advantageous
      * for White, this returns 1. If it is more advantageous for Black, this returns -1. Otherwise, this
