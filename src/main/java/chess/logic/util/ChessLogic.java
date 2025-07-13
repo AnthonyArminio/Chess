@@ -105,6 +105,10 @@ public class ChessLogic {
         return false;
     }
 
+    public static boolean isIrreversible(ChessMove move) {
+        return move.getPieceType() == 'P' || move.isCapture() || move.isKingsideCastle() || move.isQueensideCastle();
+    }
+
     public static boolean isCheckmate(ChessPosition position) {
         return ChessLogic.isCheck(position) && !ChessLogic.canMove(position);
     }

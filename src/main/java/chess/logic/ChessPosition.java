@@ -9,12 +9,12 @@ import java.util.ArrayList;
  */
 public class ChessPosition {
 
-    private static final int EN_PASSANT = 0;
-    private static final int W_K_CASTLING_RIGHTS = 1;
-    private static final int W_Q_CASTLING_RIGHTS = 2;
-    private static final int B_K_CASTLING_RIGHTS = 3;
-    private static final int B_Q_CASTLING_RIGHTS = 4;
-    private static final int TO_MOVE = 5;
+    protected static final int EN_PASSANT = 0;
+    protected static final int W_K_CASTLING_RIGHTS = 1;
+    protected static final int W_Q_CASTLING_RIGHTS = 2;
+    protected static final int B_K_CASTLING_RIGHTS = 3;
+    protected static final int B_Q_CASTLING_RIGHTS = 4;
+    protected static final int TO_MOVE = 5;
 
     // The current state of the board represented as a list of 64 integers.
     private int[] positionArray;
@@ -103,6 +103,14 @@ public class ChessPosition {
      * @param move the move to make
      */
     public void makeMove(ChessMove move) {
+
+        if (move.isIrreversible()) {
+            this.reachedPositions.clear();
+        } else {
+            this.reachedPositions.add(this.compressedPosition.copy());
+        }
+        this.compressedPosition.makeMove(move);
+
         makeAlteration(move.getStart(), move.getEnd());
         if (move.isPromotion()) {
             this.positionArray[move.getEnd()] = move.getPieceID();
@@ -131,7 +139,7 @@ public class ChessPosition {
             }
         }
 
-        this.stateArray[EN_PASSANT] = move.enPassantValue();
+        handleEnPassantOpportunity(move);
 
         // update castling rights
         if (castlingRightsExist()) {
@@ -139,6 +147,25 @@ public class ChessPosition {
         }
 
         advanceGame();
+    }
+
+    private void handleEnPassantOpportunity(ChessMove move) {
+        int enPassantValue = move.enPassantValue();
+        this.stateArray[EN_PASSANT] = enPassantValue;
+        if (enPassantValue >= 0) {
+            if (this.getPieceAt(move.getEnd() + 1).getType() == 'P' && 
+                new ChessMove(this, move.getEnd() + 1, enPassantValue).isLegal()) {
+
+                this.stateArray[EN_PASSANT] = move.enPassantValue();
+
+            } else if (this.getPieceAt(move.getEnd() - 1).getType() == 'P' && 
+                new ChessMove(this, move.getEnd() - 1, enPassantValue).isLegal()) {
+
+                this.stateArray[EN_PASSANT] = move.enPassantValue();
+            } else {
+                this.stateArray[EN_PASSANT] = -1;
+            }
+        }
     }
 
     private void handleCastlingRights(ChessMove move) {
@@ -178,6 +205,15 @@ public class ChessPosition {
         }
 
         return -1;
+    }
+
+    public boolean isRepeat() {
+        for (CompressedPosition position : this.reachedPositions) {
+            if (position.equals(this.compressedPosition)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public ChessPosition copy() {

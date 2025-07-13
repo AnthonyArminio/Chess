@@ -101,6 +101,10 @@ public class ChessMove {
         return this.isLegal;
     }
 
+    public boolean isIrreversible() {
+        return ChessLogic.isIrreversible(this);
+    }
+
     public ChessPiece getPiece() {
         return this.piece;
     }

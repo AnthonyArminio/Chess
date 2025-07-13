@@ -40,8 +40,29 @@ public class CompressedPosition {
             }
         }
 
-        // no need to update this again when a move is made: this is a reference.
+        // this is a pass by reference: no need to update this again when a move is made
         this.stateArray = position.getStateArray();
+    }
+
+    /**
+     * Creates a new CompressedPosition where the stateArray is not stored by reference. As such, objects
+     * created using this constructor should be final and should never call makeMove().
+     * @param piecePlacements
+     * @param stateArray
+     */
+    public CompressedPosition(long[][] piecePlacements, int[] stateArray) {
+
+        this.piecePlacements = new long[5][2];
+        for (int p = BISHOP; p < 5; p++) {
+            for (int c = WHITE; c < 2; c++) {
+                this.piecePlacements[p][c] = piecePlacements[p][c];
+            }
+        }
+
+        this.stateArray = new int[5];
+        for (int i = 0; i < 5; i++) {
+            this.stateArray[i] = stateArray[i];
+        }
     }
 
     private void makeAlteration(int start, int end, int id) {
@@ -78,6 +99,7 @@ public class CompressedPosition {
             }
         } else {
             makeAlteration(start, end, id);
+
             if (move.isKingsideCastle()) {
                 if (move.getColor() == 'w') {
                     makeAlteration(7, 5, ChessPiece.W_ROOK.getID());
@@ -92,6 +114,10 @@ public class CompressedPosition {
                 }
             }
         }
+    }
+
+    public CompressedPosition copy() {
+        return new CompressedPosition(this.piecePlacements, this.stateArray);
     }
 
     /**
