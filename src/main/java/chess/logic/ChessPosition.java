@@ -45,17 +45,16 @@ public class ChessPosition {
                                   -1,-1,-1,-1,-1,-1,-1,-1,
                                   -4,-3,-2,-5,-6,-2,-3,-4};
 
-        int[] startingState = {-1, 1, 1, 1, 1, 1};
+        int[] startingState = {-1, 1, 1, 1, 1, 0};
 
         this.positionArray = startingPosition;
         this.stateArray = startingState;
 
         this.compressedPosition = new CompressedPosition(this);
         this.reachedPositions = new ArrayList<CompressedPosition>();
-        this.reachedPositions.add(this.compressedPosition);
     }
 
-    public ChessPosition(int[] positionArray, int[] stateArray) {
+    public ChessPosition(int[] positionArray, int[] stateArray, CompressedPosition compressedPosition, ArrayList<CompressedPosition> reachedPositions) {
         this.positionArray = new int[positionArray.length];
         this.stateArray = new int[stateArray.length];
         for (int i = 0; i < positionArray.length; i++) {
@@ -65,9 +64,12 @@ public class ChessPosition {
             this.stateArray[i] = stateArray[i];
         }
 
-        this.compressedPosition = new CompressedPosition(this);
+        this.compressedPosition = compressedPosition.copy();
         this.reachedPositions = new ArrayList<CompressedPosition>();
-        this.reachedPositions.add(this.compressedPosition);
+        for (CompressedPosition position : reachedPositions) {
+            this.reachedPositions.add(position);
+        }
+        
     }
 
     /**
@@ -153,12 +155,12 @@ public class ChessPosition {
         int enPassantValue = move.enPassantValue();
         this.stateArray[EN_PASSANT] = enPassantValue;
         if (enPassantValue >= 0) {
-            if (this.getPieceAt(move.getEnd() + 1).getType() == 'P' && 
+            if (!this.isEmpty(move.getEnd() + 1) && this.getPieceAt(move.getEnd() + 1).getType() == 'P' && 
                 new ChessMove(this, move.getEnd() + 1, enPassantValue).isLegal()) {
 
                 this.stateArray[EN_PASSANT] = move.enPassantValue();
 
-            } else if (this.getPieceAt(move.getEnd() - 1).getType() == 'P' && 
+            } else if (!this.isEmpty(move.getEnd() - 1) && this.getPieceAt(move.getEnd() - 1).getType() == 'P' && 
                 new ChessMove(this, move.getEnd() - 1, enPassantValue).isLegal()) {
 
                 this.stateArray[EN_PASSANT] = move.enPassantValue();
@@ -207,17 +209,16 @@ public class ChessPosition {
         return -1;
     }
 
-    public boolean isRepeat() {
-        for (CompressedPosition position : this.reachedPositions) {
-            if (position.equals(this.compressedPosition)) {
-                return true;
-            }
-        }
-        return false;
+    public CompressedPosition getCompressedPosition() {
+        return this.compressedPosition;
+    }
+
+    public ArrayList<CompressedPosition> getReachedPositions() {
+        return this.reachedPositions;
     }
 
     public ChessPosition copy() {
-        return new ChessPosition(this.positionArray, this.stateArray);
+        return new ChessPosition(this.positionArray, this.stateArray, this.compressedPosition, this.reachedPositions);
     }
 
     /**

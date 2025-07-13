@@ -1,6 +1,7 @@
 package chess.logic.util;
 
 import chess.logic.ChessPosition;
+import chess.logic.CompressedPosition;
 import chess.logic.ChessPiece;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class ChessLogic {
 
         // cannot move if it is not your turn
         if (move.getColor() != position.colorToMove()) {
-            System.out.println("Piece does not match color to move.");
+            //System.out.println("Piece does not match color to move.");
             return false;
         }
 
@@ -133,6 +134,16 @@ public class ChessLogic {
     public static boolean isQueensideCastle(ChessPosition position, ChessMove move) {
         return move.getPieceType() == 'K' && position.hasCastlingRights(move.getColor(), 'Q') &&
                move.getEnd() == ChessPosition.getCastlingDestination(move.getColor(), 'Q');
+    }
+
+    public static boolean isRepeat(ChessPosition position) {
+        ArrayList<CompressedPosition> reachedPositions = position.getReachedPositions();
+        for (CompressedPosition compressedPosition : reachedPositions) {
+            if (compressedPosition.equals(position.getCompressedPosition())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static char opponentOf(char color) {

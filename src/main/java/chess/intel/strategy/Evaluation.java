@@ -34,7 +34,9 @@ public class Evaluation implements Comparable<Evaluation> {
     }
 
     public Evaluation step() {
-        this.clock++;
+        if (this.clock >= 0) {
+            this.clock++;
+        }
         return this;
     }
 
