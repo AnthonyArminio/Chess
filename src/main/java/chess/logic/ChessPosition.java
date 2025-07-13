@@ -155,16 +155,14 @@ public class ChessPosition {
         int enPassantValue = move.enPassantValue();
         this.stateArray[EN_PASSANT] = enPassantValue;
         if (enPassantValue >= 0) {
-            if (!this.isEmpty(move.getEnd() + 1) && this.getPieceAt(move.getEnd() + 1).getType() == 'P' && 
-                new ChessMove(this, move.getEnd() + 1, enPassantValue).isLegal()) {
+            ChessPosition afterPass = this.afterPass();
+            if (!(!this.isEmpty(move.getEnd() + 1) && 
+                this.getPieceAt(move.getEnd() + 1).getType() == 'P' && 
+                new ChessMove(afterPass, move.getEnd() + 1, enPassantValue).isLegal()) && 
+                !(!this.isEmpty(move.getEnd() - 1) && 
+                this.getPieceAt(move.getEnd() - 1).getType() == 'P' && 
+                new ChessMove(afterPass, move.getEnd() - 1, enPassantValue).isLegal())) {
 
-                this.stateArray[EN_PASSANT] = move.enPassantValue();
-
-            } else if (!this.isEmpty(move.getEnd() - 1) && this.getPieceAt(move.getEnd() - 1).getType() == 'P' && 
-                new ChessMove(this, move.getEnd() - 1, enPassantValue).isLegal()) {
-
-                this.stateArray[EN_PASSANT] = move.enPassantValue();
-            } else {
                 this.stateArray[EN_PASSANT] = -1;
             }
         }
@@ -258,6 +256,16 @@ public class ChessPosition {
     public ChessPosition passTurn() {
         this.stateArray[TO_MOVE] = -1 * (this.stateArray[TO_MOVE] - 1);
         return this;
+    }
+
+    /**
+     * Returns a copy of this position where the opposite color is to move without changing
+     * the state of the original position.
+     * @return the new position after the turn has been passed
+     */
+    public ChessPosition afterPass() {
+        ChessPosition position = this.copy();
+        return position.passTurn();
     }
 
     /**
