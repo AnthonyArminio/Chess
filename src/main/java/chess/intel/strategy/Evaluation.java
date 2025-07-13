@@ -35,7 +35,7 @@ public class Evaluation implements Comparable<Evaluation> {
 
     public Evaluation step() {
         if (this.clock >= 0) {
-            this.clock++;
+            return new Evaluation(this.value, this.clock + 1);
         }
         return this;
     }
@@ -81,5 +81,12 @@ public class Evaluation implements Comparable<Evaluation> {
                 }
             }
         }
+    }
+
+    public String toString() {
+        if (this.clock >= 0) {
+            return "M" + this.clock;
+        }
+        return "" + this.value;
     }
 }

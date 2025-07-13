@@ -66,11 +66,12 @@ public class Agent extends Player {
             for (ChessMove move : possibleMoves) {
                 eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);
                 if (eval.compareTo(bestEval) < 0) {
-                    //System.out.println("Success.");
                     bestEval = eval;
                     bestMove = move;
                 }
             }
+
+            System.out.printf("%s ", bestEval.toString());
 
             return bestMove;
         }
