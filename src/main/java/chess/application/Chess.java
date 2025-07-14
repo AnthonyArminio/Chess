@@ -43,7 +43,7 @@ public class Chess extends Application {
         this.user = new Player('w', true);
 
         //loadGame(new ChessGame(new Player('w'), new Player('b'), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
-        loadGame(new ChessGame(this.user, new Agent('b', new MaterialisticStrategy(), 3), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
+        loadGame(new ChessGame(this.user, new Agent('b', new MaterialisticStrategy(), 4), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
 
         this.mouseImageView = new ImageView();
         this.pieceInMouse = false;
@@ -129,6 +129,7 @@ public class Chess extends Application {
                 ChessMove move = new ChessMove(this.displayedGame.getPosition(), startIndex, releaseIndex);
                 Player player = this.displayedGame.getPlayerToMove();
 
+                //if (true && move.isLegal()) {
                 if (player.isUser() && move.isLegal()) {
                     // move attempt succeeded; move the image and make the corresponsing move in the ChessPosition.
                     if (!move.isPromotion()) {

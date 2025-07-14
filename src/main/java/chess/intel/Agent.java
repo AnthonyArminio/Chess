@@ -5,6 +5,7 @@ import chess.logic.ChessPosition;
 import chess.logic.util.ChessLogic;
 import chess.intel.strategy.Strategy;
 import chess.intel.strategy.Evaluation;
+import chess.intel.strategy.DetailedEvaluation;
 import chess.logic.ChessMove;
 
 import java.util.ArrayList;
@@ -45,8 +46,8 @@ public class Agent extends Player {
 
         if (this.color == 'w') {
 
-            Evaluation bestEval = Evaluation.CHECKMATE_FOR_BLACK;
-            Evaluation eval = null;
+            DetailedEvaluation bestEval = DetailedEvaluation.CHECKMATE_FOR_BLACK;
+            DetailedEvaluation eval = null;
             ChessMove bestMove = possibleMoves.get(0);
             for (ChessMove move : possibleMoves) {
                 eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), this.depth - 1, bestEval);
@@ -56,23 +57,26 @@ public class Agent extends Player {
                 }
             }
 
+            System.out.println(eval.pathString(1, 'w'));
+
             return bestMove;
 
         } else {
 
-            Evaluation bestEval = Evaluation.CHECKMATE_FOR_WHITE;
-            Evaluation eval = null;
+            DetailedEvaluation bestEval = DetailedEvaluation.CHECKMATE_FOR_WHITE;
+            DetailedEvaluation eval = null;
             ChessMove bestMove = possibleMoves.get(0);
+
             for (ChessMove move : possibleMoves) {
                 eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);
-                System.out.println(move.getNotation() + " " + eval.toString());
+                System.out.println(eval.step(move).pathString(1, 'b') + " (" + eval.toString() + ")");
                 if (eval.compareTo(bestEval) < 0) {
                     bestEval = eval;
                     bestMove = move;
                 }
             }
 
-            System.out.printf("%s ", bestEval.toString());
+            //System.out.printf("%s ", bestEval.toString());
 
             return bestMove;
         }
@@ -87,10 +91,10 @@ public class Agent extends Player {
      * @param alphabeta the best achieved value of the siblings of this instance of the method call.
      * @return An Evaluation representing how advantageous the given position is for one player
      */
-    private Evaluation minimaxEvaluate(ChessPosition position, char color, int depth, Evaluation alphabeta) {
+    private DetailedEvaluation minimaxEvaluate(ChessPosition position, char color, int depth, Evaluation alphabeta) {
 
         if (ChessLogic.isRepeat(position)) {
-            return Evaluation.DRAW;
+            return DetailedEvaluation.DRAW;
         }
 
         // base case
@@ -103,58 +107,46 @@ public class Agent extends Player {
         if (color == 'w') { 
             // maximizing case
 
-            Evaluation bestEval = Evaluation.CHECKMATE_FOR_BLACK;
-            Evaluation eval = null;
+            DetailedEvaluation bestEval = DetailedEvaluation.CHECKMATE_FOR_BLACK;
+            DetailedEvaluation eval = null;
+            ChessMove bestMove = possibleMoves.get(0);
             for (ChessMove move : possibleMoves) {
                 eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);
-                //for (int i = 0; i < depth; i++) {
-                    //System.out.print(" ");
-                //}
-                //System.out.println(move.getNotation() + " " + eval.toString());
-
+                
                 // alpha-beta pruning
                 if (eval.compareTo(alphabeta) > 0) {
-                    //for (int i = 0; i < depth; i++) {
-                        //System.out.print(" ");
-                    //}
-                    //System.out.println(move.getNotation() + " " + eval.toString());
-                    return eval.step();
+                    return eval.step(move);
                 }
 
                 if (eval.compareTo(bestEval) > 0) {
                     bestEval = eval;
+                    bestMove = move;
                 }
             }
 
-            return bestEval.step();
+            return bestEval.step(bestMove);
 
         } else { 
             // minimizing case
 
-            Evaluation bestEval = Evaluation.CHECKMATE_FOR_WHITE;
-            Evaluation eval = null;
+            DetailedEvaluation bestEval = DetailedEvaluation.CHECKMATE_FOR_WHITE;
+            DetailedEvaluation eval = null;
+            ChessMove bestMove = possibleMoves.get(0);
             for (ChessMove move : possibleMoves) {
-                eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);
-                //for (int i = 0; i < depth; i++) {
-                    //System.out.print(" ");
-                //}
-                //System.out.println(move.getNotation() + " " + eval.toString());
+                eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);                
 
                 // alpha-beta pruning
                 if (eval.compareTo(alphabeta) < 0) {
-                    //for (int i = 0; i < depth; i++) {
-                        //System.out.print(" ");
-                    //}
-                    //System.out.println(move.getNotation() + " " + eval.toString());
-                    return eval.step();
+                    return eval.step(move);
                 }
 
                 if (eval.compareTo(bestEval) < 0) {
                     bestEval = eval;
+                    bestMove = move;
                 }
             }
 
-            return bestEval.step();
+            return bestEval.step(bestMove);
         }
     }
 }

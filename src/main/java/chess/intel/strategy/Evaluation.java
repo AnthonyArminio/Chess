@@ -1,5 +1,7 @@
 package chess.intel.strategy;
 
+import chess.logic.ChessMove;
+
 /**
  * Represents an evaluation of a ChessPosition
  */
@@ -10,9 +12,9 @@ public class Evaluation implements Comparable<Evaluation> {
     public static final Evaluation DRAW = new Evaluation(0);
 
     // raw value of the position (positive means advantageous for White, negative means advantageous for Black).
-    private float value;
+    protected float value;
     // checkmate clock (number of ply until checkmate). If this is not equal to -1, value should be infinite.
-    private int clock;
+    protected int clock;
 
     public Evaluation(float value) {
         this.value = value;
@@ -48,6 +50,7 @@ public class Evaluation implements Comparable<Evaluation> {
      * @return 1 if this Evaluation is better for White, -1 if it is better for Black, or 0 otherwise
      */
     public int compareTo(Evaluation other) {
+
         if (this.clock < 0) {
             if (other.clock < 0) {
                 if (this.value > other.value) {
@@ -73,9 +76,17 @@ public class Evaluation implements Comparable<Evaluation> {
                 }
             } else {
                 if (this.clock < other.clock) {
-                    return 1;
+                    if (this.value >= 0) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
                 } else if (this.clock > other.clock) {
-                    return -1;
+                    if (other.value >= 0) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
                 } else {
                     return 0;
                 }
