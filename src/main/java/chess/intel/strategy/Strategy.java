@@ -13,5 +13,5 @@ public abstract class Strategy {
      * @param position the position to evaluate.
      * @return A double evaluation of the position.
      */
-    public abstract DetailedEvaluation evaluate(ChessPosition position);
+    public abstract Evaluation evaluate(ChessPosition position);
 }

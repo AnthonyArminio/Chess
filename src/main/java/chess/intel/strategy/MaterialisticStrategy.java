@@ -6,24 +6,24 @@ import chess.logic.ChessPosition;
 
 public class MaterialisticStrategy extends Strategy {
 
-    public DetailedEvaluation evaluate(ChessPosition position) {
+    public Evaluation evaluate(ChessPosition position) {
 
         // standard evaluation
         if (ChessLogic.isCheckmate(position)) {
             if (position.colorToMove() == 'b') {
-                return DetailedEvaluation.CHECKMATE_FOR_WHITE;
+                return Evaluation.CHECKMATE_FOR_WHITE;
             } else {
-                return DetailedEvaluation.CHECKMATE_FOR_BLACK;
+                return Evaluation.CHECKMATE_FOR_BLACK;
             }
         } else if (ChessLogic.isStalemate(position)) {
-            return DetailedEvaluation.DRAW;
+            return Evaluation.DRAW;
         }
 
         float sum = 0;
         for (int i = 0; i < 64; i++) {
             sum += materialValue(position.getPieceAt(i));
         }
-        return new DetailedEvaluation(sum);
+        return new Evaluation(sum);
     }
 
     private static float materialValue(ChessPiece piece) {
