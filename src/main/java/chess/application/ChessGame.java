@@ -124,6 +124,10 @@ public class ChessGame {
         return this.position;
     }
 
+    public int getMoveNumber() {
+        return this.moveNumber;
+    }
+
     public void setBoard(ChessBoard board) {
         this.board = board;
     }

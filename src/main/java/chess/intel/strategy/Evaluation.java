@@ -27,11 +27,13 @@ public class Evaluation implements Comparable<Evaluation> {
         this.value = value;
         this.clock = -1;
         this.movePath = new ArrayList<ChessMove>();
+        this.bestMove = null;
     }
 
     public Evaluation(float value, int clock) {
         initialize(value, clock);
         this.movePath = new ArrayList<ChessMove>();
+        this.bestMove = null;
     }
 
     public Evaluation(float value, int clock, ArrayList<ChessMove> movePath) {
@@ -40,6 +42,7 @@ public class Evaluation implements Comparable<Evaluation> {
         for (ChessMove move : movePath) {
             this.movePath.add(move);
         }
+        this.bestMove = null;
     }
 
     /**

@@ -41,7 +41,9 @@ public class Agent extends Player {
         }
 
         Evaluation eval = minimaxEvaluate(position, this.color, this.depth, alphabeta);
-        System.out.println(eval.pathString(this.currentGame.getMoveNumber(), this.color));
+
+        System.out.println("\n" + eval.pathString(this.currentGame.getMoveNumber(), this.color) + " (" + eval.evalString() + ")");
+
         return eval.getBestMove();
     }
 
@@ -64,8 +66,6 @@ public class Agent extends Player {
                 return Evaluation.CHECKMATE_FOR_BLACK;
             }
         } else if (ChessLogic.isStalemate(position)) {
-            return Evaluation.DRAW;
-        } else if (ChessLogic.isRepeat(position)) {
             return Evaluation.DRAW;
         }
 
