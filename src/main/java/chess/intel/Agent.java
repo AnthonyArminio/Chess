@@ -65,6 +65,7 @@ public class Agent extends Player {
             ChessMove bestMove = possibleMoves.get(0);
             for (ChessMove move : possibleMoves) {
                 eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);
+                System.out.println(move.getNotation() + " " + eval.toString());
                 if (eval.compareTo(bestEval) < 0) {
                     bestEval = eval;
                     bestMove = move;
@@ -88,6 +89,10 @@ public class Agent extends Player {
      */
     private Evaluation minimaxEvaluate(ChessPosition position, char color, int depth, Evaluation alphabeta) {
 
+        if (ChessLogic.isRepeat(position)) {
+            return Evaluation.DRAW;
+        }
+
         // base case
         if (depth == 0) {
             return this.strategy.evaluate(position);
@@ -102,9 +107,17 @@ public class Agent extends Player {
             Evaluation eval = null;
             for (ChessMove move : possibleMoves) {
                 eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);
+                //for (int i = 0; i < depth; i++) {
+                    //System.out.print(" ");
+                //}
+                //System.out.println(move.getNotation() + " " + eval.toString());
 
                 // alpha-beta pruning
                 if (eval.compareTo(alphabeta) > 0) {
+                    //for (int i = 0; i < depth; i++) {
+                        //System.out.print(" ");
+                    //}
+                    //System.out.println(move.getNotation() + " " + eval.toString());
                     return eval.step();
                 }
 
@@ -122,9 +135,17 @@ public class Agent extends Player {
             Evaluation eval = null;
             for (ChessMove move : possibleMoves) {
                 eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);
+                //for (int i = 0; i < depth; i++) {
+                    //System.out.print(" ");
+                //}
+                //System.out.println(move.getNotation() + " " + eval.toString());
 
                 // alpha-beta pruning
                 if (eval.compareTo(alphabeta) < 0) {
+                    //for (int i = 0; i < depth; i++) {
+                        //System.out.print(" ");
+                    //}
+                    //System.out.println(move.getNotation() + " " + eval.toString());
                     return eval.step();
                 }
 

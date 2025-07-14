@@ -85,7 +85,11 @@ public class Evaluation implements Comparable<Evaluation> {
 
     public String toString() {
         if (this.clock >= 0) {
-            return "M" + this.clock;
+            if (this.value < 0) {
+                return "-M" + this.clock;
+            } else {
+                return "M" + this.clock;
+            }
         }
         return "" + this.value;
     }

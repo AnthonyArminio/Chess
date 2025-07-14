@@ -17,8 +17,6 @@ public class MaterialisticStrategy extends Strategy {
             }
         } else if (ChessLogic.isStalemate(position)) {
             return Evaluation.DRAW;
-        } else if (ChessLogic.isRepeat(position)) {
-            return Evaluation.DRAW;
         }
 
         float sum = 0;
