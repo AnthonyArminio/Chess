@@ -146,6 +146,19 @@ public class ChessLogic {
         return false;
     }
 
+    public static boolean isThreefoldRepetition(ChessPosition position) {
+        ArrayList<CompressedPosition> reachedPositions = position.getReachedPositions();
+        int count = 1;
+        for (CompressedPosition compressedPosition : reachedPositions) {
+            if (compressedPosition.equals(position.getCompressedPosition())) {
+                if (++count == 3) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static char opponentOf(char color) {
         if (color == 'w') {
             return 'b';

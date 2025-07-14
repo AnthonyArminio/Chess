@@ -73,6 +73,8 @@ public class Agent extends Player {
             }
         } else if (ChessLogic.isStalemate(position)) {
             return Evaluation.DRAW;
+        } else if (ChessLogic.isThreefoldRepetition(position)) {
+            return Evaluation.DRAW;
         }
 
         // base case
@@ -108,7 +110,7 @@ public class Agent extends Player {
         } else { 
             // minimizing case
 
-            Evaluation bestEval = Evaluation.CHECKMATE_FOR_WHITE;
+            Evaluation bestEval = Evaluation.CHECKMATE_FOR_WHITE;         
             Evaluation eval = null;
             ChessMove bestMove = possibleMoves.get(0);
             for (ChessMove move : possibleMoves) {
