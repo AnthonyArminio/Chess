@@ -31,6 +31,12 @@ public class Agent extends Player {
         t.start();
     }
 
+    /**
+     * Finds the best move in a specified position according to this Agent's Strategy. If there are no moves in the
+     * position, returns null.
+     * @param position The position to analyze
+     * @return The best move in the position, or null if there are no moves.
+     */
     public ChessMove findBestMove(ChessPosition position) {
 
         Evaluation alphabeta;
