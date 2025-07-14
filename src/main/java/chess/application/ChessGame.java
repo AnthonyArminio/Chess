@@ -111,6 +111,12 @@ public class ChessGame {
         } else if (ChessLogic.isStalemate(this.position)) {
             //onDraw();
             return true;
+        } else if (ChessLogic.isThreefoldRepetition(position)) {
+            //onDraw();
+            return true;
+        } else if (ChessLogic.isFiftyMoveRule(position)) {
+            //onDraw();
+            return true;
         }
 
         return false;

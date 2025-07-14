@@ -159,6 +159,10 @@ public class ChessLogic {
         return false;
     }
 
+    public static boolean isFiftyMoveRule(ChessPosition position) {
+        return position.getReachedPositions().size() >= 100 && position.colorToMove() == 'w';
+    }
+
     public static char opponentOf(char color) {
         if (color == 'w') {
             return 'b';
