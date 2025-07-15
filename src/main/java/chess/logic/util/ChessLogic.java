@@ -170,11 +170,9 @@ public class ChessLogic {
 
         long[][] piecePlacements = position.getCompressedPosition().getPiecePlacements();
         if (piecePlacements[CompressedPosition.ROOK][CompressedPosition.WHITE] + piecePlacements[CompressedPosition.ROOK][CompressedPosition.BLACK] != 0) {
-            System.out.println("There is a rook.");
             return false;
         }
         if (piecePlacements[CompressedPosition.QUEEN][CompressedPosition.WHITE] + piecePlacements[CompressedPosition.QUEEN][CompressedPosition.BLACK] != 0) {
-            System.out.println("There is a queen.");
             return false;
         }
 

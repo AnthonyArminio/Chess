@@ -72,10 +72,7 @@ public class ChessGame {
             System.out.printf("%d. %s ", this.moveNumber, move.getNotation());
         } else {
             System.out.printf("%s\n", move.getNotation());
-            this.moveNumber++;
         }
-
-        System.out.println(this.position.getCompressedPosition().getPiecePlacements()[0][0]);
 
         if (!handleGameEnd()) {
             advanceGame();
@@ -84,7 +81,9 @@ public class ChessGame {
 
     private void advanceGame() {
         passTurn();
-        // increment move counter here
+        if (playerToMove == this.whitePlayer) {
+            this.moveNumber++;
+        }
         this.playerToMove.alertToMove(this);
 
     }

@@ -110,7 +110,7 @@ public class Agent extends Player {
                 eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);
                 
                 // alpha-beta pruning
-                if (eval.compareTo(alphabeta) > 0) {
+                if (eval.compareTo(alphabeta) >= 0) {
                     return eval.step(move);
                 }
 
@@ -144,7 +144,7 @@ public class Agent extends Player {
                 eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);                
 
                 // alpha-beta pruning
-                if (eval.compareTo(alphabeta) < 0) {
+                if (eval.compareTo(alphabeta) <= 0) {
                     return eval.step(move);
                 }
 
