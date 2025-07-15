@@ -5,14 +5,15 @@ package chess.logic;
  */
 public class CompressedPosition {
 
-    private static final int BISHOP = 0;
-    private static final int KNIGHT = 1;
-    private static final int ROOK = 2;
-    private static final int QUEEN = 3;
-    private static final int KING = 4;
 
-    private static final int WHITE = 0;
-    private static final int BLACK = 1;
+    public static final int BISHOP = 0;
+    public static final int KNIGHT = 1;
+    public static final int ROOK = 2;
+    public static final int QUEEN = 3;
+    public static final int KING = 4;
+
+    public static final int WHITE = 0;
+    public static final int BLACK = 1;
 
     // Encodes the placements of each piece type (excluding pawns). The first dimension encodes
     // piece type, the second dimension encodes piece color, and the value of the long encodes
@@ -34,9 +35,9 @@ public class CompressedPosition {
         for (int i = 0; i < 64; i++) {
             int id = position.getPieceIDAt(i);
             if (id >= 2) {
-                this.piecePlacements[id - 2][WHITE] += 1 << i;
+                this.piecePlacements[id - 2][WHITE] += 1l << i;
             } else if (id <= -2) {
-                this.piecePlacements[-2 - id][BLACK] += 1 << i;
+                this.piecePlacements[-2 - id][BLACK] += 1l << i;
             }
         }
 
@@ -67,11 +68,11 @@ public class CompressedPosition {
 
     private void makeAlteration(int start, int end, int id) {
         if (id >= 2) {
-            this.piecePlacements[id - 2][WHITE] -= 1 << start;
-            this.piecePlacements[id - 2][WHITE] += 1 << end;
+            this.piecePlacements[id - 2][WHITE] -= 1l << start;
+            this.piecePlacements[id - 2][WHITE] += 1l << end;
         } else if (id <= -2) {
-            this.piecePlacements[-2 - id][BLACK] -= 1 << start;
-            this.piecePlacements[-2 - id][BLACK] += 1 << end;
+            this.piecePlacements[-2 - id][BLACK] -= 1l << start;
+            this.piecePlacements[-2 - id][BLACK] += 1l << end;
         }
     }
 
@@ -82,8 +83,8 @@ public class CompressedPosition {
         if (move.isCapture()) {
             for (int p = BISHOP; p < 5; p++) {
                 for (int c = WHITE; c < 2; c++) {
-                    if (((this.piecePlacements[p][c] << end) & 1) != 0) {
-                        this.piecePlacements[p][c] -= 1 << end;
+                    if (((this.piecePlacements[p][c] >> end) & 1) != 0) {
+                        this.piecePlacements[p][c] -= 1l << end;
                     }
                 }
             }
@@ -93,9 +94,9 @@ public class CompressedPosition {
 
         if (move.isPromotion()) {
             if (id >= 2) {
-                this.piecePlacements[id - 2][WHITE] += 1 << end;
+                this.piecePlacements[id - 2][WHITE] += 1l << end;
             } else if (id <= -2) {
-                this.piecePlacements[-2 - id][BLACK] += 1 << end;
+                this.piecePlacements[-2 - id][BLACK] += 1l << end;
             }
         } else {
             makeAlteration(start, end, id);
@@ -140,5 +141,9 @@ public class CompressedPosition {
         }
 
         return true;
+    }
+
+    public long[][] getPiecePlacements() {
+        return this.piecePlacements;
     }
 }

@@ -163,6 +163,96 @@ public class ChessLogic {
         return position.getReachedPositions().size() >= 100 && position.colorToMove() == 'w';
     }
 
+    public static boolean isInsufficientMaterial(ChessPosition position) {
+        if (ChessLogic.containsPawn(position)) {
+            return false;
+        }
+
+        long[][] piecePlacements = position.getCompressedPosition().getPiecePlacements();
+        if (piecePlacements[CompressedPosition.ROOK][CompressedPosition.WHITE] + piecePlacements[CompressedPosition.ROOK][CompressedPosition.BLACK] != 0) {
+            System.out.println("There is a rook.");
+            return false;
+        }
+        if (piecePlacements[CompressedPosition.QUEEN][CompressedPosition.WHITE] + piecePlacements[CompressedPosition.QUEEN][CompressedPosition.BLACK] != 0) {
+            System.out.println("There is a queen.");
+            return false;
+        }
+
+        int wKnightCount = 0;
+        int bKnightCount = 0;
+        int wLightBishopCount = 0;
+        int wDarkBishopCount = 0;
+        int bLightBishopCount = 0;
+        int bDarkBishopCount = 0;
+
+        for(int i = 0; i < 64; i++) {
+            ChessPiece piece = position.getPieceAt(i);
+            if (piece != null) {
+                if (piece.getType() == 'N') {
+                    if (piece.getColor() == 'w') {
+                        if (wLightBishopCount + wDarkBishopCount > 0) {
+                            return false;
+                        }
+                        if (++wKnightCount == 3) {
+                            return false;
+                        }
+                    } else {
+                        if (bLightBishopCount + bDarkBishopCount > 0) {
+                            return false;
+                        }
+                        if (++bKnightCount == 3) {
+                            return false;
+                        }
+                    }
+                } else if (piece.getType() == 'B') {
+                    if (piece.getColor() == 'w') {
+                        if (wKnightCount > 0) {
+                            return false;
+                        }
+                        if (i % 2 == 0) {
+                            if (wLightBishopCount > 0) {
+                                return false;
+                            }
+                            wDarkBishopCount++;
+                        } else {
+                            if (wDarkBishopCount > 0) {
+                                return false;
+                            }
+                            wLightBishopCount++;
+                        }
+                    } else {
+                        if (bKnightCount > 0) {
+                            return false;
+                        }
+                        if (i % 2 == 0) {
+                            if (bLightBishopCount > 0) {
+                                return false;
+                            }
+                            bDarkBishopCount++;
+                        } else {
+                            if (bDarkBishopCount > 0) {
+                                return false;
+                            }
+                            bLightBishopCount++;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public static boolean containsPawn(ChessPosition position) {
+        for (int i = 8; i < 56; i++) {
+            ChessPiece piece = position.getPieceAt(i);
+            if (piece != null && piece.getType() == 'P') {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static char opponentOf(char color) {
         if (color == 'w') {
             return 'b';

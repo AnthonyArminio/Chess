@@ -17,9 +17,9 @@ public class Agent extends Player {
     private Strategy strategy;
     private int depth;
 
-    public Agent(char color, Strategy s, int depth) {
+    public Agent(char color, Strategy strategy, int depth) {
         super(color, false);
-        this.strategy = s;
+        this.strategy = strategy;
         this.depth = depth;
     }
 
@@ -75,6 +75,8 @@ public class Agent extends Player {
         } else if (ChessLogic.isStalemate(position)) {
             return Evaluation.DRAW;
         } else if (ChessLogic.isThreefoldRepetition(position)) {
+            return Evaluation.DRAW;
+        } else if (ChessLogic.isInsufficientMaterial(position)) {
             return Evaluation.DRAW;
         }
 
@@ -132,7 +134,7 @@ public class Agent extends Player {
             DataMath.quickSort(staticEvaluations, false);
              */
 
-            Evaluation bestEval = Evaluation.CHECKMATE_FOR_WHITE;         
+            Evaluation bestEval = Evaluation.CHECKMATE_FOR_WHITE;
             Evaluation eval = null;
             ChessMove bestMove = possibleMoves.get(0);
             //ChessMove move = null;

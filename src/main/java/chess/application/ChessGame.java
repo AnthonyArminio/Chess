@@ -75,6 +75,8 @@ public class ChessGame {
             this.moveNumber++;
         }
 
+        System.out.println(this.position.getCompressedPosition().getPiecePlacements()[0][0]);
+
         if (!handleGameEnd()) {
             advanceGame();
         }
@@ -116,6 +118,10 @@ public class ChessGame {
             return true;
         } else if (ChessLogic.isFiftyMoveRule(position)) {
             //onDraw();
+            return true;
+        } else if (ChessLogic.isInsufficientMaterial(position)) {
+            //onDraw();
+            System.out.println("INSUFFICIENT MATERIAL");
             return true;
         }
 
