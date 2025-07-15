@@ -8,17 +8,6 @@ public class MaterialisticStrategy extends Strategy {
 
     public Evaluation evaluate(ChessPosition position) {
 
-        // standard evaluation
-        if (ChessLogic.isCheckmate(position)) {
-            if (position.colorToMove() == 'b') {
-                return Evaluation.CHECKMATE_FOR_WHITE;
-            } else {
-                return Evaluation.CHECKMATE_FOR_BLACK;
-            }
-        } else if (ChessLogic.isStalemate(position)) {
-            return Evaluation.DRAW;
-        }
-
         float sum = 0;
         for (int i = 0; i < 64; i++) {
             sum += materialValue(position.getPieceAt(i));

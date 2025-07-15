@@ -1,0 +1,66 @@
+package chess.intel.util;
+
+import java.util.ArrayList;
+
+public class DataMath {
+    
+    /**
+     * Sorts a specified list using quick sort
+     * @param <T> The list type, which must implement Comparable<T>
+     * @param list The list to sort
+     * @param reversed Whether the list should be sorted in reverse
+     */
+    public static <T extends Comparable<T>> void quickSort(ArrayList<T> list, boolean reversed) {
+
+        T basis = list.remove(0);
+        ArrayList<T> minorList = new ArrayList<T>();
+        ArrayList<T> majorList = new ArrayList<T>();
+
+        for (T element : list) {
+            if (element.compareTo(basis) < 0) {
+                minorList.add(element);
+            } else {
+                majorList.add(element);
+            }
+        }
+
+        if (minorList.size() > 1) {
+            quickSort(minorList, reversed);
+        }
+        if (majorList.size() > 1) {
+            quickSort(majorList, reversed);
+        }
+
+        minorList.add(basis);
+        ArrayList<T> sortedList;
+        if (reversed) {
+            sortedList = combineLists(minorList, majorList);
+        } else {
+            sortedList = combineLists(majorList, minorList);
+        }
+
+        list.clear();
+        for (T element : sortedList) {
+            list.add(element);
+        }
+
+    }
+
+    /**
+     * Combines two lists into a single list and returns the result.
+     * @param <T> The list type
+     * @param list1 The first list
+     * @param list2 The second list
+     * @return The new list
+     */
+    private static <T> ArrayList<T> combineLists(ArrayList<T> list1, ArrayList<T> list2) {
+        ArrayList<T> newList = new ArrayList<T>();
+        for (T element : list1) {
+            newList.add(element);
+        }
+        for (T element : list2) {
+            newList.add(element);
+        }
+        return newList;
+    }
+}

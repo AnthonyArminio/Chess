@@ -4,6 +4,7 @@ import chess.application.ChessGame;
 import chess.logic.ChessPosition;
 import chess.logic.util.ChessLogic;
 import chess.intel.strategy.Strategy;
+import chess.intel.util.DataMath;
 import chess.intel.strategy.Evaluation;
 import chess.logic.ChessMove;
 
@@ -88,10 +89,22 @@ public class Agent extends Player {
         if (color == 'w') { 
             // maximizing case
 
+            // sort moves before analyzing them (apparently slower)
+            /* 
+            ArrayList<Evaluation> staticEvaluations = new ArrayList<Evaluation>();
+            for (ChessMove move : possibleMoves) {
+                staticEvaluations.add(this.strategy.evaluate(position.afterMove(move)).step(move));
+            }
+            DataMath.quickSort(staticEvaluations, true);
+             */
+
             Evaluation bestEval = Evaluation.CHECKMATE_FOR_BLACK;
             Evaluation eval = null;
             ChessMove bestMove = possibleMoves.get(0);
+            //ChessMove move = null;
             for (ChessMove move : possibleMoves) {
+            //for (Evaluation staticEval : staticEvaluations) {
+                //move = staticEval.getBestMove();
                 eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);
                 
                 // alpha-beta pruning
@@ -110,10 +123,22 @@ public class Agent extends Player {
         } else { 
             // minimizing case
 
+            // sort moves before analyzing them (apparently slower)
+            /* 
+            ArrayList<Evaluation> staticEvaluations = new ArrayList<Evaluation>();
+            for (ChessMove move : possibleMoves) {
+                staticEvaluations.add(this.strategy.evaluate(position.afterMove(move)).step(move));
+            }
+            DataMath.quickSort(staticEvaluations, false);
+             */
+
             Evaluation bestEval = Evaluation.CHECKMATE_FOR_WHITE;         
             Evaluation eval = null;
             ChessMove bestMove = possibleMoves.get(0);
+            //ChessMove move = null;
             for (ChessMove move : possibleMoves) {
+            //for (Evaluation staticEval : staticEvaluations) {
+                //move = staticEval.getBestMove();
                 eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);                
 
                 // alpha-beta pruning
