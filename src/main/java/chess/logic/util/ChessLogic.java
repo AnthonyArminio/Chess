@@ -207,7 +207,7 @@ public class ChessLogic {
                         if (wKnightCount > 0) {
                             return false;
                         }
-                        if (i % 2 == 0) {
+                        if ((GridMath.getFile(i) + GridMath.getRank(i)) % 2 == 0) {
                             if (wLightBishopCount > 0) {
                                 return false;
                             }
@@ -222,7 +222,7 @@ public class ChessLogic {
                         if (bKnightCount > 0) {
                             return false;
                         }
-                        if (i % 2 == 0) {
+                        if ((GridMath.getFile(i) + GridMath.getRank(i)) % 2 == 0) {
                             if (bLightBishopCount > 0) {
                                 return false;
                             }
