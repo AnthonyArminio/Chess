@@ -3,6 +3,33 @@ package chess.intel.util;
 import java.util.ArrayList;
 
 public class DataMath {
+
+    /**
+     * Multiplies a Matrix m by a Vector v.
+     * @param m the Matrix to multiply.
+     * @param v the Vector to multiply.
+     * @return the product of m and v.
+     * @throws IllegalArgumentException if the number of columns of m does not match the dimension of v.
+     */
+    public Vector matrixMultiply(Matrix m, Vector v) {
+
+        if (m.cols() != v.dim()) {
+            throw new IllegalArgumentException("matrixMultiply: dimensions do not match.");
+        }
+
+        int dim = v.dim();
+        int newDim = m.rows();
+
+        Vector result = new Vector(newDim);
+
+        for (int i = 0; i < newDim; i++) {
+            for (int j = 0; j < dim; j++) {
+                result.getData()[i] += m.get(i, j) * v.get(j);
+            }
+        }
+
+        return result;
+    }
     
     /**
      * Sorts a specified list using quick sort
@@ -44,6 +71,15 @@ public class DataMath {
             list.add(element);
         }
 
+    }
+
+    /**
+     * Returns a sigma distribution given an input x.
+     * @param x
+     * @return sigma(x)
+     */
+    public static double sigma(double x) {
+        return 1 / (1 + Math.pow(Math.E, -x));
     }
 
     /**
