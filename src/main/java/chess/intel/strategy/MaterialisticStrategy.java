@@ -6,7 +6,7 @@ import chess.logic.ChessPosition;
 
 public class MaterialisticStrategy extends Strategy {
 
-    public Evaluation evaluate(ChessPosition position) {
+    @Override public Evaluation evaluate(ChessPosition position) {
 
         float sum = 0;
         for (int i = 0; i < 64; i++) {

@@ -11,7 +11,7 @@ public class DataMath {
      * @return the product of m and v.
      * @throws IllegalArgumentException if the number of columns of m does not match the dimension of v.
      */
-    public Vector matrixMultiply(Matrix m, Vector v) {
+    public static Vector matrixMultiply(Matrix m, Vector v) {
 
         if (m.cols() != v.dim()) {
             throw new IllegalArgumentException("matrixMultiply: dimensions do not match.");
@@ -78,8 +78,8 @@ public class DataMath {
      * @param x
      * @return sigma(x)
      */
-    public static double sigma(double x) {
-        return 1 / (1 + Math.pow(Math.E, -x));
+    public static float sigma(double x) {
+        return 1 / (1 + (float) Math.pow(Math.E, -x));
     }
 
     /**

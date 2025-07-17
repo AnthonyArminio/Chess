@@ -17,7 +17,7 @@ public class Vector extends Matrix {
      * @return
      * @throws IllegalArgumentException if the specified index exceeds or equals the number of dimensions.
      */
-    public double get(int index) {
+    public float get(int index) {
         if (index >= this.dim) {
             throw new IllegalArgumentException("get: specified index exceeds the dimension of this vector.");
         }
@@ -33,7 +33,7 @@ public class Vector extends Matrix {
         return this.dim;
     }
 
-    public double[] getData() {
+    public float[] getData() {
         return this.data[0];
     }
 }

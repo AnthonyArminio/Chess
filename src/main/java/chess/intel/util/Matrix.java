@@ -2,16 +2,23 @@ package chess.intel.util;
 
 public class Matrix {
     
-    protected double[][] data;
+    protected float[][] data;
     private int rows;
     private int cols;
 
     public Matrix(int rows, int cols) {
-        this.data = new double[cols][rows];
         this.rows = rows;
         this.cols = cols;
+        this.data = new float[this.cols][this.rows];
 
         clear();
+    }
+
+    public Matrix(float[][] data) {
+        this.rows = data[0].length;
+        this.cols = data.length;
+
+        setAll(data);
     }
 
     /**
@@ -20,9 +27,21 @@ public class Matrix {
     public void clear() {
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.cols; j++) {
-                this.data[i][j] = 0;
+                this.data[j][i] = 0;
             }
         }
+    }
+
+    public void setAll(float[][] data) {
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
+                this.data[j][i] = data[j][i];
+            }
+        }
+    }
+
+    public Matrix copy() {
+        return new Matrix(this.data);
     }
 
     /**
@@ -32,7 +51,7 @@ public class Matrix {
      * @return
      * @throws IllegalArgumentException if the specified row or column is out of bounds.
      */
-    public double get(int row, int col) {
+    public float get(int row, int col) {
         if (row >= this.rows || col >= this.cols) {
             throw new IllegalArgumentException("get: specified row or column is out of bounds for this matrix.");
         }
