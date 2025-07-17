@@ -83,6 +83,16 @@ public class DataMath {
     }
 
     /**
+     * Applies the sigma distribution to all entries of a given Vector.
+     * @param v
+     */
+    public static void sigma(Vector v) {
+        for (int i = 0; i < v.dim(); i++) {
+            v.set(i, DataMath.sigma(v.get(i)));
+        }
+    }
+
+    /**
      * Combines two lists into a single list and returns the result.
      * @param <T> The list type
      * @param list1 The first list

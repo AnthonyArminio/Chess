@@ -11,6 +11,10 @@ public class Vector extends Matrix {
 
     }
 
+    public void set(int index, float value) {
+        this.getData()[index] = value;
+    }
+
     /**
      * Returns the entry at a specified index
      * @param index
@@ -22,7 +26,7 @@ public class Vector extends Matrix {
             throw new IllegalArgumentException("get: specified index exceeds the dimension of this vector.");
         }
 
-        return this.data[0][index];
+        return this.getData()[index];
     }
 
     /**

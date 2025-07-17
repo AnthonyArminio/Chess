@@ -30,6 +30,7 @@ public class NeuralNetwork extends Strategy {
         Vector inputLayer = this.inputStrategy.convertToInput(position);
         for (int layer = 0; layer < this.numLayers; layer++) {
             inputLayer = DataMath.matrixMultiply(weights[layer], inputLayer);
+            DataMath.sigma(inputLayer);
         }
         return new Evaluation(inputLayer.get(0));
     }
