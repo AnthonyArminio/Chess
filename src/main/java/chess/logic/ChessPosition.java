@@ -72,6 +72,10 @@ public class ChessPosition {
         
     }
 
+    public ChessPosition copy() {
+        return new ChessPosition(this.positionArray, this.stateArray, this.compressedPosition, this.reachedPositions);
+    }
+
     /**
      * Returns the index corresponding to the castling destination (where the king lands) for a given
      * color and side. ('K' for kingside castling, 'Q' for queenside castling)
@@ -155,7 +159,7 @@ public class ChessPosition {
         int enPassantValue = move.enPassantValue();
         this.stateArray[EN_PASSANT] = enPassantValue;
         if (enPassantValue >= 0) {
-            ChessPosition afterPass = this.afterPass();
+            ChessPosition afterPass = this.copy().passTurn();
             if (!(!this.isEmpty(move.getEnd() + 1) && 
                 this.getPieceAt(move.getEnd() + 1).getType() == 'P' && 
                 new ChessMove(afterPass, move.getEnd() + 1, enPassantValue).isLegal()) && 
@@ -215,10 +219,6 @@ public class ChessPosition {
         return this.reachedPositions;
     }
 
-    public ChessPosition copy() {
-        return new ChessPosition(this.positionArray, this.stateArray, this.compressedPosition, this.reachedPositions);
-    }
-
     /**
      * Returns a copy of this position after a specified alteration is made.
      */
@@ -263,10 +263,12 @@ public class ChessPosition {
      * the state of the original position.
      * @return the new position after the turn has been passed
      */
+    /*
     public ChessPosition afterPass() {
         ChessPosition position = this.copy();
         return position.passTurn();
     }
+    */
 
     /**
      * Returns a reference to this position's positionArray.

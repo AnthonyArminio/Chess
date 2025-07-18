@@ -1,6 +1,5 @@
 package chess.intel.strategy;
 
-import chess.logic.util.ChessLogic;
 import chess.logic.ChessPiece;
 import chess.logic.ChessPosition;
 

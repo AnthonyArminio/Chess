@@ -32,6 +32,10 @@ public class Matrix {
         }
     }
 
+    public void set(int row, int col, float value) {
+        this.data[col][row] = value;
+    }
+
     public void setAll(float[][] data) {
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.cols; j++) {
