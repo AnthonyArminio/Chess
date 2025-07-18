@@ -5,14 +5,21 @@ public class Vector extends Matrix {
     private int dim;
 
     public Vector(int dimension) {
-
         super(dimension, 1);
         this.dim = dimension;
+    }
 
+    public Vector(float[][] data) {
+        super(data);
+        this.dim = data[0].length;
     }
 
     public void set(int index, float value) {
         this.getData()[index] = value;
+    }
+
+    @Override public Vector copy() {
+        return new Vector(this.data);
     }
 
     /**

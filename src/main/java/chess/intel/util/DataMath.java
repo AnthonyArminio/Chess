@@ -5,6 +5,28 @@ import java.util.ArrayList;
 public class DataMath {
 
     /**
+     * Returns the sum of two vectors.
+     * @param v1
+     * @param v2
+     * @return
+     * @throws IllegalArgumentException If the dimensions of the two vectors do not match.
+     */
+    public static Vector vectorAdd(Vector v1, Vector v2) {
+        if (v1.dim() != v2.dim()) {
+            throw new IllegalArgumentException("vectorAdd: both vectors do not have the same dimension.");
+        }
+
+        int dim = v1.dim();
+        Vector result = new Vector(dim);
+
+        for (int i = 0; i < dim; i++) {
+            result.set(i, v1.get(i) + v2.get(i));
+        }
+
+        return result;
+    }
+
+    /**
      * Multiplies a Matrix m by a Vector v.
      * @param m the Matrix to multiply.
      * @param v the Vector to multiply.
@@ -19,12 +41,11 @@ public class DataMath {
 
         int dim = v.dim();
         int newDim = m.rows();
-
         Vector result = new Vector(newDim);
 
         for (int i = 0; i < newDim; i++) {
             for (int j = 0; j < dim; j++) {
-                result.getData()[i] += m.get(i, j) * v.get(j);
+                result.set(i, result.get(i) + (m.get(i, j) * v.get(j)));
             }
         }
 
