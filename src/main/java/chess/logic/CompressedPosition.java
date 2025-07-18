@@ -6,11 +6,12 @@ package chess.logic;
 public class CompressedPosition {
 
 
-    public static final int BISHOP = 0;
-    public static final int KNIGHT = 1;
-    public static final int ROOK = 2;
-    public static final int QUEEN = 3;
-    public static final int KING = 4;
+    public static final int PAWN = 0;
+    public static final int BISHOP = 1;
+    public static final int KNIGHT = 2;
+    public static final int ROOK = 3;
+    public static final int QUEEN = 4;
+    public static final int KING = 5;
 
     public static final int WHITE = 0;
     public static final int BLACK = 1;
@@ -24,20 +25,20 @@ public class CompressedPosition {
     private int[] stateArray;
 
     public CompressedPosition(ChessPosition position) {
-        this.piecePlacements = new long[5][2];
+        this.piecePlacements = new long[6][2];
 
-        for (int p = BISHOP; p < 5; p++) {
-            for (int c = WHITE; c < 2; c++) {
+        for (int p = PAWN; p <= KING; p++) {
+            for (int c = WHITE; c <= BLACK; c++) {
                 this.piecePlacements[p][c] = 0;
             }
         }
 
         for (int i = 0; i < 64; i++) {
             int id = position.getPieceIDAt(i);
-            if (id >= 2) {
-                this.piecePlacements[id - 2][WHITE] += 1l << i;
-            } else if (id <= -2) {
-                this.piecePlacements[-2 - id][BLACK] += 1l << i;
+            if (id > 0) {
+                this.piecePlacements[id - 1][WHITE] += 1l << i;
+            } else if (id < 0) {
+                this.piecePlacements[-1 - id][BLACK] += 1l << i;
             }
         }
 
@@ -53,36 +54,43 @@ public class CompressedPosition {
      */
     public CompressedPosition(long[][] piecePlacements, int[] stateArray) {
 
-        this.piecePlacements = new long[5][2];
-        for (int p = BISHOP; p < 5; p++) {
-            for (int c = WHITE; c < 2; c++) {
+        this.piecePlacements = new long[6][2];
+        for (int p = PAWN; p <= KING; p++) {
+            for (int c = WHITE; c <= BLACK; c++) {
                 this.piecePlacements[p][c] = piecePlacements[p][c];
             }
         }
 
-        this.stateArray = new int[5];
-        for (int i = 0; i < 5; i++) {
+        this.stateArray = new int[6];
+        for (int i = 0; i < 6; i++) {
             this.stateArray[i] = stateArray[i];
         }
     }
 
     private void makeAlteration(int start, int end, int id) {
-        if (id >= 2) {
-            this.piecePlacements[id - 2][WHITE] -= 1l << start;
-            this.piecePlacements[id - 2][WHITE] += 1l << end;
-        } else if (id <= -2) {
-            this.piecePlacements[-2 - id][BLACK] -= 1l << start;
-            this.piecePlacements[-2 - id][BLACK] += 1l << end;
+        if (id > 0) {
+            this.piecePlacements[id - 1][WHITE] -= 1l << start;
+            this.piecePlacements[id - 1][WHITE] += 1l << end;
+        } else if (id < 0) {
+            this.piecePlacements[-1 - id][BLACK] -= 1l << start;
+            this.piecePlacements[-1 - id][BLACK] += 1l << end;
         }
     }
 
     public void makeMove(ChessMove move) {
         int start = move.getStart();
         int end = move.getEnd();
+        int id = move.getPieceID();
 
-        if (move.isCapture()) {
-            for (int p = BISHOP; p < 5; p++) {
-                for (int c = WHITE; c < 2; c++) {
+        if (move.isEnPassant()) {
+            if (id > 0) {
+                this.piecePlacements[PAWN][BLACK] -= 1l << (end - 8);
+            } else if (id < 0) {
+                this.piecePlacements[PAWN][WHITE] -= 1l << (end + 8);
+            }
+        } else if (move.isCapture()) {
+            for (int p = PAWN; p <= KING; p++) {
+                for (int c = WHITE; c <= BLACK; c++) {
                     if (((this.piecePlacements[p][c] >> end) & 1) != 0) {
                         this.piecePlacements[p][c] -= 1l << end;
                     }
@@ -90,13 +98,13 @@ public class CompressedPosition {
             }
         }
 
-        int id = move.getPieceID();
-
         if (move.isPromotion()) {
-            if (id >= 2) {
-                this.piecePlacements[id - 2][WHITE] += 1l << end;
-            } else if (id <= -2) {
-                this.piecePlacements[-2 - id][BLACK] += 1l << end;
+            if (id > 0) {
+                this.piecePlacements[PAWN][WHITE] -= 1l << start;
+                this.piecePlacements[id - 1][WHITE] += 1l << end;
+            } else if (id < 0) {
+                this.piecePlacements[PAWN][BLACK] -= 1l << start;
+                this.piecePlacements[-1 - id][BLACK] += 1l << end;
             }
         } else {
             makeAlteration(start, end, id);
@@ -126,15 +134,15 @@ public class CompressedPosition {
      */
     public boolean equals(CompressedPosition other) {
 
-        for (int p = BISHOP; p < 5; p++) {
-            for (int c = WHITE; c < 2; c++) {
+        for (int p = BISHOP; p <= KING; p++) {
+            for (int c = WHITE; c <= BLACK; c++) {
                 if (this.piecePlacements[p][c] != other.piecePlacements[p][c]) {
                     return false;
                 }
             }
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             if (this.stateArray[i] != other.stateArray[i]) {
                 return false;
             }
