@@ -14,9 +14,18 @@ public class Matrix {
         clear();
     }
 
+    public Matrix(int rows, int cols, float min, float max) {
+        this.rows = rows;
+        this.cols = cols;
+        this.data = new float[this.cols][this.rows];
+
+        randomize(min, max);
+    }
+
     public Matrix(float[][] data) {
         this.rows = data[0].length;
         this.cols = data.length;
+        this.data = new float[this.cols][this.rows];
 
         setAll(data);
     }
@@ -28,6 +37,17 @@ public class Matrix {
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.cols; j++) {
                 this.data[j][i] = 0;
+            }
+        }
+    }
+
+    private void randomize(float min, float max) {
+        if (max < min) {
+            throw new IllegalArgumentException("randomize: max cannot be less than min");
+        }
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
+                this.data[j][i] = (float) ((max - min) * Math.random() + min);
             }
         }
     }
