@@ -11,4 +11,12 @@ public class Generation {
         this.size = size;
         this.roster = new Trainee[size];
     }
+
+    public int getSize() {
+        return this.size;
+    }
+
+    public Trainee[] getRoster() {
+        return this.roster;
+    }
 }
