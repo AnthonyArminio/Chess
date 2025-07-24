@@ -104,27 +104,38 @@ public class ChessGame {
     private boolean handleGameEnd() {
         if (ChessLogic.isCheckmate(this.position)) {
             if (this.position.colorToMove() == 'w') {
-                //onWinForWhite();
+                onWinForWhite();
             } else {
-                //onWinForBlack();
+                onWinForBlack();
             }
             return true;
         } else if (ChessLogic.isStalemate(this.position)) {
-            //onDraw();
+            onDraw(0);
             return true;
         } else if (ChessLogic.isThreefoldRepetition(position)) {
-            //onDraw();
+            onDraw(1);
             return true;
         } else if (ChessLogic.isFiftyMoveRule(position)) {
-            //onDraw();
+            onDraw(2);
             return true;
         } else if (ChessLogic.isInsufficientMaterial(position)) {
-            //onDraw();
-            System.out.println("INSUFFICIENT MATERIAL");
+            onDraw(3);
             return true;
         }
 
         return false;
+    }
+
+    protected void onWinForWhite() {
+        System.out.println("White wins. Move number: " + this.moveNumber);
+    }
+
+    protected void onWinForBlack() {
+        System.out.println("Black wins. Move number: " + this.moveNumber);
+    }
+
+    protected void onDraw(int code) {
+        System.out.println("The game is a draw. Move number: " + this.moveNumber);
     }
 
     public Player getPlayerToMove() {
