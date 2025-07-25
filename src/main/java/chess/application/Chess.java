@@ -19,6 +19,8 @@ import chess.intel.strategy.MaterialisticStrategy;
 import chess.logic.ChessMove;
 import chess.logic.util.GridMath;
 
+import chess.intel.training.TrainingManager;
+
 public class Chess extends Application {
 
     private final double boardSize = 504.0;
@@ -67,6 +69,9 @@ public class Chess extends Application {
 
         stage.sizeToScene();
         stage.show();
+
+        // FOR TESTING
+        TrainingManager.startTraining(1);
     }
 
     private void loadGame(ChessGame game) {

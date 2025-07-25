@@ -1,18 +1,36 @@
 package chess.intel.training;
 
 import java.util.ArrayList;
+import java.io.File;
 
 public class TrainingManager {
 
     private static final String TEMPFILE_PATH = "file:output/training/gen";
     private static final int NUM_ROUNDS = 100;
+    private static final int MAX_MOVES = 100;
 
     /**
-     * 
-     * @param numGenerations
+     * Trains a specified number of generations starting from the Generation found by parsing the tempfile.
+     * When the training is complete, this method writes the final Generation to that same tempfile.
+     * @param numGenerations The number of Generations to train.
      */
     public static void startTraining(int numGenerations) {
+        File genFile = new File(TEMPFILE_PATH);
 
+        Generation gen;
+        if (genFile.exists()) {
+            gen = new Generation(genFile);
+        } else {
+            gen = new Generation();
+        }
+
+        int startingGenNumber = gen.getGenerationNumber();
+
+        for (int genNumber = startingGenNumber; genNumber < startingGenNumber + numGenerations; genNumber++) {
+            gen = train(gen);
+        }
+
+        gen.write(genFile);
     }
 
     /**
@@ -34,7 +52,7 @@ public class TrainingManager {
             }
         }
 
-        return gen.breed();
+        return breed(gen);
     }
 
     /**
