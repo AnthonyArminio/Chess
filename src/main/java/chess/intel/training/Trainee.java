@@ -5,6 +5,9 @@ import chess.intel.strategy.NeuralNetwork;
 
 public class Trainee extends Agent implements Comparable<Trainee> {
 
+    private final float WIN_REWARD = 10;
+    private final float LOSS_PUNISHMENT = -10;
+
     private float fitness;
 
     public Trainee(char color, NeuralNetwork nn, int depth) {
@@ -20,5 +23,19 @@ public class Trainee extends Agent implements Comparable<Trainee> {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Rewards the Trainee for winning a game.
+     */
+    public void reward() {
+        this.fitness += WIN_REWARD;
+    }
+
+    /**
+     * Punishes the Trainee for losing a game.
+     */
+    public void punish() {
+        this.fitness += LOSS_PUNISHMENT;
     }
 }

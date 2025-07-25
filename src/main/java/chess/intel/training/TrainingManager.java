@@ -1,8 +1,19 @@
 package chess.intel.training;
 
+import java.util.ArrayList;
+
 public class TrainingManager {
 
+    private static final String TEMPFILE_PATH = "file:output/training/gen";
     private static final int NUM_ROUNDS = 100;
+
+    /**
+     * 
+     * @param numGenerations
+     */
+    public static void startTraining(int numGenerations) {
+
+    }
 
     /**
      * Returns a new Generation created by training the previous Generation
@@ -10,7 +21,7 @@ public class TrainingManager {
      * @return The next improved Generation
      */
     public static Generation train(Generation gen) {
-        Trainee[] roster = gen.getRoster();
+        ArrayList<Trainee> roster = gen.getRoster();
 
         for (Trainee t1 : roster) {
             for (Trainee t2 : roster) {
