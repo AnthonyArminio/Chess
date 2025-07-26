@@ -17,20 +17,29 @@ public class TrainingManager {
     public static void startTraining(int numGenerations) {
         File genFile = new File(TEMPFILE_PATH);
 
-        Generation gen;
-        if (genFile.exists()) {
-            gen = new Generation(genFile);
-        } else {
-            gen = new Generation();
+        try {
+            Generation gen;
+            if (genFile.exists()) {
+                gen = Generation.getFromJson(genFile);
+            } else {
+                gen = new Generation();
+            }
+
+            int startingGenNumber = gen.getGenerationNumber();
+
+            for (int genNumber = startingGenNumber; genNumber < startingGenNumber + numGenerations; genNumber++) {
+                gen = train(gen);
+            }
+
+            try {
+                gen.write(genFile);
+            } catch (java.io.IOException ex) {
+                System.out.println("Error: Failed to write to JSON file.");
+            }
+
+        } catch (java.io.IOException ex) {
+            System.out.println("Error: Failed to read from JSON file.");
         }
-
-        int startingGenNumber = gen.getGenerationNumber();
-
-        for (int genNumber = startingGenNumber; genNumber < startingGenNumber + numGenerations; genNumber++) {
-            gen = train(gen);
-        }
-
-        gen.write(genFile);
     }
 
     /**

@@ -14,6 +14,7 @@
         "c:\\Program Files\\JavaFX\\javafx-sdk-24.0.1\\lib\\jfx.incubator.input.jar",
         "c:\\Program Files\\JavaFX\\javafx-sdk-24.0.1\\lib\\javafx.graphics.jar",
         "c:\\Program Files\\Java\\jdk-24\\lib\\jrt-fs.jar",
-        "c:\\Program Files\\JavaFX\\javafx-sdk-24.0.1\\lib\\javafx-swt.jar"
+        "c:\\Program Files\\JavaFX\\javafx-sdk-24.0.1\\lib\\javafx-swt.jar",
+        "lib\\gson-2.13.1.jar"
     ]
 }
