@@ -30,6 +30,11 @@ public class Agent extends Player {
         Thread t = new Thread(() -> makeMove(findBestMove(game.getPosition())));
         t.setDaemon(true);
         t.start();
+        try {
+            t.join();
+        } catch (InterruptedException ex) {
+            System.out.println("Thread interrupted.");
+        }
     }
 
     /**

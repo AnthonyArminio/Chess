@@ -83,7 +83,9 @@ public class TrainingManager {
      * fitness value of each Trainee.
      */
     private static TrainingGame match(Trainee white, Trainee black) {
-        return new TrainingGame(white, black);
+        TrainingGame newGame = new TrainingGame(white, black);
+        newGame.start();
+        return newGame;
     }
 
     /**
