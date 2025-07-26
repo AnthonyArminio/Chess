@@ -6,10 +6,10 @@ import java.io.File;
 public class TrainingManager {
 
     // Number of Trainees per Generation
-    private static final int BATCH_SIZE = 80;
+    private static final int BATCH_SIZE = 8; //80;
 
     private static final String TEMPFILE_PATH = "file:output/training/gen";
-    private static final int NUM_ROUNDS = 100;
+    private static final int NUM_ROUNDS = 1; //100;
     private static final int MAX_MOVES = 100;
 
     /**
@@ -34,7 +34,11 @@ public class TrainingManager {
                 for (int genNumber = startingGenNumber; genNumber < startingGenNumber + numGenerations; genNumber++) {
                     System.out.println("DEBUG: Training generation " + genNumber);
                     gen = train(gen);
+                    System.out.println("DEBUG: Finished training generation " + genNumber);
                 }
+
+                // PROBLEM TO FIX: ALL GAMES HAPPEN ON A SEPARATE THREAD, SO THIS LINE IS REACHED BEFORE ALL
+                // THE GAMES FINISH.
 
                 try {
                     gen.write(genFile);
