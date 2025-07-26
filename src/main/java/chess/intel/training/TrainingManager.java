@@ -20,30 +20,36 @@ public class TrainingManager {
     public static void startTraining(int numGenerations) {
         File genFile = new File(TEMPFILE_PATH);
 
-        try {
-            Generation gen;
-            if (genFile.exists()) {
-                gen = Generation.getFromJson(genFile);
-            } else {
-                gen = new Generation(BATCH_SIZE);
-            }
-
-            int startingGenNumber = gen.getGenerationNumber();
-
-            for (int genNumber = startingGenNumber; genNumber < startingGenNumber + numGenerations; genNumber++) {
-                System.out.println("DEBUG: Training generation " + genNumber);
-                gen = train(gen);
-            }
-
+        Runnable r = () -> {
             try {
-                gen.write(genFile);
-            } catch (java.io.IOException ex) {
-                System.out.println("Error: Failed to write to JSON file.");
-            }
+                Generation gen;
+                if (genFile.exists()) {
+                    gen = Generation.getFromJson(genFile);
+                } else {
+                    gen = new Generation(BATCH_SIZE);
+                }
 
-        } catch (java.io.IOException ex) {
-            System.out.println("Error: Failed to read from JSON file.");
-        }
+                int startingGenNumber = gen.getGenerationNumber();
+
+                for (int genNumber = startingGenNumber; genNumber < startingGenNumber + numGenerations; genNumber++) {
+                    System.out.println("DEBUG: Training generation " + genNumber);
+                    gen = train(gen);
+                }
+
+                try {
+                    gen.write(genFile);
+                } catch (java.io.IOException ex) {
+                    System.out.println("Error: Failed to write to JSON file.");
+                }
+
+            } catch (java.io.IOException ex) {
+                System.out.println("Error: Failed to read from JSON file.");
+            }
+        };
+
+        Thread t = new Thread(r);
+        t.setDaemon(true);
+        t.start();
     }
 
     /**

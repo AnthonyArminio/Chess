@@ -42,10 +42,10 @@ public class Chess extends Application {
         this.root = new Group();
         this.layout = new HBox();
 
-        this.user = new Player('w', true);
+        this.user = new Player(true);
 
-        //loadGame(new ChessGame(new Player('w'), new Player('b'), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
-        loadGame(new ChessGame(this.user, new Agent('b', new MaterialisticStrategy(), 5), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
+        //loadGame(new ChessGame(new Player(), new Player(), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
+        loadGame(new ChessGame(this.user, new Agent(new MaterialisticStrategy(), 5), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
 
         this.mouseImageView = new ImageView();
         this.pieceInMouse = false;
