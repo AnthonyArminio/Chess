@@ -31,8 +31,6 @@ public class ChessGame {
         this.moveNumber = 0;
 
         this.isIdle = true;
-
-        start(); //
     }
 
     public ChessGame(Player whitePlayer, Player blackPlayer, ChessBoard board) {
@@ -47,8 +45,6 @@ public class ChessGame {
         this.moveNumber = 0;
 
         this.isIdle = true;
-
-        start(); //
     }
 
     public void start() {

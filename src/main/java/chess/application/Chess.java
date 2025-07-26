@@ -45,7 +45,9 @@ public class Chess extends Application {
         this.user = new Player(true);
 
         //loadGame(new ChessGame(new Player(), new Player(), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
-        loadGame(new ChessGame(this.user, new Agent(new MaterialisticStrategy(), 5), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
+        ChessGame game = new ChessGame(this.user, new Agent(new MaterialisticStrategy(), 5), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor));
+        loadGame(game);
+        game.start();
 
         this.mouseImageView = new ImageView();
         this.pieceInMouse = false;
