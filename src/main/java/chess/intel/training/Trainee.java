@@ -5,8 +5,6 @@ import chess.intel.strategy.NeuralNetwork;
 
 public class Trainee extends Agent implements Comparable<Trainee> {
 
-    private final int[] DEFAULT_NEURAL_NETWORK_SHAPE = {};
-
     private final float WIN_REWARD = 10;
     private final float LOSS_PUNISHMENT = -10;
 
@@ -16,11 +14,12 @@ public class Trainee extends Agent implements Comparable<Trainee> {
      * Creates a default Trainee with a random Matrix using the default NeuralNetwork specifications.
      */
     public Trainee() {
-
+        super(new NeuralNetwork(), 3);
+        this.fitness = 0;
     }
 
-    public Trainee(char color, NeuralNetwork nn, int depth) {
-        super(color, nn, depth);
+    public Trainee(NeuralNetwork nn, int depth) {
+        super(nn, depth);
         this.fitness = 0;
     }
 

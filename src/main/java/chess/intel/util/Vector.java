@@ -9,9 +9,25 @@ public class Vector extends Matrix {
         this.dim = dimension;
     }
 
+    public Vector(int dimension, float min, float max) {
+        super(dimension, 1);
+        this.dim = dimension;
+
+        randomize(min, max);
+    }
+
     public Vector(float[][] data) {
         super(data);
         this.dim = data[0].length;
+    }
+
+    private void randomize(float min, float max) {
+        if (max < min) {
+            throw new IllegalArgumentException("randomize: max cannot be less than min");
+        }
+        for (int i = 0; i < this.dim; i++) {
+            this.getData()[i] = (float) ((max - min) * Math.random() + min);
+        }
     }
 
     public void set(int index, float value) {

@@ -8,13 +8,12 @@ import chess.logic.ChessMove;
  */
 public class Player {
 
-    protected char color;
+    //protected char color;
     protected ChessGame currentGame;
     protected boolean hasTurn;
     protected boolean isUser;
 
-    public Player(char color, boolean isUser) {
-        this.color = color;
+    public Player(boolean isUser) {
         this.hasTurn = false;
         this.isUser = isUser;
     }

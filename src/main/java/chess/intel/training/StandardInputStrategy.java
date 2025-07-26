@@ -5,11 +5,13 @@ import chess.logic.CompressedPosition;
 import chess.intel.util.Vector;
 
 public class StandardInputStrategy implements InputStrategy {
+
+    private final int INPUT_SIZE = 6 * 128 + 5;
     
-    public Vector convertToInput(ChessPosition position) {
+    @Override public Vector convertToInput(ChessPosition position) {
 
         long[][] piecePlacements = position.getCompressedPosition().getPiecePlacements();
-        Vector input = new Vector(6 * 128 + 5); // 773-dimensional input vector
+        Vector input = new Vector(INPUT_SIZE); // 773-dimensional input vector
 
         for (int p = CompressedPosition.PAWN; p <= CompressedPosition.KING; p++) {
             for (int c = CompressedPosition.WHITE; c <= CompressedPosition.BLACK; c++) {
@@ -26,5 +28,9 @@ public class StandardInputStrategy implements InputStrategy {
         }
 
         return input;
+    }
+
+    @Override public int getInputSize() {
+        return INPUT_SIZE;
     }
 }

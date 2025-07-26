@@ -14,4 +14,10 @@ public interface InputStrategy {
      * @return The determined Vector of inputs.
      */
     public Vector convertToInput(ChessPosition position);
+
+    /**
+     * Returns the dimensionality of the Vector typically returned by convertToInput.
+     * @return The size of the input Vectors produced by this InputStrategy.
+     */
+    public int getInputSize();
 }

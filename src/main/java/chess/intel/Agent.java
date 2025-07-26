@@ -17,8 +17,8 @@ public class Agent extends Player {
     private Strategy strategy;
     private int depth;
 
-    public Agent(char color, Strategy strategy, int depth) {
-        super(color, false);
+    public Agent(Strategy strategy, int depth) {
+        super(false);
         this.strategy = strategy;
         this.depth = depth;
     }
@@ -40,16 +40,18 @@ public class Agent extends Player {
      */
     public ChessMove findBestMove(ChessPosition position) {
 
+        char color = position.colorToMove();
+
         Evaluation alphabeta;
-        if (this.color == 'w') {
+        if (color == 'w') {
             alphabeta = Evaluation.CHECKMATE_FOR_WHITE;
         } else {
             alphabeta = Evaluation.CHECKMATE_FOR_BLACK;
         }
 
-        Evaluation eval = minimaxEvaluate(position, this.color, this.depth, alphabeta);
+        Evaluation eval = minimaxEvaluate(position, color, this.depth, alphabeta);
 
-        System.out.println("\n" + eval.pathString(this.currentGame.getMoveNumber(), this.color) + " (" + eval.evalString() + ")");
+        System.out.println("\n" + eval.pathString(this.currentGame.getMoveNumber(), color) + " (" + eval.evalString() + ")");
 
         return eval.getBestMove();
     }
