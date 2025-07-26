@@ -5,6 +5,9 @@ import java.io.File;
 
 public class TrainingManager {
 
+    // Number of Trainees per Generation
+    private static final int BATCH_SIZE = 80;
+
     private static final String TEMPFILE_PATH = "file:output/training/gen";
     private static final int NUM_ROUNDS = 100;
     private static final int MAX_MOVES = 100;
@@ -22,12 +25,13 @@ public class TrainingManager {
             if (genFile.exists()) {
                 gen = Generation.getFromJson(genFile);
             } else {
-                gen = new Generation();
+                gen = new Generation(BATCH_SIZE);
             }
 
             int startingGenNumber = gen.getGenerationNumber();
 
             for (int genNumber = startingGenNumber; genNumber < startingGenNumber + numGenerations; genNumber++) {
+                System.out.println("DEBUG: Training generation " + genNumber);
                 gen = train(gen);
             }
 
@@ -47,7 +51,7 @@ public class TrainingManager {
      * @param gen The previous Generation to train
      * @return The next improved Generation
      */
-    public static Generation train(Generation gen) {
+    private static Generation train(Generation gen) {
         ArrayList<Trainee> roster = gen.getRoster();
 
         for (Trainee t1 : roster) {
@@ -68,7 +72,17 @@ public class TrainingManager {
      * Creates a new TrainingGame between two Trainees. The result of the game is used to update the
      * fitness value of each Trainee.
      */
-    public static TrainingGame match(Trainee white, Trainee black) {
+    private static TrainingGame match(Trainee white, Trainee black) {
         return new TrainingGame(white, black);
+    }
+
+    /**
+     * Determines the next Generation based on the best-performing Trainees from a specified Generation.
+     * This method should introduce some random noise/mutations to encourage new strategies.
+     * @param prevGen The previous Generation.
+     * @return The next Generation, breeded to hopefully be better at chess than the previous.
+     */
+    private static Generation breed(Generation prevGen) {
+        return prevGen; // FOR TESTING
     }
 }

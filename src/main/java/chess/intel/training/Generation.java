@@ -12,7 +12,6 @@ import com.google.gson.Gson;
  * Class that represents a group of Trainees fit to play against each other to train.
  */
 public class Generation {
-    private final int DEFAULT_SIZE = 80;
 
     private int generationNumber;
     private int size;
@@ -21,9 +20,9 @@ public class Generation {
     /**
      * Creates the initial Generation based on the default size and default Trainee constructor.
      */
-    public Generation() {
+    public Generation(int size) {
         this.generationNumber = 0;
-        this.size = DEFAULT_SIZE;
+        this.size = size;
         this.roster = new ArrayList<Trainee>();
         for (int i = 0; i < this.size; i++) {
             this.roster.add(new Trainee());
