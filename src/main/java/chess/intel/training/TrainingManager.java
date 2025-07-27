@@ -6,7 +6,7 @@ import java.io.File;
 public class TrainingManager {
 
     // Number of Trainees per Generation
-    private static final int BATCH_SIZE = 2; //80;
+    private static final int BATCH_SIZE = 8; //80;
 
     private static final String TEMPFILE_PATH = "output/training/gen";
     private static final int NUM_ROUNDS = 1; //100;
@@ -73,7 +73,6 @@ public class TrainingManager {
                     Runnable r = () -> {
                         for (int round = 0; round < NUM_ROUNDS; round++) {
                             match(t1, t2);
-                            match(t2, t1);
                         }
                     };
                     Thread t = new Thread(r);
@@ -112,6 +111,7 @@ public class TrainingManager {
      * @return The next Generation, breeded to hopefully be better at chess than the previous.
      */
     private static Generation breed(Generation prevGen) {
+        prevGen.incrementGenerationNumber();
         return prevGen; // FOR TESTING
     }
 }

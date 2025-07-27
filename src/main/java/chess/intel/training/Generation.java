@@ -50,25 +50,29 @@ public class Generation {
      * @throws java.io.IOException if an error occurs while reading the file.
      */
     public static Generation getFromJson(File jsonFile) throws java.io.IOException {
+        final int BUFFER_SIZE = 500000;
+
         jsonFile.setReadable(true);
         FileReader reader = new FileReader(jsonFile);
 
         String jsonString = "";
-        char[] buffer = new char[50000];
+        char[] buffer = new char[BUFFER_SIZE];
         int bytesRead = 0;
         do {
             bytesRead = reader.read(buffer);
 
             if (bytesRead > 0) {
-                if (bytesRead < 50000) {
+                if (bytesRead < BUFFER_SIZE) {
+                    char[] truncBuffer = new char[bytesRead];
                     for (int c = 0; c < bytesRead; c++) {
-                        jsonString += buffer[c];
+                        truncBuffer[c] = buffer[c];
                     }
+                    jsonString += new String(truncBuffer);
                 } else {
                     jsonString += new String(buffer);
                 }
             }
-            
+
         } while(bytesRead > 0);
 
         reader.close();
@@ -80,6 +84,10 @@ public class Generation {
             .create();
         return gson.fromJson(jsonString, Generation.class);
 
+    }
+
+    public void incrementGenerationNumber() {
+        this.generationNumber++;
     }
 
     public int getGenerationNumber() {
