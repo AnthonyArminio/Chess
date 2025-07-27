@@ -6,16 +6,21 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 
+import chess.intel.strategy.Strategy;
+import chess.intel.util.json.*;
+
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 
 /**
  * Class that represents a group of Trainees fit to play against each other to train.
  */
 public class Generation {
 
-    private int generationNumber;
-    private int size;
-    private ArrayList<Trainee> roster;
+    @Expose private int generationNumber;
+    @Expose private int size;
+    @Expose private ArrayList<Trainee> roster;
 
     /**
      * Creates the initial Generation based on the default size and default Trainee constructor.
@@ -49,14 +54,30 @@ public class Generation {
         FileReader reader = new FileReader(jsonFile);
 
         String jsonString = "";
-        char[] buffer = new char[50];
-        while(reader.read(buffer) > 0) {
-            jsonString += new String(buffer);
-        }
+        char[] buffer = new char[50000];
+        int bytesRead = 0;
+        do {
+            bytesRead = reader.read(buffer);
+
+            if (bytesRead > 0) {
+                if (bytesRead < 50000) {
+                    for (int c = 0; c < bytesRead; c++) {
+                        jsonString += buffer[c];
+                    }
+                } else {
+                    jsonString += new String(buffer);
+                }
+            }
+            
+        } while(bytesRead > 0);
 
         reader.close();
 
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder()
+            .excludeFieldsWithoutExposeAnnotation()
+            .registerTypeAdapter(Strategy.class, new JsonStrategyAdapter())
+            .registerTypeAdapter(InputStrategy.class, new JsonInputStrategyAdapter())
+            .create();
         return gson.fromJson(jsonString, Generation.class);
 
     }
@@ -82,7 +103,7 @@ public class Generation {
         file.setWritable(true);
         FileWriter writer = new FileWriter(file);
 
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         String jsonString = gson.toJson(this);
 
         writer.write(jsonString);

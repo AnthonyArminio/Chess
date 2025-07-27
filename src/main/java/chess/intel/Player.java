@@ -3,6 +3,8 @@ package chess.intel;
 import chess.application.ChessGame;
 import chess.logic.ChessMove;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Class that represents a chess player.
  */
@@ -10,8 +12,8 @@ public class Player {
 
     //protected char color;
     protected ChessGame currentGame;
-    protected boolean hasTurn;
-    protected boolean isUser;
+    @Expose protected boolean hasTurn;
+    @Expose protected boolean isUser;
 
     public Player(boolean isUser) {
         this.hasTurn = false;
@@ -26,7 +28,7 @@ public class Player {
     public void makeMove(ChessMove move) {
         if (this.hasTurn) {
             this.hasTurn = false;
-            
+
             Thread t = new Thread(() -> this.currentGame.makeMove(move));
             t.setDaemon(true);
             t.start();

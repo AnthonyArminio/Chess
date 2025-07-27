@@ -8,6 +8,8 @@ import chess.intel.util.DataMath;
 import chess.intel.util.Vector;
 import chess.intel.util.Matrix;
 
+import com.google.gson.annotations.Expose;
+
 public class NeuralNetwork extends Strategy {
 
     private final InputStrategy DEFAULT_INPUT_STRATEGY = new StandardInputStrategy();
@@ -19,12 +21,12 @@ public class NeuralNetwork extends Strategy {
     private final float ACTIVATION_WEIGHT_RANDOMIZATION_MAX = 10;
 
     // Number of neuron layers, not including the output layer.
-    private int numLayers;
+    @Expose private int numLayers;
 
-    private Matrix[] weights;
-    private Vector[] activationWeights;
+    @Expose private Matrix[] weights;
+    @Expose private Vector[] activationWeights;
 
-    private InputStrategy inputStrategy;
+    @Expose private InputStrategy inputStrategy;
 
     /**
      * Creates the default NeuralNetwork.

@@ -3,12 +3,14 @@ package chess.intel.training;
 import chess.intel.Agent;
 import chess.intel.strategy.NeuralNetwork;
 
+import com.google.gson.annotations.Expose;
+
 public class Trainee extends Agent implements Comparable<Trainee> {
 
-    private final float WIN_REWARD = 10;
-    private final float LOSS_PUNISHMENT = -10;
+    @Expose private final float WIN_REWARD = 10;
+    @Expose private final float LOSS_PUNISHMENT = -10;
 
-    private float fitness;
+    @Expose private float fitness;
 
     /**
      * Creates a default Trainee with a random Matrix using the default NeuralNetwork specifications.

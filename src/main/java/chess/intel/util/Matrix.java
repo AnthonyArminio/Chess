@@ -1,10 +1,12 @@
 package chess.intel.util;
 
+import com.google.gson.annotations.Expose;
+
 public class Matrix {
     
-    protected float[][] data;
-    private int rows;
-    private int cols;
+    @Expose protected float[][] data;
+    @Expose private int rows;
+    @Expose private int cols;
 
     public Matrix(int rows, int cols) {
         this.rows = rows;

@@ -1,8 +1,10 @@
 package chess.intel.util;
 
+import com.google.gson.annotations.Expose;
+
 public class Vector extends Matrix {
 
-    private int dim;
+    @Expose private int dim;
 
     public Vector(int dimension) {
         super(dimension, 1);

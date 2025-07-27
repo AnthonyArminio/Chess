@@ -4,9 +4,11 @@ import chess.logic.ChessPosition;
 import chess.logic.CompressedPosition;
 import chess.intel.util.Vector;
 
+import com.google.gson.annotations.Expose;
+
 public class StandardInputStrategy implements InputStrategy {
 
-    private final int INPUT_SIZE = 6 * 128 + 5;
+    @Expose private final int INPUT_SIZE = 6 * 128 + 5;
     
     @Override public Vector convertToInput(ChessPosition position) {
 

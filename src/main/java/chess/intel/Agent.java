@@ -10,12 +10,14 @@ import chess.logic.ChessMove;
 
 import java.util.ArrayList;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Class that represents a computer player.
  */
 public class Agent extends Player {
-    private Strategy strategy;
-    private int depth;
+    @Expose private Strategy strategy;
+    @Expose private int depth;
 
     public Agent(Strategy strategy, int depth) {
         super(false);

@@ -6,9 +6,9 @@ import java.io.File;
 public class TrainingManager {
 
     // Number of Trainees per Generation
-    private static final int BATCH_SIZE = 8; //80;
+    private static final int BATCH_SIZE = 2; //80;
 
-    private static final String TEMPFILE_PATH = "file:output/training/gen";
+    private static final String TEMPFILE_PATH = "output/training/gen";
     private static final int NUM_ROUNDS = 1; //100;
     private static final int MAX_MOVES = 100;
 
@@ -24,6 +24,7 @@ public class TrainingManager {
             try {
                 Generation gen;
                 if (genFile.exists()) {
+                    System.out.println("Getting generation from JSON");
                     gen = Generation.getFromJson(genFile);
                 } else {
                     gen = new Generation(BATCH_SIZE);
@@ -43,7 +44,8 @@ public class TrainingManager {
                 try {
                     gen.write(genFile);
                 } catch (java.io.IOException ex) {
-                    System.out.println("Error: Failed to write to JSON file.");
+                    System.out.println(ex.getMessage());
+                    //System.out.println("Error: Failed to write to JSON file.");
                 }
 
             } catch (java.io.IOException ex) {
@@ -63,15 +65,30 @@ public class TrainingManager {
      */
     private static Generation train(Generation gen) {
         ArrayList<Trainee> roster = gen.getRoster();
+        ArrayList<Thread> threads = new ArrayList<Thread>();
 
         for (Trainee t1 : roster) {
             for (Trainee t2 : roster) {
                 if (t1 != t2) {
-                    for (int round = 0; round < NUM_ROUNDS; round++) {
-                        match(t1, t2);
-                        match(t2, t1);
-                    }
+                    Runnable r = () -> {
+                        for (int round = 0; round < NUM_ROUNDS; round++) {
+                            match(t1, t2);
+                            match(t2, t1);
+                        }
+                    };
+                    Thread t = new Thread(r);
+                    threads.add(t);
+                    t.setDaemon(true);
+                    t.start();
                 }
+            }
+        }
+
+        for (Thread t : threads) {
+            try {
+                t.join();
+            } catch (InterruptedException ex) {
+                System.out.println("Thread interrupted.");
             }
         }
 
