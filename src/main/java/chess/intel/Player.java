@@ -26,7 +26,10 @@ public class Player {
     public void makeMove(ChessMove move) {
         if (this.hasTurn) {
             this.hasTurn = false;
-            this.currentGame.makeMove(move);
+            
+            Thread t = new Thread(() -> this.currentGame.makeMove(move));
+            t.setDaemon(true);
+            t.start();
         }
     }
 

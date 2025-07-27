@@ -27,13 +27,21 @@ public class Agent extends Player {
         this.currentGame = game;
         this.hasTurn = true;
 
-        Thread t = new Thread(() -> makeMove(findBestMove(game.getPosition())));
-        t.setDaemon(true);
-        t.start();
-        try {
-            t.join();
-        } catch (InterruptedException ex) {
-            System.out.println("Thread interrupted.");
+        makeMove(findBestMove(game.getPosition()));
+    }
+
+    @Override public void makeMove(ChessMove move) {
+        if (this.hasTurn) {
+            this.hasTurn = false;
+            
+            Thread t = new Thread(() -> this.currentGame.makeMove(move));
+            t.setDaemon(true);
+            t.start();
+            try {
+                t.join();
+            } catch (InterruptedException ex) {
+                System.out.println("Thread interrupted.");
+            }
         }
     }
 
