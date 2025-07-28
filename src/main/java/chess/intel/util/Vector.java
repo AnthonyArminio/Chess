@@ -20,7 +20,7 @@ public class Vector extends Matrix {
 
     public Vector(float[][] data) {
         super(data);
-        this.dim = data[0].length;
+        this.dim = rows();
     }
 
     private void randomize(float min, float max) {

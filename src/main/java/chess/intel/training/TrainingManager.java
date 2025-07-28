@@ -111,7 +111,21 @@ public class TrainingManager {
      * @return The next Generation, breeded to hopefully be better at chess than the previous.
      */
     private static Generation breed(Generation prevGen) {
-        prevGen.incrementGenerationNumber();
-        return prevGen; // FOR TESTING
+
+        ArrayList<Trainee> roster = prevGen.getRoster();
+        int genSize = prevGen.getSize();
+        
+        int numLayers = roster.get(0).getStrategy().getNumLayers();
+        int[] shape = roster.get(0).getStrategy().getShape();
+
+        // Matrix weights
+        for (int layer = 0; layer < numLayers; layer++) {
+            for (int row = 0; row < shape[layer + 1]; row++) {
+                for (int col = 0; col < shape[layer]; col++) {
+                    float w[][] = new float[1][genSize];
+                    
+                }
+            }
+        }
     }
 }

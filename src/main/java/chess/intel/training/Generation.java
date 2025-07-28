@@ -111,7 +111,9 @@ public class Generation {
         file.setWritable(true);
         FileWriter writer = new FileWriter(file);
 
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        Gson gson = new GsonBuilder()
+            .excludeFieldsWithoutExposeAnnotation()
+            .create();
         String jsonString = gson.toJson(this);
 
         writer.write(jsonString);

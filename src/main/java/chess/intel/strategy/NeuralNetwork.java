@@ -22,6 +22,7 @@ public class NeuralNetwork extends Strategy {
 
     // Number of neuron layers, not including the output layer.
     @Expose private int numLayers;
+    @Expose private int[] shape;
 
     @Expose private Matrix[] weights;
     @Expose private Vector[] activationWeights;
@@ -33,6 +34,7 @@ public class NeuralNetwork extends Strategy {
      */
     public NeuralNetwork() {
         this.numLayers = DEFAULT_NUM_LAYERS;
+        this.shape = DEFAULT_SHAPE;
 
         this.weights = new Matrix[this.numLayers];
         this.activationWeights = new Vector[this.numLayers - 1];
@@ -51,6 +53,10 @@ public class NeuralNetwork extends Strategy {
 
     public NeuralNetwork(Matrix[] weights, Vector[] activationWeights, InputStrategy is) {
         this.numLayers = weights.length;
+        this.shape = new int[this.numLayers + 1];
+        this.shape[0] = is.getInputSize();
+        this.shape[this.numLayers] = 1;
+
         this.weights = new Matrix[this.numLayers];
         this.activationWeights = new Vector[this.numLayers - 1];
 
@@ -60,6 +66,7 @@ public class NeuralNetwork extends Strategy {
 
         for (int layer = 0; layer < this.numLayers - 1; layer++) {
             this.activationWeights[layer] = activationWeights[layer].copy();
+            this.shape[layer + 1] = this.activationWeights[layer].dim();
         }
 
         this.inputStrategy = is;
@@ -75,5 +82,21 @@ public class NeuralNetwork extends Strategy {
         // represent a concrete evaluation of the position.
         currentLayer = DataMath.matrixMultiply(weights[this.numLayers - 1], currentLayer);
         return new Evaluation(currentLayer.get(0));
+    }
+
+    public int getNumLayers() {
+        return this.numLayers;
+    }
+
+    public int[] getShape() {
+        return this.shape;
+    }
+
+    public Matrix[] getWeights() {
+        return this.weights;
+    }
+
+    public Vector[] getActivationWeights() {
+        return this.activationWeights;
     }
 }

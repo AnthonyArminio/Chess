@@ -48,4 +48,8 @@ public class Trainee extends Agent implements Comparable<Trainee> {
     public void punish() {
         this.fitness += LOSS_PUNISHMENT;
     }
+
+    @Override public NeuralNetwork getStrategy() {
+        return (NeuralNetwork) super.getStrategy();
+    }
 }

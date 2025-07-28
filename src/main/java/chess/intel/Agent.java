@@ -174,4 +174,8 @@ public class Agent extends Player {
             return bestEval.step(bestMove);
         }
     }
+
+    public Strategy getStrategy() {
+        return this.strategy;
+    }
 }
