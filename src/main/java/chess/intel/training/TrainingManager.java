@@ -3,6 +3,10 @@ package chess.intel.training;
 import java.util.ArrayList;
 import java.io.File;
 
+import chess.intel.util.DataMath;
+import chess.intel.util.Matrix;
+import chess.intel.util.Vector;
+
 public class TrainingManager {
 
     // Number of Trainees per Generation
@@ -112,18 +116,51 @@ public class TrainingManager {
      */
     private static Generation breed(Generation prevGen) {
 
+        int generationNumber = prevGen.getGenerationNumber();
+
         ArrayList<Trainee> roster = prevGen.getRoster();
         int genSize = prevGen.getSize();
         
         int numLayers = roster.get(0).getStrategy().getNumLayers();
         int[] shape = roster.get(0).getStrategy().getShape();
 
-        // Matrix weights
+        int totalWeights = 0;
+        for (int layer = 0; layer < numLayers; layer++) { // weights
+            totalWeights += shape[layer] * shape[layer + 1];
+        }
+        for (int layer = 0; layer < numLayers - 1; layer++) { // activation weights
+            totalWeights += shape[layer + 1];
+        }
+        System.out.printf("Breeding generation %d. Total weights to analyze: %d\n", generationNumber, totalWeights);
+
+        // Find linear regression matrix (((XTX)^-1)XT)
+        Vector corner = Vector.corner(genSize); // All 1s Vector
+        float f[][] = new float[1][genSize]; // Fitness Vector
+        for (int t = 0; t < genSize; t++) {
+            f[0][t] = roster.get(t).getFitness();
+        }
+        Vector fitness = new Vector(f);
+        Matrix X = new Matrix(corner, fitness);
+
+        Matrix[] weightImportance = new Matrix[numLayers];
+        Vector[] activationWeightImportance = new Vector[numLayers - 1];
+
+        // Matrix weight importance
         for (int layer = 0; layer < numLayers; layer++) {
-            for (int row = 0; row < shape[layer + 1]; row++) {
-                for (int col = 0; col < shape[layer]; col++) {
+
+            int rows = shape[layer + 1];
+            int cols = shape[layer];
+            weightImportance[layer] = new Matrix(rows, cols);
+
+            for (int row = 0; row < rows; row++) {
+                for (int col = 0; col < cols; col++) {
                     float w[][] = new float[1][genSize];
-                    
+                    for (int t = 0; t < genSize; t++) {
+                        w[0][t] = roster.get(t).getStrategy().getWeights()[layer].get(row, col);
+                    }
+                    Vector y = new Vector(w);
+
+                    weightImportance[layer].set(row, col, DataMath.matrixMultiply(linearRegressionMatrix, y));
                 }
             }
         }

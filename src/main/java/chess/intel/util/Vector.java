@@ -23,6 +23,17 @@ public class Vector extends Matrix {
         this.dim = rows();
     }
 
+    /**
+     * Returns the positive corner vector of a given dimension (the vector with all ones as its entries).
+     */
+    public static Vector corner(int dimension) {
+        float[][] data = new float[1][dimension];
+        for (int i = 0; i < dimension; i++) {
+            data[0][i] = 1f;
+        }
+        return new Vector(data);
+    }
+
     private void randomize(float min, float max) {
         if (max < min) {
             throw new IllegalArgumentException("randomize: max cannot be less than min");

@@ -32,6 +32,18 @@ public class Matrix {
         setAll(data);
     }
 
+    public Matrix(Vector... vectors) {
+        this.rows = vectors[0].dim();
+        this.cols = vectors.length;
+        this.data = new float[this.cols][this.rows];
+        
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
+                this.data[j][i] = vectors[j].get(i);
+            }
+        }
+    }
+
     /**
      * Sets every entry of this Matrix to 0.
      */
