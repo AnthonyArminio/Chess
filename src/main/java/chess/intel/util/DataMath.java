@@ -31,7 +31,7 @@ public class DataMath {
      * @param m the Matrix to multiply.
      * @param v the Vector to multiply.
      * @return the product of m and v.
-     * @throws IllegalArgumentException if the number of columns of m does not match the dimension of v.
+     * @throws IllegalArgumentException if the number of columns in m does not match the dimension of v.
      */
     public static Vector matrixMultiply(Matrix m, Vector v) {
 
@@ -50,6 +50,34 @@ public class DataMath {
         }
 
         return result;
+    }
+
+    /**
+     * Multiplies a Matrix m1 by another Matrix m2.
+     * @param m1 The first Matrix to multiply.
+     * @param m2 The second Matrix to multiply.
+     * @return The product of m1 and m2.
+     * @throws IllegalArgumentException if the number of columns in m1 does not match the number of rows in m2.
+     */
+    public static Matrix matrixMultiply(Matrix m1, Matrix m2) {
+
+    }
+
+    /**
+     * Takes the transpose of a Matrix m.
+     * @return The transpose of m.
+     */
+    public static Matrix matrixTranspose(Matrix m) {
+
+    }
+
+    /**
+     * Takes the inverse of a 2 by 2 Matrix m.
+     * @return The inverse of m, or null if m is not invertible.
+     * @throws IllegalArgumentException if m is not a 2 by 2 Matrix.
+     */
+    public static Matrix matrixInverse2D(Matrix m) {
+
     }
     
     /**

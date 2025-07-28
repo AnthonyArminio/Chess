@@ -141,6 +141,8 @@ public class TrainingManager {
         }
         Vector fitness = new Vector(f);
         Matrix X = new Matrix(corner, fitness);
+        Matrix XT = DataMath.matrixTranspose(X);
+        Matrix linearRegressionMatrix = DataMath.matrixMultiply(DataMath.matrixInverse2D(DataMath.matrixMultiply(XT, X)), XT);
 
         Matrix[] weightImportance = new Matrix[numLayers];
         Vector[] activationWeightImportance = new Vector[numLayers - 1];
