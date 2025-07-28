@@ -110,7 +110,8 @@ public class TrainingManager {
 
     /**
      * Determines the next Generation based on the best-performing Trainees from a specified Generation.
-     * This method should introduce some random noise/mutations to encourage new strategies.
+     * This method should introduce some random noise/mutations to encourage new strategies. All Trainees
+     * are expected to use NeuralNetworks of the same shape.
      * @param prevGen The previous Generation.
      * @return The next Generation, breeded to hopefully be better at chess than the previous.
      */
@@ -131,6 +132,7 @@ public class TrainingManager {
         for (int layer = 0; layer < numLayers - 1; layer++) { // activation weights
             totalWeights += shape[layer + 1];
         }
+        int weightsAnalyzed = 0;
         System.out.printf("Breeding generation %d. Total weights to analyze: %d\n", generationNumber, totalWeights);
 
         // Find linear regression matrix (((XTX)^-1)XT)
@@ -148,6 +150,7 @@ public class TrainingManager {
         Vector[] activationWeightImportance = new Vector[numLayers - 1];
 
         // Matrix weight importance
+        System.out.printf("Analyzing matrix weights...\n");
         for (int layer = 0; layer < numLayers; layer++) {
 
             int rows = shape[layer + 1];
@@ -156,14 +159,49 @@ public class TrainingManager {
 
             for (int row = 0; row < rows; row++) {
                 for (int col = 0; col < cols; col++) {
-                    float w[][] = new float[1][genSize];
+                    float[][] w = new float[1][genSize];
                     for (int t = 0; t < genSize; t++) {
                         w[0][t] = roster.get(t).getStrategy().getWeights()[layer].get(row, col);
                     }
-                    Vector y = new Vector(w);
+                    Vector wVector = new Vector(w);
 
-                    weightImportance[layer].set(row, col, DataMath.matrixMultiply(linearRegressionMatrix, y));
+                    weightImportance[layer].set(row, col, DataMath.matrixMultiply(linearRegressionMatrix, wVector).get(1));
+                    weightsAnalyzed++;
                 }
+                System.out.printf("Analyzing weights... (%.2f%)\n", (float) weightsAnalyzed / totalWeights);
+            }
+        }
+
+        // Activation weight importance
+        System.out.printf("Analyzing activation weights...\n");
+        for (int layer = 0; layer < numLayers - 1; layer++) {
+
+            int dim = shape[layer + 1];
+            activationWeightImportance[layer] = new Vector(dim);
+
+            for (int i = 0; i < dim; i++) {
+                float[][] w = new float[1][genSize];
+                for (int t = 0; t < genSize; t++) {
+                    w[0][t] = roster.get(t).getStrategy().getActivationWeights()[layer].get(i);
+                }
+                Vector wVector = new Vector(w);
+
+                activationWeightImportance[layer].set(i, DataMath.matrixMultiply(linearRegressionMatrix, wVector).get(1));
+                weightsAnalyzed++;
+            }
+            System.out.printf("Analyzing weights... (%.2f%)\n", (float) weightsAnalyzed / totalWeights);
+        }
+
+        System.out.printf("All weights analyzed. Creating the next generation...\n");
+
+        ArrayList<Trainee> newRoster = new ArrayList<Trainee>();
+        // Find step Matrices for each Trainee and apply steps in random amounts.
+        for (Trainee t : roster) {
+            Matrix[] weightStep = new Matrix[numLayers];
+            Vector[] activationWeightStep = new Vector[numLayers - 1];
+
+            for (int layer = 0; layer < numLayers; layer++) {
+                weightStep[layer] = DataMath.scalarMultiply(weightImportance[layer], 1f / DataMath.sigma(t.getFitness()));
             }
         }
     }

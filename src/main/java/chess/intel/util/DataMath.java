@@ -5,6 +5,24 @@ import java.util.ArrayList;
 public class DataMath {
 
     /**
+     * Multiplies all of the entries in a given Matrix by a specified scalar value.
+     * @param m The Matrix to alter.
+     * @param scalar The scalar to multiply by.
+     * @return A reference to the Matrix passed to this method.
+     */
+    public static Matrix scalarMultiply(Matrix m, float scalar) {
+        int rows = m.rows();
+        int cols = m.cols();
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                m.set(i, j, scalar * m.get(i, j));
+            }
+        }
+
+        return m;
+    }
+
+    /**
      * Returns the sum of two vectors.
      * @param v1
      * @param v2
@@ -36,7 +54,7 @@ public class DataMath {
     public static Vector matrixMultiply(Matrix m, Vector v) {
 
         if (m.cols() != v.dim()) {
-            throw new IllegalArgumentException("matrixMultiply: dimensions do not match.");
+            throw new IllegalArgumentException("matrixMultiply: dimensions are not compatible.");
         }
 
         int dim = v.dim();
@@ -44,9 +62,11 @@ public class DataMath {
         Vector result = new Vector(newDim);
 
         for (int i = 0; i < newDim; i++) {
+            float sum = 0;
             for (int j = 0; j < dim; j++) {
-                result.set(i, result.get(i) + (m.get(i, j) * v.get(j)));
+                sum += m.get(i, j) * v.get(j);
             }
+            result.set(i, sum);
         }
 
         return result;
@@ -60,7 +80,26 @@ public class DataMath {
      * @throws IllegalArgumentException if the number of columns in m1 does not match the number of rows in m2.
      */
     public static Matrix matrixMultiply(Matrix m1, Matrix m2) {
+        if (m1.cols() != m2.rows()) {
+            throw new IllegalArgumentException("matrixMultiply: dimensions are not compatible.");
+        }
 
+        int dim = m2.rows();
+        int newRows = m1.rows();
+        int newCols = m2.cols();
+        Matrix result = new Matrix(newRows, newCols);
+
+        for (int i = 0; i < newRows; i++) {
+            for (int j = 0; j < newCols; j++) {
+                float sum = 0;
+                for (int k = 0; k < dim; k++) {
+                    sum += m1.get(i, k) * m2.get(k, j);
+                }
+                result.set(i, j, sum);
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -68,7 +107,18 @@ public class DataMath {
      * @return The transpose of m.
      */
     public static Matrix matrixTranspose(Matrix m) {
+        int newRows = m.cols();
+        int newCols = m.rows();
 
+        Matrix result = new Matrix(newRows, newCols);
+
+        for (int i = 0; i < newRows; i++) {
+            for (int j = 0; j < newCols; j++) {
+                result.set(i, j, m.get(j, i));
+            }
+        }
+        
+        return result;
     }
 
     /**
@@ -77,7 +127,24 @@ public class DataMath {
      * @throws IllegalArgumentException if m is not a 2 by 2 Matrix.
      */
     public static Matrix matrixInverse2D(Matrix m) {
+        if (m.rows() != 2 || m.cols() != 2) {
+            throw new IllegalArgumentException("matrixInverse2D: must pass 2 by 2 Matrix.");
+        }
 
+        float determinant = m.get(0, 0) * m.get(1, 1) - m.get(0, 1) * m.get(1, 0);
+
+        if (determinant == 0) {
+            return null;
+        } else {
+            Matrix result = new Matrix(2, 2);
+
+            result.set(0, 0, m.get(1, 1));
+            result.set(0, 1, -1 * m.get(0, 1));
+            result.set(1, 0, -1 * m.get(1, 0));
+            result.set(1, 1, m.get(0, 0));
+
+            return DataMath.scalarMultiply(result, 1f / determinant);
+        }
     }
     
     /**
