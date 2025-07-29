@@ -43,6 +43,21 @@ public class Vector extends Matrix {
         }
     }
 
+    /**
+     * Multiplies all of the entries in a given Vector by a specified scalar value.
+     * @param m The Vector to alter.
+     * @param scalar The scalar to multiply by.
+     * @return A reference to the Vector passed to this method.
+     */
+    @Override public Vector scalarMultiply(float scalar) {
+        
+        for (int i = 0; i < this.dim; i++) {
+            set(i, scalar * this.get(i));
+        }
+
+        return this;
+    }
+
     public void set(int index, float value) {
         this.getData()[index] = value;
     }

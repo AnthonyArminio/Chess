@@ -5,29 +5,11 @@ import java.util.ArrayList;
 public class DataMath {
 
     /**
-     * Multiplies all of the entries in a given Matrix by a specified scalar value.
-     * @param m The Matrix to alter.
-     * @param scalar The scalar to multiply by.
-     * @return A reference to the Matrix passed to this method.
-     */
-    public static Matrix scalarMultiply(Matrix m, float scalar) {
-        int rows = m.rows();
-        int cols = m.cols();
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                m.set(i, j, scalar * m.get(i, j));
-            }
-        }
-
-        return m;
-    }
-
-    /**
-     * Returns the sum of two vectors.
+     * Returns the sum of two Vectors.
      * @param v1
      * @param v2
      * @return
-     * @throws IllegalArgumentException If the dimensions of the two vectors do not match.
+     * @throws IllegalArgumentException If the dimensions of the two Vectors do not match.
      */
     public static Vector vectorAdd(Vector v1, Vector v2) {
         if (v1.dim() != v2.dim()) {
@@ -39,6 +21,31 @@ public class DataMath {
 
         for (int i = 0; i < dim; i++) {
             result.set(i, v1.get(i) + v2.get(i));
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns the sum of two Matrices.
+     * @param m1
+     * @param m2
+     * @return
+     * @throws IllegalArgumentException If the dimensions of the two Matrices do not match.
+     */
+    public static Matrix matrixAdd(Matrix m1, Matrix m2) {
+        if (m1.rows() != m2.rows() || m1.cols() != m2.cols()) {
+            throw new IllegalArgumentException("matrixAdd: both matrices do not have the same dimensions.");
+        }
+
+        int rows = m1.rows();
+        int cols = m2.cols();
+        Matrix result = new Matrix(rows, cols);
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                result.set(i, j, m1.get(i, j) + m2.get(i, j));
+            }
         }
 
         return result;
@@ -143,7 +150,7 @@ public class DataMath {
             result.set(1, 0, -1 * m.get(1, 0));
             result.set(1, 1, m.get(0, 0));
 
-            return DataMath.scalarMultiply(result, 1f / determinant);
+            return result.scalarMultiply(1f / determinant);
         }
     }
     
@@ -224,5 +231,16 @@ public class DataMath {
             newList.add(element);
         }
         return newList;
+    }
+
+    /**
+     * Returns a random value between min and max.
+     * @throws IllegalArgumentException if max < min.
+     */
+    public static float random(float min, float max) {
+        if (max < min) {
+            throw new IllegalArgumentException("random: max cannot be less than min");
+        }
+        return (float) ((max - min) * Math.random() + min);
     }
 }

@@ -36,7 +36,7 @@ public class Matrix {
         this.rows = vectors[0].dim();
         this.cols = vectors.length;
         this.data = new float[this.cols][this.rows];
-        
+
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.cols; j++) {
                 this.data[j][i] = vectors[j].get(i);
@@ -56,14 +56,48 @@ public class Matrix {
     }
 
     private void randomize(float min, float max) {
-        if (max < min) {
-            throw new IllegalArgumentException("randomize: max cannot be less than min");
-        }
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.cols; j++) {
-                this.data[j][i] = (float) ((max - min) * Math.random() + min);
+                this.data[j][i] = DataMath.random(min, max);
             }
         }
+    }
+
+    /**
+     * Changes each entry in this Matrix to a random value between its current value and 0.
+     */
+    public void randomize() {
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
+                float min;
+                float max;
+                if (this.data[j][i] > 0) {
+                    min = 0;
+                    max = this.data[j][i];
+                } else {
+                    min = this.data[j][i];
+                    max = 0;
+                }
+                this.data[j][i] = DataMath.random(min, max);
+            }
+        }
+    }
+
+    /**
+     * Multiplies all of the entries in a given Matrix by a specified scalar value.
+     * @param m The Matrix to alter.
+     * @param scalar The scalar to multiply by.
+     * @return A reference to the Matrix passed to this method.
+     */
+    public Matrix scalarMultiply(float scalar) {
+
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
+                this.set(i, j, scalar * this.get(i, j));
+            }
+        }
+
+        return this;
     }
 
     public void set(int row, int col, float value) {

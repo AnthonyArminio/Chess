@@ -7,12 +7,15 @@ import chess.intel.util.DataMath;
 import chess.intel.util.Matrix;
 import chess.intel.util.Vector;
 
+import chess.intel.strategy.NeuralNetwork;
+
 public class TrainingManager {
 
     // Number of Trainees per Generation
     private static final int BATCH_SIZE = 8; //80;
 
     private static final String TEMPFILE_PATH = "output/training/gen";
+    private static final int THINKING_DEPTH = 2;
     private static final int NUM_ROUNDS = 1; //100;
     private static final int MAX_MOVES = 100;
 
@@ -200,9 +203,23 @@ public class TrainingManager {
             Matrix[] weightStep = new Matrix[numLayers];
             Vector[] activationWeightStep = new Vector[numLayers - 1];
 
+            Matrix[] newWeights = new Matrix[numLayers];
+            Vector[] newActivationWeights = new Vector[numLayers - 1];
+
             for (int layer = 0; layer < numLayers; layer++) {
-                weightStep[layer] = DataMath.scalarMultiply(weightImportance[layer], 1f / DataMath.sigma(t.getFitness()));
+                weightStep[layer] = weightImportance[layer].scalarMultiply(1f / DataMath.sigma(t.getFitness()));
+                weightStep[layer].randomize();
+                newWeights[layer] = DataMath.matrixAdd(t.getStrategy().getWeights()[layer], weightStep[layer]);
             }
+
+            for (int layer = 0; layer < numLayers - 1; layer++) {
+                activationWeightStep[layer] = activationWeightImportance[layer].scalarMultiply(1f / DataMath.sigma(t.getFitness()));
+                activationWeightStep[layer].randomize();
+                newActivationWeights[layer] = DataMath.vectorAdd(t.getStrategy().getActivationWeights()[layer], activationWeightStep[layer]);
+            }
+
+            newRoster.add(new Trainee(new NeuralNetwork(newWeights, newActivationWeights, new StandardInputStrategy()), THINKING_DEPTH));
         }
+        return new Generation(newRoster, generationNumber + 1);
     }
 }
