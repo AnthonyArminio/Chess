@@ -46,9 +46,6 @@ public class TrainingManager {
                     System.out.println("DEBUG: Finished training generation " + genNumber);
                 }
 
-                // PROBLEM TO FIX: ALL GAMES HAPPEN ON A SEPARATE THREAD, SO THIS LINE IS REACHED BEFORE ALL
-                // THE GAMES FINISH.
-
                 try {
                     gen.sort();
                     gen.write(genFile);
@@ -239,6 +236,6 @@ public class TrainingManager {
      * Deletes the tempfile holding the latest Generation JSON.
      */
     private static void purge() {
-        
+
     }
 }
