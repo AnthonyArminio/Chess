@@ -171,7 +171,7 @@ public class TrainingManager {
                     weightImportance[layer].set(row, col, DataMath.matrixMultiply(linearRegressionMatrix, wVector).get(1));
                     weightsAnalyzed++;
                 }
-                System.out.printf("Analyzing weights... (%.2f%)\n", (float) weightsAnalyzed / totalWeights);
+                System.out.printf("Analyzing weights... (%.2f%%)\n", 100 * (float) weightsAnalyzed / totalWeights);
             }
         }
 
@@ -192,7 +192,7 @@ public class TrainingManager {
                 activationWeightImportance[layer].set(i, DataMath.matrixMultiply(linearRegressionMatrix, wVector).get(1));
                 weightsAnalyzed++;
             }
-            System.out.printf("Analyzing weights... (%.2f%)\n", (float) weightsAnalyzed / totalWeights);
+            System.out.printf("Analyzing weights... (%.2f%%)\n", 100 * (float) weightsAnalyzed / totalWeights);
         }
 
         System.out.printf("All weights analyzed. Creating the next generation...\n");
