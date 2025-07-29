@@ -130,7 +130,7 @@ public class DataMath {
 
     /**
      * Takes the inverse of a 2 by 2 Matrix m.
-     * @return The inverse of m, or null if m is not invertible.
+     * @return The inverse of m.
      * @throws IllegalArgumentException if m is not a 2 by 2 Matrix.
      */
     public static Matrix matrixInverse2D(Matrix m) {
@@ -141,17 +141,16 @@ public class DataMath {
         float determinant = m.get(0, 0) * m.get(1, 1) - m.get(0, 1) * m.get(1, 0);
 
         if (determinant == 0) {
-            return null;
-        } else {
-            Matrix result = new Matrix(2, 2);
-
-            result.set(0, 0, m.get(1, 1));
-            result.set(0, 1, -1 * m.get(0, 1));
-            result.set(1, 0, -1 * m.get(1, 0));
-            result.set(1, 1, m.get(0, 0));
-
-            return result.scalarMultiply(1f / determinant);
+            determinant = 0.01f;
         }
+        Matrix result = new Matrix(2, 2);
+
+        result.set(0, 0, m.get(1, 1));
+        result.set(0, 1, -1 * m.get(0, 1));
+        result.set(1, 0, -1 * m.get(1, 0));
+        result.set(1, 1, m.get(0, 0));
+
+        return result.scalarMultiply(1f / determinant);
     }
     
     /**

@@ -2,11 +2,13 @@ package chess.intel.training;
 
 import java.util.ArrayList;
 import java.io.File;
+import java.io.IOException;
 
 import chess.intel.util.DataMath;
 import chess.intel.util.Matrix;
 import chess.intel.util.Vector;
 
+import chess.intel.Agent;
 import chess.intel.strategy.NeuralNetwork;
 
 public class TrainingManager {
@@ -14,9 +16,9 @@ public class TrainingManager {
     // Number of Trainees per Generation
     private static final int BATCH_SIZE = 8; //80;
 
-    private static final String TEMPFILE_PATH = "output/training/gen";
+    public static final String TEMPFILE_PATH = "output/training/gen";
     private static final int THINKING_DEPTH = 2;
-    private static final int NUM_ROUNDS = 1; //100;
+    private static final int NUM_ROUNDS = 5; //100;
     private static final int MAX_MOVES = 100;
 
     /**
@@ -49,6 +51,7 @@ public class TrainingManager {
                 // THE GAMES FINISH.
 
                 try {
+                    gen.sort();
                     gen.write(genFile);
                 } catch (java.io.IOException ex) {
                     System.out.println(ex.getMessage());

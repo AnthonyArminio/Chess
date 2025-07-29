@@ -10,6 +10,8 @@ import javafx.stage.Stage;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
 
+import java.io.File;
+
 import chess.display.ChessBoard;
 import chess.display.Square;
 import chess.intel.Player;
@@ -20,6 +22,7 @@ import chess.logic.ChessMove;
 import chess.logic.util.GridMath;
 
 import chess.intel.training.TrainingManager;
+import chess.intel.training.Generation;
 
 public class Chess extends Application {
 
@@ -45,9 +48,14 @@ public class Chess extends Application {
         this.user = new Player(true);
 
         //loadGame(new ChessGame(new Player(), new Player(), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
-        ChessGame game = new ChessGame(this.user, new Agent(new MaterialisticStrategy(), 5), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor));
-        loadGame(game);
-        game.start();
+        //ChessGame game = new ChessGame(this.user, new Agent(new MaterialisticStrategy(), 5), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor));
+        try {
+            ChessGame game = new ChessGame(this.user, Generation.getFromJson(new File(TrainingManager.TEMPFILE_PATH)).getBestAgent(3), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor));
+            loadGame(game);
+            game.start();
+        } catch (java.io.IOException ex) {
+            System.out.println(ex.getMessage());
+        }
 
         this.mouseImageView = new ImageView();
         this.pieceInMouse = false;
@@ -73,7 +81,7 @@ public class Chess extends Application {
         stage.show();
 
         // FOR TESTING
-        TrainingManager.startTraining(1);
+        //TrainingManager.startTraining(1);
     }
 
     private void loadGame(ChessGame game) {

@@ -6,6 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 
+import chess.intel.Agent;
+
+import chess.intel.util.DataMath;
+
 import chess.intel.strategy.Strategy;
 import chess.intel.util.json.*;
 
@@ -100,6 +104,15 @@ public class Generation {
 
     public ArrayList<Trainee> getRoster() {
         return this.roster;
+    }
+
+    public void sort() {
+        DataMath.<Trainee>quickSort(this.roster, false);
+    }
+
+    public Agent getBestAgent(int depth) {
+        
+        return new Agent(this.roster.get(0).getStrategy(), depth);
     }
 
     /**
