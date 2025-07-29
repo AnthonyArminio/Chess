@@ -49,13 +49,9 @@ public class Chess extends Application {
 
         //loadGame(new ChessGame(new Player(), new Player(), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
         //ChessGame game = new ChessGame(this.user, new Agent(new MaterialisticStrategy(), 5), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor));
-        try {
-            ChessGame game = new ChessGame(this.user, Generation.getFromJson(new File(TrainingManager.TEMPFILE_PATH)).getBestAgent(3), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor));
-            loadGame(game);
-            game.start();
-        } catch (java.io.IOException ex) {
-            System.out.println(ex.getMessage());
-        }
+        ChessGame game = new ChessGame(this.user, TrainingManager.getBestAgent(3), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor));
+        loadGame(game);
+        game.start();
 
         this.mouseImageView = new ImageView();
         this.pieceInMouse = false;

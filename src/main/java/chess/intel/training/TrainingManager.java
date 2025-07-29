@@ -2,7 +2,6 @@ package chess.intel.training;
 
 import java.util.ArrayList;
 import java.io.File;
-import java.io.IOException;
 
 import chess.intel.util.DataMath;
 import chess.intel.util.Matrix;
@@ -16,7 +15,7 @@ public class TrainingManager {
     // Number of Trainees per Generation
     private static final int BATCH_SIZE = 8; //80;
 
-    public static final String TEMPFILE_PATH = "output/training/gen";
+    private static final String TEMPFILE_PATH = "output/training/gen";
     private static final int THINKING_DEPTH = 2;
     private static final int NUM_ROUNDS = 5; //100;
     private static final int MAX_MOVES = 100;
@@ -224,5 +223,22 @@ public class TrainingManager {
             newRoster.add(new Trainee(new NeuralNetwork(newWeights, newActivationWeights, new StandardInputStrategy()), THINKING_DEPTH));
         }
         return new Generation(newRoster, generationNumber + 1);
+    }
+
+    public static Agent getBestAgent(int depth) {
+        try {
+            Generation bestGen = Generation.getFromJson(new File(TEMPFILE_PATH));
+            return new Agent(bestGen.getRoster().get(0).getStrategy(), depth);
+        } catch (java.io.IOException ex) {
+            System.out.println(ex.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Deletes the tempfile holding the latest Generation JSON.
+     */
+    private static void purge() {
+        
     }
 }

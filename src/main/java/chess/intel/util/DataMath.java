@@ -201,7 +201,7 @@ public class DataMath {
      * @return sigma(x)
      */
     public static float sigma(double x) {
-        return 1 / (1 + (float) Math.pow(Math.E, -x));
+        return 1 / (1 + (float) Math.pow(Math.E, -1 * x));
     }
 
     /**

@@ -110,11 +110,6 @@ public class Generation {
         DataMath.<Trainee>quickSort(this.roster, false);
     }
 
-    public Agent getBestAgent(int depth) {
-        
-        return new Agent(this.roster.get(0).getStrategy(), depth);
-    }
-
     /**
      * Writes the JSON String representing this Generation to a specified File.
      * @param file The file to write to
