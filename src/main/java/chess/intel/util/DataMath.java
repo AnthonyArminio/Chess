@@ -157,7 +157,7 @@ public class DataMath {
      * Sorts a specified list using quick sort
      * @param <T> The list type, which must implement Comparable<T>
      * @param list The list to sort
-     * @param reversed Whether the list should be sorted in reverse
+     * @param reversed Whether the list should be sorted in reverse (greatest to least)
      */
     public static <T extends Comparable<T>> void quickSort(ArrayList<T> list, boolean reversed) {
 
@@ -180,12 +180,13 @@ public class DataMath {
             quickSort(majorList, reversed);
         }
 
-        minorList.add(basis);
         ArrayList<T> sortedList;
         if (reversed) {
-            sortedList = combineLists(minorList, majorList);
-        } else {
+            majorList.add(basis);
             sortedList = combineLists(majorList, minorList);
+        } else {
+            minorList.add(basis);
+            sortedList = combineLists(minorList, majorList);
         }
 
         list.clear();

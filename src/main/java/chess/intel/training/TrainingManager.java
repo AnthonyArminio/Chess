@@ -20,22 +20,24 @@ public class TrainingManager {
     private static final int NUM_ROUNDS = 5; //100;
     private static final int MAX_MOVES = 100;
 
+    private static int gamesFinished;
+
     /**
      * Trains a specified number of generations starting from the Generation found by parsing the tempfile.
      * When the training is complete, this method writes the final Generation to that same tempfile.
      * @param numGenerations The number of Generations to train.
      */
-    public static void startTraining(int numGenerations) {
+    public static void startTraining(int numGenerations, boolean purge) {
         File genFile = new File(TEMPFILE_PATH);
 
         Runnable r = () -> {
             try {
                 Generation gen;
-                if (genFile.exists()) {
+                if (!genFile.exists() || purge) {
+                    gen = new Generation(BATCH_SIZE);
+                } else {
                     System.out.println("Getting generation from JSON");
                     gen = Generation.getFromJson(genFile);
-                } else {
-                    gen = new Generation(BATCH_SIZE);
                 }
 
                 int startingGenNumber = gen.getGenerationNumber();
@@ -73,12 +75,17 @@ public class TrainingManager {
         ArrayList<Trainee> roster = gen.getRoster();
         ArrayList<Thread> threads = new ArrayList<Thread>();
 
+        final int totalGames = gen.getSize() * gen.getSize() * NUM_ROUNDS;
+        System.out.printf("Total games scheduled: %d\n", totalGames);
+        gamesFinished = 0;
+
         for (Trainee t1 : roster) {
             for (Trainee t2 : roster) {
                 if (t1 != t2) {
                     Runnable r = () -> {
                         for (int round = 0; round < NUM_ROUNDS; round++) {
                             match(t1, t2);
+                            System.out.printf("Finished training game. %.2f%% complete.\n", 100.0 * (++gamesFinished) / totalGames);
                         }
                     };
                     Thread t = new Thread(r);
@@ -97,7 +104,7 @@ public class TrainingManager {
             }
         }
 
-        return breed(gen);
+        return breedStrategy2(gen);
     }
 
     /**
@@ -117,7 +124,7 @@ public class TrainingManager {
      * @param prevGen The previous Generation.
      * @return The next Generation, breeded to hopefully be better at chess than the previous.
      */
-    private static Generation breed(Generation prevGen) {
+    private static Generation breedStrategy1(Generation prevGen) {
 
         int generationNumber = prevGen.getGenerationNumber();
 
@@ -222,20 +229,71 @@ public class TrainingManager {
         return new Generation(newRoster, generationNumber + 1);
     }
 
+    /**
+     * Determines the next Generation based on the best-performing Trainees from a specified Generation.
+     * This method should introduce some random noise/mutations to encourage new strategies. All Trainees
+     * are expected to use NeuralNetworks of the same shape.
+     * 
+     * This strategy is simpler than breedStrategy1, simply introducing purely random noise in varying amounts
+     * for each Trainee. The fittest Trainee from the previous Generation will remain unchanged this Generation.
+     * 
+     * @param prevGen The previous Generation.
+     * @return The next Generation, breeded to hopefully be better at chess than the previous.
+     */
+    private static Generation breedStrategy2(Generation prevGen) {
+
+        System.out.printf("Creating the next generation...\n");
+
+        int generationNumber = prevGen.getGenerationNumber();
+        int genSize = prevGen.getSize();
+
+        prevGen.sort();
+        ArrayList<Trainee> roster = prevGen.getRoster();
+        ArrayList<Trainee> newRoster = new ArrayList<Trainee>();
+
+        int numLayers = roster.get(0).getStrategy().getNumLayers();
+        int[] shape = roster.get(0).getStrategy().getShape();
+
+        // print fitnesses for debugging
+        for (Trainee t : roster) {
+            System.out.println("DEBUG (fitness): " + t.getFitness());
+        }
+
+        final float MAX_STEP = 10;
+        float step = 0;
+
+        for (Trainee t : roster) {
+
+            Matrix[] weights = new Matrix[numLayers];
+            Vector[] activationWeights = new Vector[numLayers - 1];
+
+            // weights
+            for (int layer = 0; layer < numLayers; layer++) {
+                weights[layer] = new Matrix(shape[layer + 1], shape[layer], -step, step);
+                weights[layer].add(t.getStrategy().getWeights()[layer]);
+            }
+
+            // activation weights
+            for (int layer = 0; layer < numLayers - 1; layer++) {
+                activationWeights[layer] = new Vector(shape[layer + 1], -step, step);
+                activationWeights[layer].add(t.getStrategy().getActivationWeights()[layer]);
+            }
+
+            newRoster.add(new Trainee(new NeuralNetwork(weights, activationWeights, new StandardInputStrategy()), THINKING_DEPTH));
+            
+            step += MAX_STEP / (genSize - 1);
+        }
+
+        return new Generation(newRoster, generationNumber + 1);
+    }
+
     public static Agent getBestAgent(int depth) {
         try {
             Generation bestGen = Generation.getFromJson(new File(TEMPFILE_PATH));
-            return new Agent(bestGen.getRoster().get(0).getStrategy(), depth);
+            return new Agent(bestGen.getRoster().get(0).getStrategy(), depth, true);
         } catch (java.io.IOException ex) {
             System.out.println(ex.getMessage());
             return null;
         }
-    }
-
-    /**
-     * Deletes the tempfile holding the latest Generation JSON.
-     */
-    private static void purge() {
-
     }
 }

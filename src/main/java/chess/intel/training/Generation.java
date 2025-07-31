@@ -34,7 +34,7 @@ public class Generation {
         this.size = size;
         this.roster = new ArrayList<Trainee>();
         for (int i = 0; i < this.size; i++) {
-            this.roster.add(new Trainee());
+            this.roster.add(new Trainee(2));
         }
     }
 
@@ -107,7 +107,7 @@ public class Generation {
     }
 
     public void sort() {
-        DataMath.<Trainee>quickSort(this.roster, false);
+        DataMath.<Trainee>quickSort(this.roster, true);
     }
 
     /**

@@ -8,7 +8,7 @@ public class TrainingGame extends ChessGame {
     private Trainee blackPlayer;
 
     public TrainingGame(Trainee whitePlayer, Trainee blackPlayer) {
-        super(whitePlayer, blackPlayer);
+        super(whitePlayer, blackPlayer, false);
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
     }

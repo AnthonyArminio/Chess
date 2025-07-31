@@ -85,15 +85,30 @@ public class Matrix {
 
     /**
      * Multiplies all of the entries in a given Matrix by a specified scalar value.
-     * @param m The Matrix to alter.
      * @param scalar The scalar to multiply by.
-     * @return A reference to the Matrix passed to this method.
+     * @return A reference to the altered Matrix.
      */
     public Matrix scalarMultiply(float scalar) {
 
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.cols; j++) {
                 this.set(i, j, scalar * this.get(i, j));
+            }
+        }
+
+        return this;
+    }
+
+    /**
+     * Adds another Matrix to this Matrix.
+     * @param other The Matrix to add to this Matrix.
+     * @return A reference to the altered Matrix.
+     */
+    public Matrix add(Matrix other) {
+
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
+                this.set(i, j, this.get(i, j) + other.get(i, j));
             }
         }
 

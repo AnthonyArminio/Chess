@@ -49,7 +49,7 @@ public class Chess extends Application {
 
         //loadGame(new ChessGame(new Player(), new Player(), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
         //ChessGame game = new ChessGame(this.user, new Agent(new MaterialisticStrategy(), 5), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor));
-        ChessGame game = new ChessGame(this.user, TrainingManager.getBestAgent(3), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor));
+        ChessGame game = new ChessGame(this.user, TrainingManager.getBestAgent(3), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor), true);
         loadGame(game);
         game.start();
 
@@ -77,7 +77,7 @@ public class Chess extends Application {
         stage.show();
 
         // FOR TESTING
-        //TrainingManager.startTraining(1);
+        TrainingManager.startTraining(1, true);
     }
 
     private void loadGame(ChessGame game) {

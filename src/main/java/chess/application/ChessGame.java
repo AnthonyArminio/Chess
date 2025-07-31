@@ -19,12 +19,15 @@ public class ChessGame {
     private Player playerToMove;
     private int moveNumber;
     private boolean isIdle;
+    private boolean printMoves;
     
-    public ChessGame(Player whitePlayer, Player blackPlayer) {
+    public ChessGame(Player whitePlayer, Player blackPlayer, boolean printMoves) {
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
         this.position = new ChessPosition();
         this.playerToMove = null;
+
+        this.printMoves = printMoves;
 
         this.board = null;
 
@@ -33,11 +36,13 @@ public class ChessGame {
         this.isIdle = true;
     }
 
-    public ChessGame(Player whitePlayer, Player blackPlayer, ChessBoard board) {
+    public ChessGame(Player whitePlayer, Player blackPlayer, ChessBoard board, boolean printMoves) {
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
         this.position = new ChessPosition();
         this.playerToMove = null;
+
+        this.printMoves = printMoves;
 
         this.board = board;
         this.board.loadGame(this);
@@ -64,10 +69,12 @@ public class ChessGame {
         }
         this.position.makeMove(move);
 
-        if (this.position.colorToMove() == 'b') {
-            System.out.printf("%d. %s ", this.moveNumber, move.getNotation());
-        } else {
-            System.out.printf("%s\n", move.getNotation());
+        if (this.printMoves) {
+            if (this.position.colorToMove() == 'b') {
+                System.out.printf("%d. %s ", this.moveNumber, move.getNotation());
+            } else {
+                System.out.printf("%s\n", move.getNotation());
+            }
         }
 
         if (!handleGameEnd()) {

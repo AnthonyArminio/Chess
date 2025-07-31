@@ -18,11 +18,13 @@ import com.google.gson.annotations.Expose;
 public class Agent extends Player {
     @Expose private Strategy strategy;
     @Expose private int depth;
+    @Expose private boolean printMoves;
 
-    public Agent(Strategy strategy, int depth) {
+    public Agent(Strategy strategy, int depth, boolean printMoves) {
         super(false);
         this.strategy = strategy;
         this.depth = depth;
+        this.printMoves = printMoves;
     }
 
     @Override public void alertToMove(ChessGame game) {
@@ -66,7 +68,9 @@ public class Agent extends Player {
 
         Evaluation eval = minimaxEvaluate(position, color, this.depth, alphabeta);
 
-        System.out.println("\n" + eval.pathString(this.currentGame.getMoveNumber(), color) + " (" + eval.evalString() + ")");
+        if (this.printMoves) {
+            System.out.println("\n" + eval.pathString(this.currentGame.getMoveNumber(), color) + " (" + eval.evalString() + ")");
+        }
 
         return eval.getBestMove();
     }

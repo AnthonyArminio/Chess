@@ -15,13 +15,13 @@ public class Trainee extends Agent implements Comparable<Trainee> {
     /**
      * Creates a default Trainee with a random Matrix using the default NeuralNetwork specifications.
      */
-    public Trainee() {
-        super(new NeuralNetwork(), 2);
+    public Trainee(int depth) {
+        super(new NeuralNetwork(), depth, false);
         this.fitness = 0;
     }
 
     public Trainee(NeuralNetwork nn, int depth) {
-        super(nn, depth);
+        super(nn, depth, false);
         this.fitness = 0;
     }
 
