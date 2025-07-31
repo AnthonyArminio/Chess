@@ -13,7 +13,7 @@ import chess.intel.strategy.NeuralNetwork;
 public class TrainingManager {
 
     // Number of Trainees per Generation
-    private static final int BATCH_SIZE = 8; //80;
+    private static final int BATCH_SIZE = 20; //80;
 
     private static final String TEMPFILE_PATH = "output/training/gen";
     private static final int THINKING_DEPTH = 2;
@@ -21,6 +21,11 @@ public class TrainingManager {
     private static final int MAX_MOVES = 100;
 
     private static int gamesFinished;
+
+    public static void main(String[] args) {
+        System.out.println("SUCCESS");
+        startTraining(1, true);
+    }
 
     /**
      * Trains a specified number of generations starting from the Generation found by parsing the tempfile.
@@ -64,6 +69,12 @@ public class TrainingManager {
         Thread t = new Thread(r);
         t.setDaemon(true);
         t.start();
+
+        try {
+            t.join();
+        } catch (InterruptedException ex) {
+            System.out.println("Thread interrupted.");
+        }
     }
 
     /**
@@ -81,21 +92,26 @@ public class TrainingManager {
 
         for (Trainee t1 : roster) {
             for (Trainee t2 : roster) {
-                if (t1 != t2) {
-                    Runnable r = () -> {
-                        for (int round = 0; round < NUM_ROUNDS; round++) {
-                            match(t1, t2);
-                            System.out.printf("Finished training game. %.2f%% complete.\n", 100.0 * (++gamesFinished) / totalGames);
-                        }
-                    };
-                    Thread t = new Thread(r);
-                    threads.add(t);
-                    t.setDaemon(true);
-                    t.start();
+                for (int round = 0; round < NUM_ROUNDS; round++) {
+                    match(t1, t2);
+                    System.out.printf("Finished training game. %.2f%% complete.\n", 100.0 * (++gamesFinished) / totalGames);
                 }
+                /* 
+                Runnable r = () -> {
+                    for (int round = 0; round < NUM_ROUNDS; round++) {
+                        match(t1, t2);
+                        System.out.printf("Finished training game. %.2f%% complete.\n", 100.0 * (++gamesFinished) / totalGames);
+                    }
+                };
+                Thread t = new Thread(r);
+                threads.add(t);
+                t.setDaemon(true);
+                t.start();
+                 */
             }
         }
 
+        /* 
         for (Thread t : threads) {
             try {
                 t.join();
@@ -103,6 +119,7 @@ public class TrainingManager {
                 System.out.println("Thread interrupted.");
             }
         }
+         */
 
         return breedStrategy2(gen);
     }
@@ -112,7 +129,7 @@ public class TrainingManager {
      * fitness value of each Trainee.
      */
     private static TrainingGame match(Trainee white, Trainee black) {
-        TrainingGame newGame = new TrainingGame(white, black);
+        TrainingGame newGame = new TrainingGame(white, black, MAX_MOVES);
         newGame.start();
         return newGame;
     }

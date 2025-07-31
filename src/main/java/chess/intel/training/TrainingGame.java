@@ -6,11 +6,21 @@ public class TrainingGame extends ChessGame {
 
     private Trainee whitePlayer;
     private Trainee blackPlayer;
+    private int maxMoves;
 
-    public TrainingGame(Trainee whitePlayer, Trainee blackPlayer) {
+    public TrainingGame(Trainee whitePlayer, Trainee blackPlayer, int maxMoves) {
         super(whitePlayer, blackPlayer, false);
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
+    }
+
+    @Override protected boolean handleGameEnd() {
+        if (this.getMoveNumber() > this.maxMoves) {
+            onDraw(-1);
+            return true;
+        } else {
+            return super.handleGameEnd();
+        }
     }
 
     @Override protected void onWinForWhite() {

@@ -77,7 +77,7 @@ public class Chess extends Application {
         stage.show();
 
         // FOR TESTING
-        TrainingManager.startTraining(1, true);
+        
     }
 
     private void loadGame(ChessGame game) {

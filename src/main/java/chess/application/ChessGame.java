@@ -104,7 +104,7 @@ public class ChessGame {
      * Returns false if the game is not over.
      * @return true if the game is over, and false otherwise.
      */
-    private boolean handleGameEnd() {
+    protected boolean handleGameEnd() {
         if (ChessLogic.isCheckmate(this.position)) {
             if (this.position.colorToMove() == 'w') {
                 onWinForWhite();
