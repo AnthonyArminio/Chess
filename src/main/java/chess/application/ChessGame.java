@@ -18,6 +18,7 @@ public class ChessGame {
     private ChessBoard board;
     private Player playerToMove;
     private int moveNumber;
+    private int plyNumber;
     private boolean isIdle;
     private boolean printMoves;
     
@@ -32,6 +33,7 @@ public class ChessGame {
         this.board = null;
 
         this.moveNumber = 0;
+        this.plyNumber = 0;
 
         this.isIdle = true;
     }
@@ -48,6 +50,7 @@ public class ChessGame {
         this.board.loadGame(this);
 
         this.moveNumber = 0;
+        this.plyNumber = 0;
 
         this.isIdle = true;
     }
@@ -55,6 +58,7 @@ public class ChessGame {
     public void start() {
         this.isIdle = false;
         this.moveNumber = 1;
+        this.plyNumber = 1;
         this.playerToMove = this.whitePlayer;
         this.playerToMove.alertToMove(this);
     }
@@ -82,11 +86,12 @@ public class ChessGame {
         }
     }
 
-    private void advanceGame() {
+    protected void advanceGame() {
         passTurn();
         if (playerToMove == this.whitePlayer) {
             this.moveNumber++;
         }
+        this.plyNumber++;
         this.playerToMove.alertToMove(this);
 
     }
@@ -151,6 +156,10 @@ public class ChessGame {
 
     public int getMoveNumber() {
         return this.moveNumber;
+    }
+
+    public int getPlyNumber() {
+        return this.plyNumber;
     }
 
     public void setBoard(ChessBoard board) {

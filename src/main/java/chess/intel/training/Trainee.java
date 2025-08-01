@@ -8,7 +8,7 @@ import com.google.gson.annotations.Expose;
 public class Trainee extends Agent implements Comparable<Trainee> {
 
     @Expose private final float WIN_REWARD = 10;
-    @Expose private final float LOSS_PUNISHMENT = -10;
+    @Expose private final float LOSS_PUNISHMENT = 10;
 
     @Expose private float fitness;
 
@@ -43,10 +43,26 @@ public class Trainee extends Agent implements Comparable<Trainee> {
     }
 
     /**
+     * Rewards the Trainee for good performance in a game.
+     * @param value The value to increase this Trainee's fitness by.
+     */
+    public void reward(float value) {
+        this.fitness += value;
+    }
+
+    /**
      * Punishes the Trainee for losing a game.
      */
     public void punish() {
-        this.fitness += LOSS_PUNISHMENT;
+        this.fitness -= LOSS_PUNISHMENT;
+    }
+
+    /**
+     * Punishes the Trainee for bad performance in a game.
+     * @param value The value to decrease this Trainee's fitness by.
+     */
+    public void punish(float value) {
+        this.fitness -= value;
     }
 
     public float getFitness() {

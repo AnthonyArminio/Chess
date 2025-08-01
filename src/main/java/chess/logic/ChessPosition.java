@@ -271,6 +271,20 @@ public class ChessPosition {
     */
 
     /**
+     * Returns the standard material evaluation of the position.
+     */
+    public float getMaterialEvaluation() {
+        float sum = 0;
+        for (int i = 0; i < 64; i++) {
+            ChessPiece piece = this.getPieceAt(i);
+            if (piece != null) {
+                sum += piece.getValue();
+            }
+        }
+        return sum;
+    }
+
+    /**
      * Returns a reference to this position's positionArray.
      */
     public int[] getPositionArray() {

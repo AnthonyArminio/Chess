@@ -7,37 +7,6 @@ public class MaterialisticStrategy extends Strategy {
 
     @Override public Evaluation evaluate(ChessPosition position) {
 
-        float sum = 0;
-        for (int i = 0; i < 64; i++) {
-            sum += materialValue(position.getPieceAt(i));
-        }
-        return new Evaluation(sum);
-    }
-
-    private static float materialValue(ChessPiece piece) {
-
-        if (piece == null) {
-            return 0;
-        }
-
-        float value = 0;
-
-        if (piece.getType() == 'P') {
-            value = 1;
-        } else if (piece.getType() == 'B') {
-            value = 3;
-        } else if (piece.getType() == 'N') {
-            value = 3;
-        } else if (piece.getType() == 'R') {
-            value = 5;
-        } else if (piece.getType() == 'Q') {
-            value = 9;
-        }
-
-        if (piece.getColor() == 'b') {
-            value *= -1;
-        }
-
-        return value;
+        return new Evaluation(position.getMaterialEvaluation());
     }
 }
