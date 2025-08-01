@@ -22,9 +22,15 @@ import com.google.gson.annotations.Expose;
  */
 public class Generation {
 
+    private static final Gson GSON = new GsonBuilder()
+        .excludeFieldsWithoutExposeAnnotation()
+        .registerTypeAdapter(Strategy.class, new JsonStrategyAdapter())
+        .registerTypeAdapter(InputStrategy.class, new JsonInputStrategyAdapter())
+        .create();
+
     @Expose private int generationNumber;
     @Expose private int size;
-    @Expose private ArrayList<Trainee> roster;
+    private ArrayList<Trainee> roster;
 
     /**
      * Creates the initial Generation based on the default size and default Trainee constructor.
@@ -48,45 +54,31 @@ public class Generation {
     }
 
     /**
-     * Returns a Generation object recovered from the contents of a JSON-formatted file.
-     * @param jsonFile The file to parse
+     * Returns a Generation object recovered from the contents of a directory of JSON-formatted files.
+     * @param directoryPath The directory to parse
      * @return A Generation object
-     * @throws java.io.IOException if an error occurs while reading the file.
+     * @throws java.io.IOException if an error occurs while reading the files.
      */
-    public static Generation getFromJson(File jsonFile) throws java.io.IOException {
-        final int BUFFER_SIZE = 500000;
+    public static Generation getFromJsonDirectory(String directoryPath) throws java.io.IOException {
 
-        jsonFile.setReadable(true);
-        FileReader reader = new FileReader(jsonFile);
+        final int GEN_BUFFER_SIZE = 100;
+        final int TRAINEE_BUFFER_SIZE = 50000;
 
-        String jsonString = "";
-        char[] buffer = new char[BUFFER_SIZE];
-        int bytesRead = 0;
-        do {
-            bytesRead = reader.read(buffer);
+        File genFile = new File(directoryPath + TrainingManager.GEN_METADATA_FILENAME);
 
-            if (bytesRead > 0) {
-                if (bytesRead < BUFFER_SIZE) {
-                    char[] truncBuffer = new char[bytesRead];
-                    for (int c = 0; c < bytesRead; c++) {
-                        truncBuffer[c] = buffer[c];
-                    }
-                    jsonString += new String(truncBuffer);
-                } else {
-                    jsonString += new String(buffer);
-                }
-            }
+        Generation empty = GSON.fromJson(readFile(genFile, GEN_BUFFER_SIZE), Generation.class);
 
-        } while(bytesRead > 0);
+        int size = empty.getSize();
+        int generationNumber = empty.getGenerationNumber();
 
-        reader.close();
+        ArrayList<Trainee> roster = new ArrayList<Trainee>();
+        for (int t = 0; t < size; t++) {
+            File tFile = new File(directoryPath + TrainingManager.TRAINEE_FILENAME + t);
 
-        Gson gson = new GsonBuilder()
-            .excludeFieldsWithoutExposeAnnotation()
-            .registerTypeAdapter(Strategy.class, new JsonStrategyAdapter())
-            .registerTypeAdapter(InputStrategy.class, new JsonInputStrategyAdapter())
-            .create();
-        return gson.fromJson(jsonString, Generation.class);
+            roster.add(GSON.fromJson(readFile(tFile, TRAINEE_BUFFER_SIZE), Trainee.class));
+        }
+
+        return new Generation(roster, generationNumber);
 
     }
 
@@ -111,20 +103,70 @@ public class Generation {
     }
 
     /**
-     * Writes the JSON String representing this Generation to a specified File.
-     * @param file The file to write to
+     * Returns a String representation of the contents of a specified File.
+     * @param file The file to read
+     * @param bufferSize The buffer size to use
+     * @return The String representation of the File.
+     * @throws java.io.IOException
+     */
+    private static String readFile(File file, int bufferSize) throws java.io.IOException {
+        file.setReadable(true);
+        FileReader reader = new FileReader(file);
+
+        String string = "";
+        char[] buffer = new char[bufferSize];
+        int bytesRead = 0;
+        do {
+            bytesRead = reader.read(buffer);
+
+            if (bytesRead > 0) {
+                if (bytesRead < bufferSize) {
+                    char[] truncBuffer = new char[bytesRead];
+                    for (int c = 0; c < bytesRead; c++) {
+                        truncBuffer[c] = buffer[c];
+                    }
+                    string += new String(truncBuffer);
+                } else {
+                    string += new String(buffer);
+                }
+            }
+
+        } while(bytesRead > 0);
+
+        reader.close();
+
+        return string;
+    }
+
+    /**
+     * Writes the JSON String representing this Generation as well as each Trainee to files in a specified directory.
+     * @param directoryPath The directory to write to
      * @throws IOException if an error occurs while writing the file.
      */
-    public void write(File file) throws java.io.IOException {
-        file.setWritable(true);
-        FileWriter writer = new FileWriter(file);
+    public void write(String directoryPath) throws java.io.IOException {
 
-        Gson gson = new GsonBuilder()
-            .excludeFieldsWithoutExposeAnnotation()
-            .create();
-        String jsonString = gson.toJson(this);
+        // write this generation
+        File genFile = new File(directoryPath + TrainingManager.GEN_METADATA_FILENAME);
+
+        genFile.setWritable(true);
+        FileWriter writer = new FileWriter(genFile);
+
+        String jsonString = GSON.toJson(this);
 
         writer.write(jsonString);
         writer.close();
+
+        // write trainees in separate files
+        for (int t = 0; t < this.size; t++) {
+            File tFile = new File(directoryPath + TrainingManager.TRAINEE_FILENAME + t);
+
+            tFile.setWritable(true);
+            writer = new FileWriter(tFile);
+
+            jsonString = GSON.toJson(this.roster.get(t));
+
+            writer.write(jsonString);
+            writer.close();
+        }
     }
 }

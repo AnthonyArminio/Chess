@@ -14,9 +14,11 @@ import chess.intel.strategy.NeuralNetwork;
 public class TrainingManager {
 
     // Number of Trainees per Generation
-    private static final int BATCH_SIZE = 28;
+    private static final int BATCH_SIZE = 3;
 
-    private static final String TEMPFILE_PATH = "output/training/gen";
+    private static final String GEN_DIRECTORY_PATH = "output/training/generation/";
+    public static final String GEN_METADATA_FILENAME = "gen";
+    public static final String TRAINEE_FILENAME = "roster/t";
     private static final int THINKING_DEPTH = 2;
     private static final int MAX_MOVES = 30;
     private static final int NUM_THREADS = 10;
@@ -29,16 +31,16 @@ public class TrainingManager {
      * @param numGenerations The number of Generations to train.
      */
     public static void startTraining(int numGenerations, boolean fromBeginning) {
-        File genFile = new File(TEMPFILE_PATH);
+        File genFile = new File(GEN_DIRECTORY_PATH + GEN_METADATA_FILENAME);
 
         Runnable r = () -> {
             try {
                 Generation gen;
-                if (!genFile.exists() || fromBeginning) {
+                if (fromBeginning || !genFile.exists()) {
                     gen = new Generation(BATCH_SIZE);
                 } else {
                     System.out.println("Getting generation from JSON");
-                    gen = Generation.getFromJson(genFile);
+                    gen = Generation.getFromJsonDirectory(GEN_DIRECTORY_PATH);
                 }
 
                 int startingGenNumber = gen.getGenerationNumber();
@@ -50,7 +52,7 @@ public class TrainingManager {
 
                 try {
                     gen.sort();
-                    gen.write(genFile);
+                    gen.write(GEN_DIRECTORY_PATH);
                 } catch (java.io.IOException ex) {
                     System.out.println(ex.getMessage());
                     //System.out.println("Error: Failed to write to JSON file.");
@@ -309,28 +311,11 @@ public class TrainingManager {
 
     public static Agent getBestAgent(int depth) {
         try {
-            Generation bestGen = Generation.getFromJson(new File(TEMPFILE_PATH));
+            Generation bestGen = Generation.getFromJsonDirectory(GEN_DIRECTORY_PATH);
             return new Agent(bestGen.getRoster().get(0).getStrategy(), depth, true);
         } catch (java.io.IOException ex) {
             System.out.println(ex.getMessage());
             return null;
         }
-    }
-
-    /**
-     * Removes all the contents of the gen file. BE CAREFUL ABOUT USING THIS FUNCTION!
-     */
-    public static void purge() {
-
-        File file = new File(TEMPFILE_PATH);
-
-        try {
-            FileWriter writer = new FileWriter(file);
-            writer.write("");
-            writer.close();
-        } catch (java.io.IOException ex) {
-            System.out.println(ex.getMessage());
-        }
-
     }
 }
