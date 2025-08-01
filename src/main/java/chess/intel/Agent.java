@@ -109,7 +109,7 @@ public class Agent extends Player {
         // due to the standard evaluation, the size of this list is expected to be nonzero.
         ArrayList<ChessMove> possibleMoves = ChessLogic.generateLegalMoves(position);
 
-        if (color == 'w') { 
+        if (color == 'w') {
             // maximizing case
 
             // sort moves before analyzing them (apparently slower)

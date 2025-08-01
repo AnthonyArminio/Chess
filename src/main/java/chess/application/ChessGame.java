@@ -111,7 +111,7 @@ public class ChessGame {
      */
     protected boolean handleGameEnd() {
         if (ChessLogic.isCheckmate(this.position)) {
-            if (this.position.colorToMove() == 'w') {
+            if (this.position.colorToMove() == 'b') {
                 onWinForWhite();
             } else {
                 onWinForBlack();

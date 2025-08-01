@@ -20,8 +20,8 @@ public class TrainingManager {
     public static final String GEN_METADATA_FILENAME = "gen";
     public static final String TRAINEE_FILENAME = "roster/t";
     private static final int THINKING_DEPTH = 2;
-    private static final int MAX_MOVES = 30;
-    private static final int NUM_THREADS = 20;
+    private static final int MAX_MOVES = 20;
+    private static final int NUM_THREADS = 30;
 
     private static int currentGeneration;
     private static int gamesFinished;
@@ -50,14 +50,13 @@ public class TrainingManager {
                     currentGeneration = genNumber;
                     gen = train(gen);
                     System.out.printf("Finished training generation %d.\n", genNumber);
-                }
-
-                try {
-                    gen.sort();
-                    gen.write(GEN_DIRECTORY_PATH);
-                } catch (java.io.IOException ex) {
-                    System.out.println(ex.getMessage());
-                    //System.out.println("Error: Failed to write to JSON file.");
+                    try {
+                        gen.sort();
+                        gen.write(GEN_DIRECTORY_PATH);
+                    } catch (java.io.IOException ex) {
+                        System.out.println(ex.getMessage());
+                        //System.out.println("Error: Failed to write to JSON file.");
+                    }
                 }
 
             } catch (java.io.IOException ex) {
