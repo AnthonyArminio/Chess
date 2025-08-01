@@ -2,6 +2,7 @@ package chess.intel.training;
 
 import java.util.ArrayList;
 import java.io.File;
+import java.io.FileWriter;
 
 import chess.intel.util.DataMath;
 import chess.intel.util.Matrix;
@@ -13,12 +14,12 @@ import chess.intel.strategy.NeuralNetwork;
 public class TrainingManager {
 
     // Number of Trainees per Generation
-    private static final int BATCH_SIZE = 25;
+    private static final int BATCH_SIZE = 28;
 
     private static final String TEMPFILE_PATH = "output/training/gen";
     private static final int THINKING_DEPTH = 2;
     private static final int MAX_MOVES = 30;
-    private static final int NUM_THREADS = 15;
+    private static final int NUM_THREADS = 10;
 
     private static int gamesFinished;
 
@@ -27,13 +28,13 @@ public class TrainingManager {
      * When the training is complete, this method writes the final Generation to that same tempfile.
      * @param numGenerations The number of Generations to train.
      */
-    public static void startTraining(int numGenerations, boolean purge) {
+    public static void startTraining(int numGenerations, boolean fromBeginning) {
         File genFile = new File(TEMPFILE_PATH);
 
         Runnable r = () -> {
             try {
                 Generation gen;
-                if (!genFile.exists() || purge) {
+                if (!genFile.exists() || fromBeginning) {
                     gen = new Generation(BATCH_SIZE);
                 } else {
                     System.out.println("Getting generation from JSON");
@@ -314,5 +315,22 @@ public class TrainingManager {
             System.out.println(ex.getMessage());
             return null;
         }
+    }
+
+    /**
+     * Removes all the contents of the gen file. BE CAREFUL ABOUT USING THIS FUNCTION!
+     */
+    public static void purge() {
+
+        File file = new File(TEMPFILE_PATH);
+
+        try {
+            FileWriter writer = new FileWriter(file);
+            writer.write("");
+            writer.close();
+        } catch (java.io.IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+
     }
 }
