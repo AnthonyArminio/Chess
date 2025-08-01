@@ -14,15 +14,16 @@ import chess.intel.strategy.NeuralNetwork;
 public class TrainingManager {
 
     // Number of Trainees per Generation
-    private static final int BATCH_SIZE = 3;
+    private static final int BATCH_SIZE = 28;
 
     private static final String GEN_DIRECTORY_PATH = "output/training/generation/";
     public static final String GEN_METADATA_FILENAME = "gen";
     public static final String TRAINEE_FILENAME = "roster/t";
     private static final int THINKING_DEPTH = 2;
     private static final int MAX_MOVES = 30;
-    private static final int NUM_THREADS = 10;
+    private static final int NUM_THREADS = 20;
 
+    private static int currentGeneration;
     private static int gamesFinished;
 
     /**
@@ -46,6 +47,7 @@ public class TrainingManager {
                 int startingGenNumber = gen.getGenerationNumber();
 
                 for (int genNumber = startingGenNumber; genNumber < startingGenNumber + numGenerations; genNumber++) {
+                    currentGeneration = genNumber;
                     gen = train(gen);
                     System.out.printf("Finished training generation %d.\n", genNumber);
                 }
@@ -88,7 +90,7 @@ public class TrainingManager {
         for (Trainee t1 : roster) {
             for (Trainee t2 : roster) {
                 if (t1 != t2) {
-                    games.add(match(t1, t2));
+                    games.add(new TrainingGame(t1, t2, MAX_MOVES));
                 }
             }
         }
@@ -118,14 +120,6 @@ public class TrainingManager {
     }
 
     /**
-     * Creates a new TrainingGame between two Trainees. The result of the game is used to update the
-     * fitness value of each Trainee.
-     */
-    private static TrainingGame match(Trainee white, Trainee black) {
-        return new TrainingGame(white, black, MAX_MOVES);
-    }
-
-    /**
      * Starts a set of games, allowing for multiple threads of excution.
      * @param games
      * @param totalThreads
@@ -135,7 +129,8 @@ public class TrainingManager {
         int totalGames = games.size();
         for (int g = threadNumber; g < totalGames; g += totalThreads) {
             games.get(g).start();
-            System.out.printf("Finished training game. %.2f%% complete.\n", 100.0 * (++gamesFinished) / totalGames);
+            System.out.printf("====GEN %d==== Finished training game. %.2f%% complete.\n", 
+                currentGeneration, 100.0 * (++gamesFinished) / totalGames);
         }
     }
 
