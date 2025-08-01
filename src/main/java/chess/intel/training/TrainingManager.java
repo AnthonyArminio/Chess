@@ -13,12 +13,12 @@ import chess.intel.strategy.NeuralNetwork;
 public class TrainingManager {
 
     // Number of Trainees per Generation
-    private static final int BATCH_SIZE = 10;
+    private static final int BATCH_SIZE = 25;
 
     private static final String TEMPFILE_PATH = "output/training/gen";
     private static final int THINKING_DEPTH = 2;
-    private static final int MAX_MOVES = 20;
-    private static final int NUM_THREADS = 5;
+    private static final int MAX_MOVES = 30;
+    private static final int NUM_THREADS = 15;
 
     private static int gamesFinished;
 
@@ -43,9 +43,8 @@ public class TrainingManager {
                 int startingGenNumber = gen.getGenerationNumber();
 
                 for (int genNumber = startingGenNumber; genNumber < startingGenNumber + numGenerations; genNumber++) {
-                    System.out.println("DEBUG: Training generation " + genNumber);
                     gen = train(gen);
-                    System.out.println("DEBUG: Finished training generation " + genNumber);
+                    System.out.printf("Finished training generation %d.\n", genNumber);
                 }
 
                 try {
@@ -85,11 +84,14 @@ public class TrainingManager {
 
         for (Trainee t1 : roster) {
             for (Trainee t2 : roster) {
-                games.add(match(t1, t2));
+                if (t1 != t2) {
+                    games.add(match(t1, t2));
+                }
             }
         }
 
         int totalGames = games.size();
+        System.out.printf("Training generation %d with %d threads.\n", gen.getGenerationNumber(), NUM_THREADS);
         System.out.printf("Total games scheduled: %d\n", totalGames);
         gamesFinished = 0;
 
