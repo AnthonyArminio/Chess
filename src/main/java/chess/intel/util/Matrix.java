@@ -72,11 +72,11 @@ public class Matrix {
                 float min;
                 float max;
                 if (this.data[j][i] > 0) {
-                    min = 0;
+                    min = -1 * this.data[j][i];
                     max = this.data[j][i];
                 } else {
                     min = this.data[j][i];
-                    max = 0;
+                    max = -1 * this.data[j][i];
                 }
                 this.data[j][i] = DataMath.random(min, max);
             }

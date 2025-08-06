@@ -51,6 +51,14 @@ public class DataMath {
         return result;
     }
 
+    public static Vector scalarMultiply(Vector v, float scalar) {
+        return v.copy().scalarMultiply(scalar);
+    }
+
+    public static Matrix scalarMultiply(Matrix m, float scalar) {
+        return m.copy().scalarMultiply(scalar);
+    }
+
     /**
      * Multiplies a Matrix m by a Vector v.
      * @param m the Matrix to multiply.
@@ -231,6 +239,17 @@ public class DataMath {
             newList.add(element);
         }
         return newList;
+    }
+
+    /**
+     * Returns a random integer between min and max, inclusive.
+     * @throws IllegalArgumentException if max < min.
+     */
+    public static int random(int min, int max) {
+        if (max < min) {
+            throw new IllegalArgumentException("random: max cannot be less than min");
+        }
+        return (int) ((max - min + 1) * Math.random() + min);
     }
 
     /**

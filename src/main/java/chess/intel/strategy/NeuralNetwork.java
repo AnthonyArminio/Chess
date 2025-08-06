@@ -81,7 +81,8 @@ public class NeuralNetwork extends Strategy {
         // Do not handle activation weights or sigma distribution for the last layer since that should
         // represent a concrete evaluation of the position.
         currentLayer = DataMath.matrixMultiply(weights[this.numLayers - 1], currentLayer);
-        return new Evaluation(currentLayer.get(0));
+        // Introduce hybrid strategy by adding the position's material evaluation.
+        return new Evaluation(currentLayer.get(0) + position.getMaterialEvaluation());
     }
 
     public int getNumLayers() {

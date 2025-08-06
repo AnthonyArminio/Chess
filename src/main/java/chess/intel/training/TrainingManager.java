@@ -14,9 +14,10 @@ import chess.intel.strategy.NeuralNetwork;
 public class TrainingManager {
 
     // Number of Trainees per Generation
-    private static final int BATCH_SIZE = 28;
+    private static final int BATCH_SIZE = 30;
+    private static final int NUM_GAMES = 0; // set to 0 to ensure that all games are played
 
-    private static final String GEN_DIRECTORY_PATH = "output/training/generation/";
+    private static final String GEN_DIRECTORY_PATH = "output/training/gen_stream_2/";
     public static final String GEN_METADATA_FILENAME = "gen";
     public static final String TRAINEE_FILENAME = "roster/t";
     private static final int THINKING_DEPTH = 2;
@@ -94,6 +95,14 @@ public class TrainingManager {
             }
         }
 
+        int numGames = NUM_GAMES;
+        ArrayList<TrainingGame> filteredGames;
+        if (numGames > 0) {
+            filteredGames = subset(games, numGames);
+        } else {
+            filteredGames = games;
+        }
+
         int totalGames = games.size();
         System.out.printf("Training generation %d with %d threads.\n", gen.getGenerationNumber(), NUM_THREADS);
         System.out.printf("Total games scheduled: %d\n", totalGames);
@@ -101,7 +110,7 @@ public class TrainingManager {
 
         for (int i = 0; i < NUM_THREADS; i++) {
             final int threadNumber = i;
-            Thread t = new Thread(() -> simulateGames(games, NUM_THREADS, threadNumber));
+            Thread t = new Thread(() -> simulateGames(filteredGames, NUM_THREADS, threadNumber));
             t.setDaemon(true);
             threads.add(t);
             t.start();
@@ -115,7 +124,28 @@ public class TrainingManager {
             }
         }
 
-        return breedStrategy2(gen);
+        return breedStrategy1(gen);
+    }
+
+    /**
+     * Randomly selects a subset of numGames games from a list of TrainingGames and returns the resulting list.
+     * If numGames is greater than the size of the list, a copy of the list is returned.
+     * @param games
+     * @param numGames
+     * @return A new list created by a random subset of games from the specified list.
+     */
+    private static ArrayList<TrainingGame> subset(ArrayList<TrainingGame> games, int numGames) {
+        ArrayList<TrainingGame> subset = new ArrayList<TrainingGame>();
+
+        for (TrainingGame g : games) {
+            subset.add(g);
+        }
+
+        for (int i = games.size(); i > numGames; i--) {
+            subset.remove(DataMath.random(0, i - 1));
+        }
+
+        return subset;
     }
 
     /**
@@ -147,8 +177,14 @@ public class TrainingManager {
         ArrayList<Trainee> roster = prevGen.getRoster();
         int genSize = prevGen.getSize();
         
+        prevGen.sort();
         int numLayers = roster.get(0).getStrategy().getNumLayers();
         int[] shape = roster.get(0).getStrategy().getShape();
+
+        // print fitnesses for debugging
+        for (Trainee t : roster) {
+            System.out.println("DEBUG (fitness): " + t.getFitness());
+        }
 
         int totalWeights = 0;
         for (int layer = 0; layer < numLayers; layer++) { // weights
@@ -221,6 +257,7 @@ public class TrainingManager {
 
         ArrayList<Trainee> newRoster = new ArrayList<Trainee>();
         // Find step Matrices for each Trainee and apply steps in random amounts.
+        float maxFitness = roster.get(0).getFitness();
         for (Trainee t : roster) {
             Matrix[] weightStep = new Matrix[numLayers];
             Vector[] activationWeightStep = new Vector[numLayers - 1];
@@ -229,13 +266,13 @@ public class TrainingManager {
             Vector[] newActivationWeights = new Vector[numLayers - 1];
 
             for (int layer = 0; layer < numLayers; layer++) {
-                weightStep[layer] = weightImportance[layer].scalarMultiply(1f / DataMath.sigma(t.getFitness()));
+                weightStep[layer] = DataMath.scalarMultiply(weightImportance[layer], (maxFitness - t.getFitness()) * DataMath.sigma(-1 * t.getFitness()));
                 weightStep[layer].randomize();
                 newWeights[layer] = DataMath.matrixAdd(t.getStrategy().getWeights()[layer], weightStep[layer]);
             }
 
             for (int layer = 0; layer < numLayers - 1; layer++) {
-                activationWeightStep[layer] = activationWeightImportance[layer].scalarMultiply(1f / DataMath.sigma(t.getFitness()));
+                activationWeightStep[layer] = DataMath.scalarMultiply(activationWeightImportance[layer], (maxFitness - t.getFitness()) * DataMath.sigma(-1 * t.getFitness()));
                 activationWeightStep[layer].randomize();
                 newActivationWeights[layer] = DataMath.vectorAdd(t.getStrategy().getActivationWeights()[layer], activationWeightStep[layer]);
             }
