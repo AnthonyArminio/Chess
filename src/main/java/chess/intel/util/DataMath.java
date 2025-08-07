@@ -262,4 +262,15 @@ public class DataMath {
         }
         return (float) ((max - min) * Math.random() + min);
     }
+
+    /**
+     * Returns a copy of a specified array of integers.
+     */
+    public static int[] copy(int[] a) {
+        int[] copy = new int[a.length];
+        for (int i = 0; i < a.length; i++) {
+            copy[i] = a[i];
+        }
+        return copy;
+    }
 }

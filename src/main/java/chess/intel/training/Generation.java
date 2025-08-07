@@ -11,6 +11,7 @@ import chess.intel.Agent;
 import chess.intel.util.DataMath;
 
 import chess.intel.strategy.Strategy;
+import chess.intel.strategy.NeuralNetwork;
 import chess.intel.util.json.*;
 
 import com.google.gson.Gson;
@@ -33,14 +34,14 @@ public class Generation {
     private ArrayList<Trainee> roster;
 
     /**
-     * Creates the initial Generation based on the default size and default Trainee constructor.
+     * Creates the initial Generation based on the provided size and NeuralNetwork specifications
      */
-    public Generation(int size) {
+    public Generation(int size, int[] shape, float min, float max) {
         this.generationNumber = 0;
         this.size = size;
         this.roster = new ArrayList<Trainee>();
         for (int i = 0; i < this.size; i++) {
-            this.roster.add(new Trainee(2));
+            this.roster.add(new Trainee(new NeuralNetwork(shape, min, max, new StandardInputStrategy()), 2));
         }
     }
 

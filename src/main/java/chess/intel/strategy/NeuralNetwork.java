@@ -12,14 +12,6 @@ import com.google.gson.annotations.Expose;
 
 public class NeuralNetwork extends Strategy {
 
-    private final InputStrategy DEFAULT_INPUT_STRATEGY = new StandardInputStrategy();
-    private final int[] DEFAULT_SHAPE = {DEFAULT_INPUT_STRATEGY.getInputSize(), 300, 300, 200, 1};
-    private final int DEFAULT_NUM_LAYERS = DEFAULT_SHAPE.length - 1;
-    private final float WEIGHT_RANDOMIZATION_MIN = -10;
-    private final float WEIGHT_RANDOMIZATION_MAX = 10;
-    private final float ACTIVATION_WEIGHT_RANDOMIZATION_MIN = -10;
-    private final float ACTIVATION_WEIGHT_RANDOMIZATION_MAX = 10;
-
     // Number of neuron layers, not including the output layer.
     @Expose private int numLayers;
     @Expose private int[] shape;
@@ -30,24 +22,39 @@ public class NeuralNetwork extends Strategy {
     @Expose private InputStrategy inputStrategy;
 
     /**
-     * Creates the default NeuralNetwork.
+     * Creates an empty NeuralNetwork (all weights are 0)
      */
-    public NeuralNetwork() {
-        this.numLayers = DEFAULT_NUM_LAYERS;
-        this.shape = DEFAULT_SHAPE;
+    public NeuralNetwork(InputStrategy is) {
+        this.numLayers = 1;
+        this.shape = new int[2];
+        this.shape[0] = is.getInputSize();
+        this.shape[this.numLayers] = 1;
+
+        this.weights = new Matrix[1];
+        this.weights[0] = new Matrix(this.shape[1], this.shape[0]);
+        this.activationWeights = null;
+    }
+
+    /**
+     * Creates a randomized Neural Network with the specified shape. The first element of shape
+     * will be overridden by the size of the specified InputStrategy.
+     */
+    public NeuralNetwork(int[] shape, float min, float max, InputStrategy is) {
+        this.numLayers = shape.length - 1;
+        this.shape = DataMath.copy(shape);
+        this.shape[0] = is.getInputSize();
+        this.shape[this.numLayers] = 1;
 
         this.weights = new Matrix[this.numLayers];
         this.activationWeights = new Vector[this.numLayers - 1];
-        this.inputStrategy = DEFAULT_INPUT_STRATEGY;
+        this.inputStrategy = is;
 
         for (int layer = 0; layer < this.numLayers; layer++) {
-            this.weights[layer] = new Matrix(DEFAULT_SHAPE[layer + 1], DEFAULT_SHAPE[layer], 
-                WEIGHT_RANDOMIZATION_MIN, WEIGHT_RANDOMIZATION_MAX);
+            this.weights[layer] = new Matrix(shape[layer + 1], shape[layer], min, max);
         }
 
         for (int layer = 0; layer < this.numLayers - 1; layer++) {
-            this.activationWeights[layer] = new Vector(DEFAULT_SHAPE[layer + 1],
-                ACTIVATION_WEIGHT_RANDOMIZATION_MIN, ACTIVATION_WEIGHT_RANDOMIZATION_MAX);
+            this.activationWeights[layer] = new Vector(shape[layer + 1], min, max);
         }
     }
 
@@ -82,7 +89,7 @@ public class NeuralNetwork extends Strategy {
         // represent a concrete evaluation of the position.
         currentLayer = DataMath.matrixMultiply(weights[this.numLayers - 1], currentLayer);
         // Introduce hybrid strategy by adding the position's material evaluation.
-        return new Evaluation(currentLayer.get(0) + 100 * position.getMaterialEvaluation());
+        return new Evaluation(currentLayer.get(0) + 10 * position.getMaterialEvaluation());
     }
 
     public int getNumLayers() {

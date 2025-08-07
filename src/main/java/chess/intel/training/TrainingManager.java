@@ -15,7 +15,11 @@ public class TrainingManager {
 
     // Number of Trainees per Generation
     private static final int BATCH_SIZE = 30;
-    private static final int NUM_GAMES = 0; // set to 0 to ensure that all games are played
+
+    // Default NeuralNetwork specifications
+    private static final int[] NETWORK_SHAPE = {new StandardInputStrategy().getInputSize(), 300, 300, 200, 1};
+    private static final int WEIGHT_RANDOMIZATION_MIN = -10;
+    private static final int WEIGHT_RANDOMIZATION_MAX = 10;
 
     private static final String GEN_DIRECTORY_PATH = "output/training/gen_stream_2/";
     public static final String GEN_METADATA_FILENAME = "gen";
@@ -39,7 +43,7 @@ public class TrainingManager {
             try {
                 Generation gen;
                 if (fromBeginning || !genFile.exists()) {
-                    gen = new Generation(BATCH_SIZE);
+                    gen = new Generation(BATCH_SIZE, NETWORK_SHAPE, WEIGHT_RANDOMIZATION_MIN, WEIGHT_RANDOMIZATION_MAX);
                 } else {
                     System.out.println("Getting generation from JSON");
                     gen = Generation.getFromJsonDirectory(GEN_DIRECTORY_PATH);
@@ -85,23 +89,8 @@ public class TrainingManager {
         ArrayList<Trainee> roster = gen.getRoster();
         ArrayList<Thread> threads = new ArrayList<Thread>();
 
-        ArrayList<TrainingGame> games = new ArrayList<TrainingGame>();
-
-        for (Trainee t1 : roster) {
-            for (Trainee t2 : roster) {
-                if (t1 != t2) {
-                    games.add(new TrainingGame(t1, t2, MAX_MOVES));
-                }
-            }
-        }
-
-        int numGames = NUM_GAMES;
-        ArrayList<TrainingGame> filteredGames;
-        if (numGames > 0) {
-            filteredGames = subset(games, numGames);
-        } else {
-            filteredGames = games;
-        }
+        //ArrayList<TrainingGame> games = matchStrategy1(roster);
+        ArrayList<TrainingGame> games = matchStrategy2(roster);
 
         int totalGames = games.size();
         System.out.printf("Training generation %d with %d threads.\n", gen.getGenerationNumber(), NUM_THREADS);
@@ -110,7 +99,7 @@ public class TrainingManager {
 
         for (int i = 0; i < NUM_THREADS; i++) {
             final int threadNumber = i;
-            Thread t = new Thread(() -> simulateGames(filteredGames, NUM_THREADS, threadNumber));
+            Thread t = new Thread(() -> simulateGames(games, NUM_THREADS, threadNumber));
             t.setDaemon(true);
             threads.add(t);
             t.start();
@@ -125,6 +114,41 @@ public class TrainingManager {
         }
 
         return breedStrategy1(gen);
+    }
+
+    /**
+     * Returns a list of games from a specified roster in which each Trainee plays each other Trainee
+     * exactly once.
+     * @param roster
+     * @return The list of scheduled games
+     */
+    private static ArrayList<TrainingGame> matchStrategy1(ArrayList<Trainee> roster) {
+        ArrayList<TrainingGame> games = new ArrayList<TrainingGame>();
+
+        for (Trainee t1 : roster) {
+            for (Trainee t2 : roster) {
+                if (t1 != t2) {
+                    games.add(new TrainingGame(t1, t2, MAX_MOVES));
+                }
+            }
+        }
+
+        return games;
+    }
+
+    /**
+     * Pairs each Trainee against the same materialistic Trainee, which uses an empty NeuralNetwork
+     * @param roster
+     * @return
+     */
+    private static ArrayList<TrainingGame> matchStrategy2(ArrayList<Trainee> roster) {
+        ArrayList<TrainingGame> games = new ArrayList<TrainingGame>();
+
+        for (Trainee t : roster) {
+            games.add(new TrainingGame(t, Trainee.EMPTY, MAX_MOVES));
+        }
+
+        return games;
     }
 
     /**
