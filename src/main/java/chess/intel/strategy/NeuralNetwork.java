@@ -33,6 +33,8 @@ public class NeuralNetwork extends Strategy {
         this.weights = new Matrix[1];
         this.weights[0] = new Matrix(this.shape[1], this.shape[0]);
         this.activationWeights = null;
+
+        this.inputStrategy = is;
     }
 
     /**

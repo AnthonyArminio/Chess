@@ -5,6 +5,6 @@ package chess.intel.training;
  */
 public class TrainingRunner {
     public static void main(String[] args) {
-        TrainingManager.startTraining(20, false);
+        TrainingManager.startTraining(100, false);
     }
 }

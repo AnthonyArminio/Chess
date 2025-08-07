@@ -14,19 +14,19 @@ import chess.intel.strategy.NeuralNetwork;
 public class TrainingManager {
 
     // Number of Trainees per Generation
-    private static final int BATCH_SIZE = 30;
+    private static final int BATCH_SIZE = 200;
 
     // Default NeuralNetwork specifications
     private static final int[] NETWORK_SHAPE = {new StandardInputStrategy().getInputSize(), 300, 300, 200, 1};
     private static final int WEIGHT_RANDOMIZATION_MIN = -10;
     private static final int WEIGHT_RANDOMIZATION_MAX = 10;
 
-    private static final String GEN_DIRECTORY_PATH = "output/training/gen_stream_2/";
+    private static final String GEN_DIRECTORY_PATH = "output/training/gen_stream_3/";
     public static final String GEN_METADATA_FILENAME = "gen";
     public static final String TRAINEE_FILENAME = "roster/t";
     private static final int THINKING_DEPTH = 2;
-    private static final int MAX_MOVES = 20;
-    private static final int NUM_THREADS = 30;
+    private static final int MAX_MOVES = 40;
+    private static final int NUM_THREADS = 10;
 
     private static int currentGeneration;
     private static int gamesFinished;
