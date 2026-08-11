@@ -1,23 +1,24 @@
 package chess.display;
 
+import chess.application.ChessGame;
+import chess.intel.Player;
+import chess.logic.ChessMove;
+import chess.logic.ChessPosition;
+import chess.logic.util.GridMath;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.layout.GridPane;
-import javafx.geometry.Point2D;
-
-import javafx.scene.paint.Paint;
 import javafx.scene.paint.Color;
-
-import chess.application.ChessGame;
-import chess.logic.ChessPosition;
-import chess.logic.ChessMove;
-import chess.logic.util.GridMath;
-import chess.intel.Player;
+import javafx.scene.paint.Paint;
 
 /**
  * Represents a grid of squares contained within a Pane object. The light square color and dark
  * square color are specified when passed to the constructor.
  */
 public class ChessBoard {
+
+    private static final String defaultLightSquareColor = "#999999";
+    private static final String defaultDarkSquareColor = "#333333";
 
     private Group chessBoard;
     private GridPane checkerboard;
@@ -52,6 +53,25 @@ public class ChessBoard {
         this.promotionUI = null;
 
         initializeColors(darkSquareColor, lightSquareColor);
+
+        makeSquares();
+
+        this.selectedSquare = -1;
+    }
+
+    public ChessBoard(Point2D origin, double boardSize){
+        this.origin = origin;
+        this.squareSize = boardSize / 8.0;
+
+        this.chessBoard = new Group();
+        this.checkerboard = new GridPane();
+        this.chessBoard.getChildren().add(this.checkerboard);
+        this.checkerboard.setPrefSize(boardSize, boardSize);
+        this.checkerboard.setHgap(0);
+        this.checkerboard.setVgap(0);
+        this.promotionUI = null;
+
+        initializeColors(ChessBoard.defaultDarkSquareColor, ChessBoard.defaultLightSquareColor);
 
         makeSquares();
 

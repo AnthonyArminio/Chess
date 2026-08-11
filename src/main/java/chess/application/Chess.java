@@ -1,28 +1,22 @@
 package chess.application;
 
+import chess.display.ChessBoard;
+import chess.display.ControlPanel;
+import chess.display.Square;
+import chess.intel.Player;
+import chess.intel.training.TrainingManager;
+import chess.logic.ChessMove;
+import chess.logic.util.GridMath;
 import javafx.application.Application;
+import javafx.geometry.Point2D;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.Group;
-import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
-import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
-
-import java.io.File;
-
-import chess.display.ChessBoard;
-import chess.display.Square;
-import chess.intel.Player;
-import chess.intel.Agent;
-import chess.intel.strategy.Strategy;
-import chess.intel.strategy.MaterialisticStrategy;
-import chess.logic.ChessMove;
-import chess.logic.util.GridMath;
-
-import chess.intel.training.TrainingManager;
-import chess.intel.training.Generation;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class Chess extends Application {
 
@@ -34,30 +28,32 @@ public class Chess extends Application {
     private ImageView mouseImageView;
     private boolean pieceInMouse;
     private Player user;
+    private Player defaultAgent;
 
     private Group root;
     private HBox layout;
+    private VBox gameView;
+    private ControlPanel controlPanel;
     private Scene scene;
 
-    public void init() {
+    @Override public void init() {
         System.out.println("Test Init");
 
         this.root = new Group();
         this.layout = new HBox();
+        this.gameView = new VBox();
+        this.controlPanel = new ControlPanel(this);
 
         this.user = new Player(true);
-
-        //loadGame(new ChessGame(new Player(), new Player(), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
-        //ChessGame game = new ChessGame(this.user, new Agent(new MaterialisticStrategy(), 5), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor));
-        ChessGame game = new ChessGame(this.user, TrainingManager.getBestAgent(3), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor), true);
-        loadGame(game);
-        game.start();
+        this.defaultAgent = TrainingManager.getBestAgent(3);
 
         this.mouseImageView = new ImageView();
         this.pieceInMouse = false;
         this.root.getChildren().add(this.mouseImageView);
 
-        root.getChildren().add(layout);
+        this.layout.getChildren().add(this.gameView);
+        this.layout.getChildren().add(this.controlPanel.getContainer());
+        this.root.getChildren().add(this.layout);
 
         // set up event handlers
         this.root.setOnMousePressed(e -> onMousePressed(e));
@@ -67,11 +63,17 @@ public class Chess extends Application {
         this.scene = new Scene(root);
     }
     
-    public void start(Stage stage) {
+    @Override public void start(Stage stage) {
         System.out.println("Test Start");
         
         stage.setTitle("Chess Application");
         stage.setScene(this.scene);
+
+        //loadGame(new ChessGame(new Player(), new Player(), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
+        //ChessGame game = new ChessGame(this.user, new Agent(new MaterialisticStrategy(), 5), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor));
+        ChessGame game = new ChessGame(this.user, this.defaultAgent, new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor), true);
+        loadGame(game);
+        game.start();
 
         stage.sizeToScene();
         stage.show();
@@ -80,12 +82,15 @@ public class Chess extends Application {
         
     }
 
-    private void loadGame(ChessGame game) {
+    public void loadGame(ChessGame game) {
+        System.out.println("Loading game...");
         if (this.displayedGame != null) {
-            layout.getChildren().remove(this.displayedGame.getBoard().getRoot());
+            //this.displayedGame.forceEnd();
+            this.gameView.getChildren().remove(this.displayedGame.getBoard().getRoot());
         }
-        layout.getChildren().add(game.getBoard().getRoot());
+        this.gameView.getChildren().add(game.getBoard().getRoot());
         this.displayedGame = game;
+        System.out.println("Done.");
     }
 
 
@@ -178,5 +183,13 @@ public class Chess extends Application {
     public void detachImage() {
         this.mouseImageView.setImage(null);
         this.pieceInMouse = false;
+    }
+
+    public Player getUser(){
+        return this.user;
+    }
+
+    public Player getDefaultAgent() {
+        return this.defaultAgent;
     }
 }

@@ -26,6 +26,7 @@ test\Test.class
 chess\intel\util\Matrix.class
 chess\intel\util\json\JsonInputStrategyAdapter.class
 chess\logic\ChessMove.class
+chess\display\ControlPanel.class
 chess\logic\CompressedPosition.class
 chess\intel\strategy\MaterialisticStrategy.class
 chess\intel\training\Generation.class
