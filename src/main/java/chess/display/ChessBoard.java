@@ -62,7 +62,7 @@ public class ChessBoard {
         this.selectedSquare = -1;
     }
 
-    public ChessBoard(Point2D origin, double boardSize){
+    public ChessBoard(Point2D origin, double boardSize, boolean flipped){
         this.origin = origin;
         this.squareSize = boardSize / 8.0;
 
@@ -77,7 +77,7 @@ public class ChessBoard {
         initializeColors(ChessBoard.DEFAULT_DARK_SQUARE_COLOR, ChessBoard.DEFAULT_LIGHT_SQUARE_COLOR);
 
         makeSquares();
-        this.isFlipped = false;
+        this.isFlipped = flipped;
         drawSquares(this.isFlipped);
 
         this.selectedSquare = -1;

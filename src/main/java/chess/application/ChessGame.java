@@ -65,7 +65,9 @@ public class ChessGame {
         this.moveNumber = 1;
         this.plyNumber = 1;
         this.playerToMove = this.whitePlayer;
-        this.playerToMove.alertToMove(this);
+        Thread t = new Thread(() -> this.playerToMove.alertToMove(this));
+        t.setDaemon(true);
+        t.start();
     }
 
     /**
@@ -93,7 +95,7 @@ public class ChessGame {
 
     protected void advanceGame() {
         passTurn();
-        if (playerToMove == this.whitePlayer) {
+        if (this.playerToMove == this.whitePlayer) {
             this.moveNumber++;
         }
         this.plyNumber++;

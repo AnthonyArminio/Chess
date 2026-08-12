@@ -25,7 +25,6 @@ public class Chess extends Application {
     private ChessBoard selectedBoard;
     private ImageView mouseImageView;
     private boolean pieceInMouse;
-    private Player user;
     private Player defaultAgent;
 
     private Group root;
@@ -42,7 +41,6 @@ public class Chess extends Application {
         this.gameView = new VBox();
         this.controlPanel = new ControlPanel(this);
 
-        this.user = new Player(true);
         this.defaultAgent = TrainingManager.getBestAgent(3);
 
         this.mouseImageView = new ImageView();
@@ -69,7 +67,7 @@ public class Chess extends Application {
 
         //loadGame(new ChessGame(new Player(), new Player(), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
         //ChessGame game = new ChessGame(this.user, new Agent(new MaterialisticStrategy(), 5), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor));
-        ChessGame game = new ChessGame(this.user, this.defaultAgent, new ChessBoard(Point2D.ZERO, boardSize), true, true);
+        ChessGame game = new ChessGame(new Player(true), this.defaultAgent, new ChessBoard(Point2D.ZERO, boardSize, false), true, true);
         loadGame(game);
         game.start();
 
@@ -181,10 +179,6 @@ public class Chess extends Application {
     public void detachImage() {
         this.mouseImageView.setImage(null);
         this.pieceInMouse = false;
-    }
-
-    public Player getUser(){
-        return this.user;
     }
 
     public Player getDefaultAgent() {

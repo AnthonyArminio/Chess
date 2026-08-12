@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import chess.application.Chess;
 import chess.application.ChessGame;
+import chess.intel.Player;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
@@ -21,6 +22,9 @@ public class ControlPanel {
 
     private Chess app;
     private VBox container;
+    private VBox choiceBoxContainer;
+    private VBox opponentTypeSelectContainer;
+    private VBox playerColorSelectContainer;
     private Button newGameButton;
     private ChoiceBox<String> opponentTypeSelect;
     private ChoiceBox<String> playerColorSelect;
@@ -29,19 +33,35 @@ public class ControlPanel {
         this.app = app;
 
         this.newGameButton = new Button("New Game");
-        this.newGameButton.setOnAction(e -> onResetButtonPressed());
+        this.newGameButton.setOnAction(e -> onNewGameButtonPressed());
 
         this.container = new VBox();
         this.container.getChildren().add(new Text("Configure New Game\n"));
-        this.container.getChildren().add(new Text("Play Against:"));
+        
+        this.choiceBoxContainer = new VBox();
+        this.opponentTypeSelectContainer = new VBox();
+        this.playerColorSelectContainer = new VBox();
 
+        this.opponentTypeSelectContainer.getChildren().add(new Text("Play Against:"));
         ArrayList<String> opponentTypeOptions = new ArrayList<>();
         for (String option : OPPONENT_TYPE_OPTIONS){
             opponentTypeOptions.add(option);
         }
         this.opponentTypeSelect = new ChoiceBox<>(FXCollections.<String>observableList(opponentTypeOptions));
-        this.container.getChildren().add(this.opponentTypeSelect);
-        //this.container.getChildren().add(this.playerColorSelect);
+        this.opponentTypeSelect.setOnAction(e -> onChoiceBoxUpdated());
+        this.opponentTypeSelectContainer.getChildren().add(this.opponentTypeSelect);
+
+        this.playerColorSelectContainer.getChildren().add(new Text("Play As:"));
+        ArrayList<String> playerColorOptions = new ArrayList<>();
+        for (String option : PLAYER_COLOR_OPTIONS){
+            playerColorOptions.add(option);
+        }
+        this.playerColorSelect = new ChoiceBox<>(FXCollections.<String>observableList(playerColorOptions));
+        this.playerColorSelectContainer.getChildren().add(this.playerColorSelect);
+        
+        this.choiceBoxContainer.getChildren().add(this.opponentTypeSelectContainer);
+        this.container.getChildren().add(this.choiceBoxContainer);
+        this.container.getChildren().add(new Text(""));
         this.container.getChildren().add(this.newGameButton);
     }
 
@@ -49,11 +69,42 @@ public class ControlPanel {
         return this.container;
     }
 
-    public void onResetButtonPressed(){
+    private void onNewGameButtonPressed(){
         System.out.println("Button press read.");
-        ChessGame game = new ChessGame(this.app.getUser(), this.app.getDefaultAgent(), new ChessBoard(Point2D.ZERO, 504.0), false, true);
+        Player whitePlayer = new Player(true);
+        Player blackPlayer = new Player(true);
+        boolean flip = true;
+        boolean flipAtStart = false;
+        if ("Computer".equals(this.opponentTypeSelect.getValue())) {
+            boolean userPlaysWhite;
+            if ("White".equals(this.playerColorSelect.getValue())) {
+                userPlaysWhite = true;
+            } else if ("Black".equals(this.playerColorSelect.getValue())) {
+                userPlaysWhite = false;
+            } else {
+                userPlaysWhite = Math.random() > 0.5;
+            }
+
+            whitePlayer = userPlaysWhite ? whitePlayer : this.app.getDefaultAgent();
+            blackPlayer = userPlaysWhite ? this.app.getDefaultAgent() : blackPlayer;
+            flip = false;
+            flipAtStart = !userPlaysWhite;
+        }
+        ChessGame game = new ChessGame(whitePlayer, blackPlayer, new ChessBoard(Point2D.ZERO, 504.0, flipAtStart), flip, true);
         this.app.loadGame(game);
         game.start();
+    }
+
+    private void onChoiceBoxUpdated() {
+        if ("Computer".equals(this.opponentTypeSelect.getValue())) {
+            if (!this.choiceBoxContainer.getChildren().contains(this.playerColorSelectContainer)) {
+                this.choiceBoxContainer.getChildren().add(this.playerColorSelectContainer);
+            }
+        } else {
+            if (this.choiceBoxContainer.getChildren().contains(this.playerColorSelectContainer)) {
+                this.choiceBoxContainer.getChildren().remove(this.playerColorSelectContainer);
+            }
+        }
     }
 
 }
