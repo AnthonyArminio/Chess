@@ -17,13 +17,14 @@ import javafx.scene.paint.Paint;
  */
 public class ChessBoard {
 
-    private static final String defaultLightSquareColor = "#999999";
-    private static final String defaultDarkSquareColor = "#333333";
+    private static final String DEFAULT_LIGHT_SQUARE_COLOR = "#999999";
+    private static final String DEFAULT_DARK_SQUARE_COLOR = "#333333";
 
     private Group chessBoard;
     private GridPane checkerboard;
     private Square[] squares;
     private int selectedSquare;
+    private boolean isFlipped;
     private ChessGame game;
 
     private double squareSize;
@@ -40,7 +41,7 @@ public class ChessBoard {
      * @param lightSquareColor the color of the light squares of the chess board
      * @param darkSquareColor the color of the dark squares of the chess board
      */
-    public ChessBoard(Point2D origin, double boardSize, String darkSquareColor, String lightSquareColor) {
+    public ChessBoard(Point2D origin, double boardSize, String darkSquareColor, String lightSquareColor, boolean flipped) {
         this.origin = origin;
         this.squareSize = boardSize / 8.0;
 
@@ -55,6 +56,8 @@ public class ChessBoard {
         initializeColors(darkSquareColor, lightSquareColor);
 
         makeSquares();
+        this.isFlipped = flipped;
+        drawSquares(this.isFlipped);
 
         this.selectedSquare = -1;
     }
@@ -71,9 +74,11 @@ public class ChessBoard {
         this.checkerboard.setVgap(0);
         this.promotionUI = null;
 
-        initializeColors(ChessBoard.defaultDarkSquareColor, ChessBoard.defaultLightSquareColor);
+        initializeColors(ChessBoard.DEFAULT_DARK_SQUARE_COLOR, ChessBoard.DEFAULT_LIGHT_SQUARE_COLOR);
 
         makeSquares();
+        this.isFlipped = false;
+        drawSquares(this.isFlipped);
 
         this.selectedSquare = -1;
     }
@@ -96,8 +101,35 @@ public class ChessBoard {
                 Point2D squareOrigin = new Point2D(this.origin.getX() + this.squareSize * (file - 1), 
                                                    this.origin.getY() + this.squareSize * (8 - rank));
                 this.squares[GridMath.index(file, rank)] = new Square(squareOrigin, this.squareSize, this.squareColors[(file + rank) % 2], 
-                                                              this.checkerboard, file, rank);
+                                                              file, rank);
             }
+        }
+    }
+
+    private void drawSquares(boolean flipped) {
+        this.checkerboard.getChildren().clear();
+        for (Square square : squares) {
+            int rfile = flipped ? 9 - square.getFile() : square.getFile();
+            int rrank = flipped ? 9 - square.getRank() : square.getRank();
+            square.draw(this.checkerboard, rfile, rrank);
+        }
+    }
+
+    /**
+     * Flips the board perspective
+     */
+    public void flip() {
+        this.isFlipped = !this.isFlipped;
+        drawSquares(this.isFlipped);
+    }
+
+    /**
+     * Flips the board perspective to that of a specified player ('w' or 'b')
+     * @param color the color to switch to.
+     */
+    public void flipTo(char color) {
+        if (color == 'b' ^ this.isFlipped) {
+            flip();
         }
     }
 
@@ -199,6 +231,10 @@ public class ChessBoard {
 
     public Group getRoot() {
         return this.chessBoard;
+    }
+
+    public boolean isFlipped() {
+        return this.isFlipped;
     }
 
     public void waitForPromotion() {

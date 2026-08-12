@@ -1,11 +1,11 @@
 package chess.application;
 
+import chess.display.ChessBoard;
 import chess.intel.Player;
 import chess.logic.ChessMove;
 import chess.logic.ChessPosition;
-import chess.display.ChessBoard;
-
 import chess.logic.util.ChessLogic;
+import javafx.application.Platform;
 
 /**
  * Class that manages a game between two Players.
@@ -21,6 +21,7 @@ public class ChessGame {
     private int plyNumber;
     private boolean isIdle;
     private boolean printMoves;
+    private boolean flip;
     
     public ChessGame(Player whitePlayer, Player blackPlayer, boolean printMoves) {
         this.whitePlayer = whitePlayer;
@@ -32,13 +33,15 @@ public class ChessGame {
 
         this.board = null;
 
+        this.flip = false;
+
         this.moveNumber = 0;
         this.plyNumber = 0;
 
         this.isIdle = true;
     }
 
-    public ChessGame(Player whitePlayer, Player blackPlayer, ChessBoard board, boolean printMoves) {
+    public ChessGame(Player whitePlayer, Player blackPlayer, ChessBoard board, boolean flip, boolean printMoves) {
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
         this.position = new ChessPosition();
@@ -48,6 +51,8 @@ public class ChessGame {
 
         this.board = board;
         this.board.loadGame(this);
+
+        this.flip = flip;
 
         this.moveNumber = 0;
         this.plyNumber = 0;
@@ -69,7 +74,7 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) {
         if (this.board != null) {
-            this.board.makeMove(move);
+            Platform.runLater(() -> this.board.makeMove(move));
         }
         this.position.makeMove(move);
 
@@ -99,8 +104,14 @@ public class ChessGame {
     private void passTurn() {
         if (this.playerToMove == this.whitePlayer) {
             this.playerToMove = this.blackPlayer;
+            if (this.flip) {
+                Platform.runLater(() -> this.board.flipTo('b'));
+            }
         } else {
             this.playerToMove = this.whitePlayer;
+            if (this.flip) {
+                Platform.runLater(() -> this.board.flipTo('w'));
+            }
         }
     }
 

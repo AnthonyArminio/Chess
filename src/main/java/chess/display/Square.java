@@ -1,31 +1,31 @@
 package chess.display;
 
-import javafx.scene.image.ImageView;
-import javafx.scene.image.Image;
 import chess.logic.ChessPiece;
 import javafx.geometry.Point2D;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 public class Square {
-    private GridPane checkerboard;
     private ChessPiece piece;
     private ImageView imageView;
     private Image image;
     private Point2D origin;
+    private Color color;
     private double size;
     private int file;
     private int rank;
 
-    public Square(Point2D origin, double size, Color color, GridPane checkerboard, int file, int rank) {
-        this.checkerboard = checkerboard;
+    public Square(Point2D origin, double size, Color color, int file, int rank) {
 
         this.file = file;
         this.rank = rank;
         
         this.origin = origin;
         this.size = size;
+        this.color = color;
 
         this.piece = null;
 
@@ -35,20 +35,20 @@ public class Square {
         this.imageView.setFitHeight(size);
         this.imageView.setFitWidth(size);
         this.image = null;
-
-        drawRectangle(color);
-        checkerboard.add(this.imageView, file - 1, 8 - rank);
-
     }
 
     /**
-     * Draw the Rectangle that gives color to the square.
+     * Draw the Rectangle that gives color to the square and set up the ImageView there.
+     * @param checkerboard the GridPane container to draw the square in.
      * @param color the color to draw
+     * @param rfile the relative file to draw the square on.
+     * @param rrank the relative rank to draw the square on.
      */
-    private void drawRectangle(Color color) {
+    public void draw(GridPane checkerboard, int rfile, int rrank) {
         Rectangle rectangle = new Rectangle(origin.getX(), origin.getY(), size, size);
-        rectangle.setFill(color);
-        this.checkerboard.add(rectangle, this.file - 1, 8 - this.rank);
+        rectangle.setFill(this.color);
+        checkerboard.add(rectangle, rfile - 1, 8 - rrank);
+        checkerboard.add(this.imageView, rfile - 1, 8 - rrank);
     }
 
     public ChessPiece capture() {

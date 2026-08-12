@@ -1,9 +1,9 @@
 package chess.intel;
 
+import com.google.gson.annotations.Expose;
+
 import chess.application.ChessGame;
 import chess.logic.ChessMove;
-
-import com.google.gson.annotations.Expose;
 
 /**
  * Class that represents a chess player.

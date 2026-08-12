@@ -100,7 +100,7 @@ public class Evaluation implements Comparable<Evaluation> {
      * @param other the Evaluation to compare
      * @return 1 if this Evaluation is better for White, -1 if it is better for Black, or 0 otherwise
      */
-    public int compareTo(Evaluation other) {
+    @Override public int compareTo(Evaluation other) {
 
         if (this.clock < 0) {
             if (other.clock < 0) {

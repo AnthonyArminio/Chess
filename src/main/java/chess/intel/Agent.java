@@ -1,16 +1,15 @@
 package chess.intel;
 
-import chess.application.ChessGame;
-import chess.logic.ChessPosition;
-import chess.logic.util.ChessLogic;
-import chess.intel.strategy.Strategy;
-import chess.intel.util.DataMath;
-import chess.intel.strategy.Evaluation;
-import chess.logic.ChessMove;
-
 import java.util.ArrayList;
 
 import com.google.gson.annotations.Expose;
+
+import chess.application.ChessGame;
+import chess.intel.strategy.Evaluation;
+import chess.intel.strategy.Strategy;
+import chess.logic.ChessMove;
+import chess.logic.ChessPosition;
+import chess.logic.util.ChessLogic;
 
 /**
  * Class that represents a computer player.
@@ -37,15 +36,8 @@ public class Agent extends Player {
     @Override public void makeMove(ChessMove move) {
         if (this.hasTurn) {
             this.hasTurn = false;
-            
-            Thread t = new Thread(() -> this.currentGame.makeMove(move));
-            t.setDaemon(true);
-            t.start();
-            try {
-                t.join();
-            } catch (InterruptedException ex) {
-                System.out.println("Thread interrupted.");
-            }
+
+            this.currentGame.makeMove(move);
         }
     }
 

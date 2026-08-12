@@ -21,8 +21,6 @@ import javafx.stage.Stage;
 public class Chess extends Application {
 
     private final double boardSize = 504.0;
-    private final String lightSquareColor = "#999999";
-    private final String darkSquareColor = "#333333";
     private ChessGame displayedGame;
     private ChessBoard selectedBoard;
     private ImageView mouseImageView;
@@ -71,7 +69,7 @@ public class Chess extends Application {
 
         //loadGame(new ChessGame(new Player(), new Player(), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
         //ChessGame game = new ChessGame(this.user, new Agent(new MaterialisticStrategy(), 5), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor));
-        ChessGame game = new ChessGame(this.user, this.defaultAgent, new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor), true);
+        ChessGame game = new ChessGame(this.user, this.defaultAgent, new ChessBoard(Point2D.ZERO, boardSize), true, true);
         loadGame(game);
         game.start();
 
@@ -100,7 +98,7 @@ public class Chess extends Application {
         if (!this.displayedGame.isIdle() && !this.selectedBoard.isWaitingForPromotion()) {
 
             int selectedSquareIndex = GridMath.findSquareIndex(e.getX(), e.getY(), 
-                                    this.selectedBoard.getOrigin(), this.selectedBoard.getSquareSize());
+                                    this.selectedBoard.getOrigin(), this.selectedBoard.getSquareSize(), this.selectedBoard.isFlipped());
             
             //System.out.println(e.getX() + " " + e.getY());
 
@@ -136,7 +134,7 @@ public class Chess extends Application {
         if (this.pieceInMouse && !this.displayedGame.isIdle() && !this.selectedBoard.isWaitingForPromotion()) {
             
             int releaseIndex = GridMath.findSquareIndex(e.getX(), e.getY(), 
-                               this.selectedBoard.getOrigin(), this.selectedBoard.getSquareSize());
+                               this.selectedBoard.getOrigin(), this.selectedBoard.getSquareSize(), this.selectedBoard.isFlipped());
             int startIndex = this.selectedBoard.getSelectedSquareIndex();
 
             detachImage();

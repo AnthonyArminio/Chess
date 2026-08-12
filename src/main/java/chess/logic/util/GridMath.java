@@ -24,10 +24,11 @@ public class GridMath {
      * @param y
      * @param origin
      * @param squareSize
+     * @param flipped
      * @return the index (0-63) of the square at pixel coordinates (x, y) in the scene, or -1 if the specified pixel
      * coordinates (x, y) are outside of the expected bounds of the board.
      */
-    public static int findSquareIndex(double x, double y, Point2D origin, double squareSize) {
+    public static int findSquareIndex(double x, double y, Point2D origin, double squareSize, boolean flipped) {
         // return -1 if the coordinates are out of bounds.
         if (x < origin.getX() || x >= origin.getX() + 8 * squareSize || 
             y < origin.getY() || y >= origin.getY() + 8 * squareSize) 
@@ -35,8 +36,11 @@ public class GridMath {
             return -1;
         }
         
-        int file = (int) ((x - origin.getX()) / squareSize) + 1;
-        int rank = 8 - (int) ((y - origin.getY()) / squareSize);
+        int rfile = (int) ((x - origin.getX()) / squareSize) + 1;
+        int rrank = 8 - (int) ((y - origin.getY()) / squareSize);
+
+        int file = flipped ? 9 - rfile : rfile;
+        int rank = flipped ? 9 - rrank : rrank;
 
         return GridMath.index(file, rank);
     }
