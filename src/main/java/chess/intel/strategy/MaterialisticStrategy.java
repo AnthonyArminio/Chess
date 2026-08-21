@@ -1,11 +1,10 @@
 package chess.intel.strategy;
 
-import chess.logic.ChessPiece;
 import chess.logic.ChessPosition;
 
 public class MaterialisticStrategy extends Strategy {
 
-    @Override public Evaluation evaluate(ChessPosition position) {
+    @Override public Evaluation subjectiveEvaluate(ChessPosition position) {
 
         return new Evaluation(position.getMaterialEvaluation());
     }

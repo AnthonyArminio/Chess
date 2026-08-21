@@ -1,14 +1,12 @@
 package chess.intel.strategy;
 
-import chess.logic.ChessPosition;
+import com.google.gson.annotations.Expose;
 
 import chess.intel.training.InputStrategy;
-import chess.intel.training.StandardInputStrategy;
 import chess.intel.util.DataMath;
-import chess.intel.util.Vector;
 import chess.intel.util.Matrix;
-
-import com.google.gson.annotations.Expose;
+import chess.intel.util.Vector;
+import chess.logic.ChessPosition;
 
 public class NeuralNetwork extends Strategy {
 
@@ -81,7 +79,7 @@ public class NeuralNetwork extends Strategy {
         this.inputStrategy = is;
     }
 
-    @Override public Evaluation evaluate(ChessPosition position) {
+    @Override public Evaluation subjectiveEvaluate(ChessPosition position) {
         Vector currentLayer = this.inputStrategy.convertToInput(position);
         for (int layer = 0; layer < this.numLayers - 1; layer++) {
             currentLayer = DataMath.vectorAdd(DataMath.matrixMultiply(weights[layer], currentLayer), this.activationWeights[layer]);

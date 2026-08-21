@@ -6,6 +6,7 @@ import chess.logic.ChessPiece;
 
 import java.util.ArrayList;
 
+import chess.intel.strategy.Evaluation;
 import chess.logic.ChessMove;
 
 /**
@@ -389,5 +390,19 @@ public class ChessLogic {
         }
 
         return false;
+    }
+
+    public static Evaluation getBaseEvaluation(ChessPosition position) {
+        if (isCheckmate(position)) {
+            if (position.colorToMove() == 'w') {
+                return Evaluation.CHECKMATE_FOR_BLACK;
+            } else {
+                return Evaluation.CHECKMATE_FOR_WHITE;
+            }
+        } else if (isStalemate(position) || isThreefoldRepetition(position)) {
+            return Evaluation.DRAW;
+        } else {
+            return Evaluation.UNDECIDED;
+        }
     }
 }
