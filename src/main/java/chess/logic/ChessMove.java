@@ -9,6 +9,7 @@ public class ChessMove {
 
     private final char[] FILE_SYMBOLS = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
     private final char[] RANK_SYMBOLS = {'1', '2', '3', '4', '5', '6', '7', '8'};
+    public static final char[] PROMOTION_TYPES = {'Q', 'N', 'R', 'B'};
 
     private int start;
     private int end;
@@ -105,6 +106,10 @@ public class ChessMove {
         return ChessLogic.isIrreversible(this);
     }
 
+    public boolean isImportant() {
+        return this.isCapture() || this.isCheck() || this.isCheckmate();
+    }
+
     public ChessPiece getPiece() {
         return this.piece;
     }
@@ -174,7 +179,7 @@ public class ChessMove {
                     // handle disambiguation
                     boolean fileDisambiguate = false;
                     boolean rankDisambiguate = false;
-                    ArrayList<ChessMove> legalMoves = ChessLogic.generateLegalMoves(this.position);
+                    ArrayList<ChessMove> legalMoves = ChessLogic.generateLegalMoves(this.position, false);
                     for (ChessMove move : legalMoves) {
                         if (this.getEnd() == move.getEnd() && this.getPieceType() == move.getPieceType() && this.getStart() != move.getStart()) {
                             if (GridMath.getFile(this.getStart()) == GridMath.getFile(move.getStart())) {

@@ -304,9 +304,10 @@ public class ChessLogic {
      * Determines all of the legal moves in a given position and returns an ArrayList of ChessMoves
      * representing those moves.
      * @param position the context of the moves
+     * @param filter whether to filter for important moves only.
      * @return An ArrayList of all of the legal moves in the position.
      */
-    public static ArrayList<ChessMove> generateLegalMoves(ChessPosition position) {
+    public static ArrayList<ChessMove> generateLegalMoves(ChessPosition position, boolean filter) {
         //System.out.println("Generating legal moves...");
 
         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
@@ -331,12 +332,16 @@ public class ChessLogic {
                                 ChessMove move = new ChessMove(position, i, i + displacement);
                                 if (move.isLegal()) {
                                     if (move.isPromotion()) {
-                                        moves.add(new ChessMove(position, i, i + displacement, 'Q'));
-                                        moves.add(new ChessMove(position, i, i + displacement, 'N'));
-                                        moves.add(new ChessMove(position, i, i + displacement, 'R'));
-                                        moves.add(new ChessMove(position, i, i + displacement, 'B'));
+                                        for (char promotionType : ChessMove.PROMOTION_TYPES) {
+                                            ChessMove promotion = new ChessMove(position, i, i + displacement, promotionType);
+                                            if (!filter || move.isImportant()) {
+                                                moves.add(promotion);
+                                            }
+                                        }
                                     } else {
-                                        moves.add(move);
+                                        if (!filter || move.isImportant()) {
+                                            moves.add(move);
+                                        }
                                     }
                                 }
                                 if (!position.isEmpty(i + displacement)) {
