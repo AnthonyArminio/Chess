@@ -43,7 +43,7 @@ public class Chess extends Application {
         this.controlPanel = new ControlPanel(this);
 
         //this.defaultAgent = TrainingManager.getBestAgent(3);
-        this.defaultAgent = new Agent(new MaterialisticStrategy(), 5, true);
+        this.defaultAgent = new Agent(new MaterialisticStrategy(), 2, true);
 
         this.mouseImageView = new ImageView();
         this.pieceInMouse = false;

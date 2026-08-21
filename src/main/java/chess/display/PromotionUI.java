@@ -1,21 +1,17 @@
 package chess.display;
 
-import javafx.scene.Group;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.Image;
-import javafx.scene.layout.VBox;
-import javafx.geometry.Point2D;
-
-import javafx.scene.paint.Paint;
-import javafx.scene.paint.Color;
-
-import javafx.scene.input.MouseEvent;
-
-import chess.logic.ChessPiece;
 import chess.logic.ChessMove;
-
+import chess.logic.ChessPiece;
 import chess.logic.util.GridMath;
+import javafx.geometry.Point2D;
+import javafx.scene.Group;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 
 public class PromotionUI {
 
@@ -93,10 +89,11 @@ public class PromotionUI {
      */
     private static Point2D findOrigin(ChessBoard chessBoard, int file, char color) {
         Point2D boardOrigin = chessBoard.getOrigin();
-        if (color == 'w') {
-            return new Point2D(boardOrigin.getX() + (file - 1) * chessBoard.getSquareSize(), boardOrigin.getY());
+        int rfile = chessBoard.isFlipped() ? 9 - file : file;
+        if (color == 'w' ^ chessBoard.isFlipped()) {
+            return new Point2D(boardOrigin.getX() + (rfile - 1) * chessBoard.getSquareSize(), boardOrigin.getY());
         } else {
-            return new Point2D(boardOrigin.getX() + (file - 1) * chessBoard.getSquareSize(), boardOrigin.getY() + 4 * chessBoard.getSquareSize());
+            return new Point2D(boardOrigin.getX() + (rfile - 1) * chessBoard.getSquareSize(), boardOrigin.getY() + 4 * chessBoard.getSquareSize());
         }
     }
 
@@ -108,7 +105,11 @@ public class PromotionUI {
         drawRectangle(this.panelColor);
 
         for (int i = 0; i < this.numPromotionCandidates; i++) {
-            this.images[i] = new Image(promotionCandidates[i].getImagePath());
+            int idx = i;
+            if (this.chessBoard.isFlipped()) {
+                idx = this.numPromotionCandidates - (idx + 1);
+            }
+            this.images[i] = new Image(promotionCandidates[idx].getImagePath());
 
             ImageView iv = new ImageView();
             iv.setImage(this.images[i]);
@@ -154,6 +155,10 @@ public class PromotionUI {
                 candidateIndex = 0;
             } else if (candidateIndex >= this.numPromotionCandidates) {
                 candidateIndex = this.numPromotionCandidates - 1;
+            }
+
+            if (this.chessBoard.isFlipped()) {
+                candidateIndex = this.numPromotionCandidates - (candidateIndex + 1);
             }
                 
             move.promoteTo(this.promotionCandidates[candidateIndex].getType());
