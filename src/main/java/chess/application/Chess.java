@@ -3,8 +3,9 @@ package chess.application;
 import chess.display.ChessBoard;
 import chess.display.ControlPanel;
 import chess.display.Square;
+import chess.intel.Agent;
 import chess.intel.Player;
-import chess.intel.training.TrainingManager;
+import chess.intel.strategy.MaterialisticStrategy;
 import chess.logic.ChessMove;
 import chess.logic.util.GridMath;
 import javafx.application.Application;
@@ -41,7 +42,8 @@ public class Chess extends Application {
         this.gameView = new VBox();
         this.controlPanel = new ControlPanel(this);
 
-        this.defaultAgent = TrainingManager.getBestAgent(3);
+        //this.defaultAgent = TrainingManager.getBestAgent(3);
+        this.defaultAgent = new Agent(new MaterialisticStrategy(), 5, true);
 
         this.mouseImageView = new ImageView();
         this.pieceInMouse = false;

@@ -7,6 +7,7 @@ import com.google.gson.annotations.Expose;
 import chess.application.ChessGame;
 import chess.intel.strategy.Evaluation;
 import chess.intel.strategy.Strategy;
+import chess.intel.util.DataMath;
 import chess.logic.ChessMove;
 import chess.logic.ChessPosition;
 import chess.logic.util.ChessLogic;
@@ -104,14 +105,21 @@ public class Agent extends Player {
         if (color == 'w') {
             // maximizing case
 
-            // sort moves before analyzing them (apparently slower)
-            /* 
-            ArrayList<Evaluation> staticEvaluations = new ArrayList<Evaluation>();
-            for (ChessMove move : possibleMoves) {
-                staticEvaluations.add(this.strategy.evaluate(position.afterMove(move)).step(move));
+            // sort moves before analyzing them
+            
+            if (depth == this.depth) {
+                ArrayList<Evaluation> staticEvaluations = new ArrayList<>();
+                for (ChessMove move : possibleMoves) {
+                    staticEvaluations.add(this.strategy.evaluate(position.afterMove(move)).step(move));
+                }
+                DataMath.quickSort(staticEvaluations, true);
+                possibleMoves.clear();
+                for (Evaluation staticEval : staticEvaluations) {
+                    possibleMoves.add(staticEval.getBestMove());
+                    //staticEval.getBestMove().printMove();
+                }
             }
-            DataMath.quickSort(staticEvaluations, true);
-             */
+            
 
             Evaluation bestEval = Evaluation.CHECKMATE_FOR_BLACK;
             Evaluation eval = null;
@@ -138,14 +146,20 @@ public class Agent extends Player {
         } else { 
             // minimizing case
 
-            // sort moves before analyzing them (apparently slower)
-            /* 
-            ArrayList<Evaluation> staticEvaluations = new ArrayList<Evaluation>();
-            for (ChessMove move : possibleMoves) {
-                staticEvaluations.add(this.strategy.evaluate(position.afterMove(move)).step(move));
+            // sort moves before analyzing them
+            
+            if (depth == this.depth) {
+                ArrayList<Evaluation> staticEvaluations = new ArrayList<>();
+                for (ChessMove move : possibleMoves) {
+                    staticEvaluations.add(this.strategy.evaluate(position.afterMove(move)).step(move));
+                }
+                DataMath.quickSort(staticEvaluations, false);
+                possibleMoves.clear();
+                for (Evaluation staticEval : staticEvaluations) {
+                    possibleMoves.add(staticEval.getBestMove());
+                    //staticEval.getBestMove().printMove();
+                }
             }
-            DataMath.quickSort(staticEvaluations, false);
-             */
 
             Evaluation bestEval = Evaluation.CHECKMATE_FOR_WHITE;
             Evaluation eval = null;

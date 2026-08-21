@@ -170,8 +170,8 @@ public class DataMath {
     public static <T extends Comparable<T>> void quickSort(ArrayList<T> list, boolean reversed) {
 
         T basis = list.remove(0);
-        ArrayList<T> minorList = new ArrayList<T>();
-        ArrayList<T> majorList = new ArrayList<T>();
+        ArrayList<T> minorList = new ArrayList<>();
+        ArrayList<T> majorList = new ArrayList<>();
 
         for (T element : list) {
             if (element.compareTo(basis) < 0) {
@@ -198,9 +198,7 @@ public class DataMath {
         }
 
         list.clear();
-        for (T element : sortedList) {
-            list.add(element);
-        }
+        list.addAll(sortedList);
 
     }
 
@@ -231,13 +229,9 @@ public class DataMath {
      * @return The new list
      */
     private static <T> ArrayList<T> combineLists(ArrayList<T> list1, ArrayList<T> list2) {
-        ArrayList<T> newList = new ArrayList<T>();
-        for (T element : list1) {
-            newList.add(element);
-        }
-        for (T element : list2) {
-            newList.add(element);
-        }
+        ArrayList<T> newList = new ArrayList<>();
+        newList.addAll(list1);
+        newList.addAll(list2);
         return newList;
     }
 
