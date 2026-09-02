@@ -11,6 +11,7 @@ import chess.intel.util.DataMath;
 import chess.logic.ChessMove;
 import chess.logic.ChessPosition;
 import chess.logic.util.ChessLogic;
+import chess.logic.util.condition.MoveFilter;
 
 /**
  * Class that represents a computer player.
@@ -59,7 +60,7 @@ public class Agent extends Player {
             alphabeta = Evaluation.CHECKMATE_FOR_BLACK;
         }
 
-        Evaluation eval = minimaxEvaluate(position, color, this.depth, alphabeta);
+        Evaluation eval = minimaxEvaluate(position, null, color, this.depth, alphabeta);
 
         if (this.printMoves) {
             System.out.println("\n" + eval.pathString(this.currentGame.getMoveNumber(), color) + " (" + eval.evalString() + ")");
@@ -72,12 +73,13 @@ public class Agent extends Player {
      * Performs a recursive minimax search of all possible moves from a given starting position to a certain
      * depth, with alpha-beta pruning. Returns an evaluation of the position based on the search.
      * @param position the position to evaluate
+     * @param previousMove the move that was most recently made in the position (can be null)
      * @param color the color to play for ('w' to maximize, 'b' to minimize).
      * @param depth the depth to search (ply)
      * @param alphabeta the best achieved value of the siblings of this instance of the method call.
      * @return An Evaluation representing how advantageous the given position is for one player
      */
-    private Evaluation minimaxEvaluate(ChessPosition position, char color, int depth, Evaluation alphabeta) {
+    private Evaluation minimaxEvaluate(ChessPosition position, ChessMove previousMove, char color, int depth, Evaluation alphabeta) {
 
         // standard evaluation
         if (ChessLogic.isCheckmate(position)) {
@@ -94,14 +96,21 @@ public class Agent extends Player {
             return Evaluation.DRAW;
         }
 
-        // due to the standard evaluation, the size of this list is expected to be nonzero.
-
-        // base case
+        MoveFilter filter = (p, m) -> true;
         if (depth <= 0) {
-            return this.strategy.evaluate(position);
+            if (!this.strategy.evaluateStability(position, previousMove)) {
+                filter = this.strategy.unstableCaseFilter(position, previousMove);
+            } else {
+                // base case 1: reached the max depth and the position is stable
+                return this.strategy.evaluate(position);
+            }
         }
 
-        ArrayList<ChessMove> possibleMoves = ChessLogic.generateLegalMoves(position, false);
+        ArrayList<ChessMove> possibleMoves = ChessLogic.generateLegalMoves(position, filter);
+        if (possibleMoves.isEmpty()) { // only occurs when a filter is used; otherwise, there will always be at least one legal move at this point
+            // base case 2: reached an unstable position with no way to respond
+            return this.strategy.evaluate(position);
+        }
 
         if (color == 'w') {
             // maximizing case
@@ -121,13 +130,13 @@ public class Agent extends Player {
             
 
             Evaluation bestEval = Evaluation.CHECKMATE_FOR_BLACK;
-            Evaluation eval = null;
+            Evaluation eval;
             ChessMove bestMove = possibleMoves.get(0);
             //ChessMove move = null;
             for (ChessMove move : possibleMoves) {
             //for (Evaluation staticEval : staticEvaluations) {
                 //move = staticEval.getBestMove();
-                eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);
+                eval = minimaxEvaluate(position.afterMove(move), move, ChessLogic.opponentOf(color), depth - 1, bestEval);
                 
                 // alpha-beta pruning
                 if (eval.compareTo(alphabeta) >= 0) {
@@ -160,13 +169,13 @@ public class Agent extends Player {
             
 
             Evaluation bestEval = Evaluation.CHECKMATE_FOR_WHITE;
-            Evaluation eval = null;
+            Evaluation eval;
             ChessMove bestMove = possibleMoves.get(0);
             //ChessMove move = null;
             for (ChessMove move : possibleMoves) {
             //for (Evaluation staticEval : staticEvaluations) {
                 //move = staticEval.getBestMove();
-                eval = minimaxEvaluate(position.afterMove(move), ChessLogic.opponentOf(color), depth - 1, bestEval);                
+                eval = minimaxEvaluate(position.afterMove(move), move, ChessLogic.opponentOf(color), depth - 1, bestEval);
 
                 // alpha-beta pruning
                 if (eval.compareTo(alphabeta) <= 0) {

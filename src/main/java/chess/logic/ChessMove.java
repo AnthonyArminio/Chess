@@ -179,7 +179,7 @@ public class ChessMove {
                     // handle disambiguation
                     boolean fileDisambiguate = false;
                     boolean rankDisambiguate = false;
-                    ArrayList<ChessMove> legalMoves = ChessLogic.generateLegalMoves(this.position, false);
+                    ArrayList<ChessMove> legalMoves = ChessLogic.generateLegalMoves(this.position);
                     for (ChessMove move : legalMoves) {
                         if (this.getEnd() == move.getEnd() && this.getPieceType() == move.getPieceType() && this.getStart() != move.getStart()) {
                             if (GridMath.getFile(this.getStart()) == GridMath.getFile(move.getStart())) {

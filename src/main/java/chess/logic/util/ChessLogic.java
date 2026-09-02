@@ -1,13 +1,13 @@
 package chess.logic.util;
 
-import chess.logic.ChessPosition;
-import chess.logic.CompressedPosition;
-import chess.logic.ChessPiece;
-
 import java.util.ArrayList;
 
 import chess.intel.strategy.Evaluation;
 import chess.logic.ChessMove;
+import chess.logic.ChessPiece;
+import chess.logic.ChessPosition;
+import chess.logic.CompressedPosition;
+import chess.logic.util.condition.MoveFilter;
 
 /**
  * Class with static functions to help with chess logic such as checks, legal moves, and checkmate.
@@ -38,7 +38,7 @@ public class ChessLogic {
         }
 
         // must move according to the capabilities of each piece
-        chess.logic.util.ChessCondition condition = (p, s, e) -> e == end;
+        chess.logic.util.condition.ChessCondition condition = (p, s, e) -> e == end;
         if (!searchVision(position, start, move.getPiece(), condition)) {
             return false;
         }
@@ -96,7 +96,7 @@ public class ChessLogic {
                 }
             } else {
                 
-                chess.logic.util.ChessCondition condition = (p, s, e) -> piece.equals(p.getPieceAt(e));
+                chess.logic.util.condition.ChessCondition condition = (p, s, e) -> piece.equals(p.getPieceAt(e));
                 
                 if (searchVision(position, kingLocation, piece, condition)) {
                     return true;
@@ -268,7 +268,7 @@ public class ChessLogic {
      * @param condition implements chess.logic.util.ChessCondition.
      * @return true if a square matching the condition was found, false otherwise.
      */
-    private static boolean searchVision(ChessPosition position, int origin, ChessPiece piece, chess.logic.util.ChessCondition condition) {
+    private static boolean searchVision(ChessPosition position, int origin, ChessPiece piece, chess.logic.util.condition.ChessCondition condition) {
         
         boolean success = false;
         
@@ -304,10 +304,10 @@ public class ChessLogic {
      * Determines all of the legal moves in a given position and returns an ArrayList of ChessMoves
      * representing those moves.
      * @param position the context of the moves
-     * @param filter whether to filter for important moves only.
+     * @param filter filter for certain moves only.
      * @return An ArrayList of all of the legal moves in the position.
      */
-    public static ArrayList<ChessMove> generateLegalMoves(ChessPosition position, boolean filter) {
+    public static ArrayList<ChessMove> generateLegalMoves(ChessPosition position, MoveFilter filter) {
         //System.out.println("Generating legal moves...");
 
         ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
@@ -334,12 +334,12 @@ public class ChessLogic {
                                     if (move.isPromotion()) {
                                         for (char promotionType : ChessMove.PROMOTION_TYPES) {
                                             ChessMove promotion = new ChessMove(position, i, i + displacement, promotionType);
-                                            if (!filter || move.isImportant()) {
+                                            if (filter.test(position, move)) {
                                                 moves.add(promotion);
                                             }
                                         }
                                     } else {
-                                        if (!filter || move.isImportant()) {
+                                        if (filter.test(position, move)) {
                                             moves.add(move);
                                         }
                                     }
@@ -395,6 +395,13 @@ public class ChessLogic {
         }
 
         return false;
+    }
+    
+    /**
+     * Generate legal moves with no filter
+     */
+    public static ArrayList<ChessMove> generateLegalMoves(ChessPosition position) {
+        return generateLegalMoves(position, (p, m) -> true);
     }
 
     public static Evaluation getBaseEvaluation(ChessPosition position) {

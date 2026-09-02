@@ -1,7 +1,9 @@
 package chess.intel.strategy;
 
+import chess.logic.ChessMove;
 import chess.logic.ChessPosition;
 import chess.logic.util.ChessLogic;
+import chess.logic.util.condition.MoveFilter;
 
 /**
  * Abstract class that represents a strategy for evaluating a ChessPosition
@@ -14,6 +16,14 @@ public abstract class Strategy {
             return subjectiveEvaluate(position);
         }
         return baseEval;
+    }
+
+    public boolean evaluateStability(ChessPosition position, ChessMove previousMove) {
+        return true;
+    }
+
+    public MoveFilter unstableCaseFilter(ChessPosition position, ChessMove previousMove) {
+        return (p, m) -> false;
     }
 
     /**

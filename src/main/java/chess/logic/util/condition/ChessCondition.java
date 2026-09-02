@@ -1,4 +1,4 @@
-package chess.logic.util;
+package chess.logic.util.condition;
 
 import chess.logic.ChessPosition;
 
