@@ -27,8 +27,9 @@ C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\ChessMove.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\ChessPiece.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\ChessPosition.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\CompressedPosition.java
-C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\util\ChessCondition.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\util\ChessLogic.java
+C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\util\condition\ChessCondition.java
+C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\util\condition\MoveFilter.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\util\GridMath.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\test\HelloWorld.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\test\Test.java

@@ -13,7 +13,7 @@ public class MaterialisticStrategy extends Strategy {
 
     @Override public boolean evaluateStability(ChessPosition position, ChessMove previousMove) {
         // If a capture happens, continue looking ahead
-        return !previousMove.isCapture();
+        return !(previousMove.isCapture() || previousMove.isPromotion());
     }
 
     @Override public MoveFilter unstableCaseFilter(ChessPosition position, ChessMove previousMove) {
