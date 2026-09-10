@@ -411,7 +411,7 @@ public class ChessLogic {
             } else {
                 return Evaluation.CHECKMATE_FOR_WHITE;
             }
-        } else if (isStalemate(position) || isThreefoldRepetition(position)) {
+        } else if (isStalemate(position) || isThreefoldRepetition(position) || isInsufficientMaterial(position)) {
             return Evaluation.DRAW;
         } else {
             return Evaluation.UNDECIDED;
