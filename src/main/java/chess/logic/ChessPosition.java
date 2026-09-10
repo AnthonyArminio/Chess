@@ -285,6 +285,10 @@ public class ChessPosition {
         return v;
     }
 
+    public int getMaterialEvaluation() {
+        return (int) iterateOverPieces((v, pos, p, s) -> v + p.getValue());
+    }
+
     /**
      * Returns a reference to this position's positionArray.
      */

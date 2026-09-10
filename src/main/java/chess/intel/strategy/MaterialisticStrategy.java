@@ -8,7 +8,7 @@ public class MaterialisticStrategy extends Strategy {
 
     @Override public Evaluation subjectiveEvaluate(ChessPosition position) {
 
-        return getMaterialEvaluation(position);
+        return new Evaluation(position.getMaterialEvaluation());
     }
 
     @Override public boolean evaluateStability(ChessPosition position, ChessMove previousMove) {
@@ -19,9 +19,5 @@ public class MaterialisticStrategy extends Strategy {
     @Override public MoveFilter unstableCaseFilter(ChessPosition position, ChessMove previousMove) {
         // If a capture happens past the max depth, only look at direct recaptures
         return (p, m) -> m.getEnd() == previousMove.getEnd();
-    }
-
-    protected Evaluation getMaterialEvaluation(ChessPosition position) {
-        return new Evaluation((int) position.iterateOverPieces((v, pos, p, s) -> v + p.getValue()));
     }
 }
