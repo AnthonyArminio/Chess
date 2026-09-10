@@ -102,48 +102,37 @@ public class Evaluation implements Comparable<Evaluation> {
      * @return 1 if this Evaluation is better for White, -1 if it is better for Black, or 0 otherwise
      */
     @Override public int compareTo(Evaluation other) {
-
-        if (this.clock < 0) {
-            if (other.clock < 0) {
-                if (this.value > other.value) {
-                    return 1;
-                } else if (this.value < other.value) {
-                    return -1;
-                } else {
-                    return 0;
-                }
+            
+        if (this.value > other.value) {
+            return 1;
+        } else if (this.value < other.value) {
+            return -1;
+        } else if (!(this.clock < 0 || other.clock < 0)) {
+            if (this.clock == other.clock) {
+                return 0;
+            } if (this.clock < other.clock ^ this.value < 0) {
+                return 1;
             } else {
-                if (other.value >= 0) {
-                    return -1;
-                } else {
-                    return 1;
-                }
+                return -1;
             }
         } else {
-            if (other.clock < 0) {
-                if (this.value >= 0) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-            } else {
-                if (this.clock < other.clock) {
-                    if (this.value >= 0) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
-                } else if (this.clock > other.clock) {
-                    if (other.value >= 0) {
-                        return -1;
-                    } else {
-                        return 1;
-                    }
-                } else {
-                    return 0;
-                }
-            }
+            return 0;
         }
+    }
+
+    /**
+     * Returns the sum of this evaluation and another evaluation.
+     * @param other
+     * @return
+     */
+    public Evaluation add(Evaluation other) {
+        int newClock;
+        if (!(this.clock < 0 || other.clock < 0)) {
+            newClock = other.clock < this.clock ? other.clock : this.clock;
+        } else {
+            newClock = other.clock > this.clock ? other.clock : this.clock;
+        }
+        return new Evaluation(this.value + other.value, newClock);
     }
 
     public String evalString() {

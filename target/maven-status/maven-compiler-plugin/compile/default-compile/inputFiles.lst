@@ -30,6 +30,7 @@ C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\ChessPiece.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\ChessPosition.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\CompressedPosition.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\util\ChessLogic.java
+C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\util\condition\Accumulator.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\util\condition\ChessCondition.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\util\condition\MoveFilter.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\util\GridMath.java

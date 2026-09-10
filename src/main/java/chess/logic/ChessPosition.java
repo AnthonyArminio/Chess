@@ -4,6 +4,8 @@ import chess.logic.util.GridMath;
 
 import java.util.ArrayList;
 
+import chess.logic.util.condition.Accumulator;
+
 /**
  * Represents a chess position. Contains information about where each piece is in a compact form.
  */
@@ -271,17 +273,16 @@ public class ChessPosition {
     */
 
     /**
-     * Returns the standard material evaluation of the position.
+     * Iterates over all pieces in the position and returns a value which should be quantifying some kind of total.
      */
-    public float getMaterialEvaluation() {
-        float sum = 0;
-        for (int i = 0; i < 64; i++) {
+    public float iterateOverPieces(Accumulator acc) {
+        float v = 0;
+        for (int i = 0; i < this.positionArray.length; i++) {
             ChessPiece piece = this.getPieceAt(i);
-            if (piece != null) {
-                sum += piece.getValue();
-            }
+            if (piece != null)
+            v = acc.update(v, this, piece, i);
         }
-        return sum;
+        return v;
     }
 
     /**

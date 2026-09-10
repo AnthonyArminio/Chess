@@ -1,7 +1,6 @@
 package chess.intel.training;
 
 import chess.application.ChessGame;
-import chess.logic.ChessMove;
 
 public class TrainingGame extends ChessGame {
 
@@ -21,7 +20,7 @@ public class TrainingGame extends ChessGame {
     }
 
     @Override protected void advanceGame() {
-        this.averageMaterial += (this.getPosition().getMaterialEvaluation() - this.averageMaterial) / (float) this.getPlyNumber();
+        this.averageMaterial += (this.getPosition().iterateOverPieces((v, pos, p, s) -> v + p.getValue()) - this.averageMaterial) / (float) this.getPlyNumber();
         super.advanceGame();
     }
 

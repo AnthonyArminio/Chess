@@ -13,6 +13,10 @@ public class PositionalStrategy extends MaterialisticStrategy {
 
     @Override public Evaluation subjectiveEvaluate(ChessPosition position) {
 
-        return new Evaluation(position.getMaterialEvaluation());
+        return getMaterialEvaluation(position).add(weigh(position));
+    }
+
+    private Evaluation weigh(ChessPosition position) {
+        return new Evaluation(position.iterateOverPieces((v, pos, p, s) -> v + weights.getWeightMap(p)[s]));
     }
 }

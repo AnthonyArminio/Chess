@@ -2,6 +2,7 @@ chess\logic\util\GridMath.class
 chess\application\ChessGame.class
 chess\intel\util\json\JsonStrategyAdapter.class
 chess\intel\strategy\NeuralNetwork.class
+chess\logic\util\condition\Accumulator.class
 chess\intel\strategy\Evaluation.class
 chess\logic\util\ChessLogic.class
 chess\intel\Agent.class

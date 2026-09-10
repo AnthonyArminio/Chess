@@ -89,7 +89,7 @@ public class NeuralNetwork extends Strategy {
         // represent a concrete evaluation of the position.
         currentLayer = DataMath.matrixMultiply(weights[this.numLayers - 1], currentLayer);
         // Introduce hybrid strategy by adding the position's material evaluation.
-        return new Evaluation(currentLayer.get(0) + 10 * position.getMaterialEvaluation());
+        return new Evaluation(currentLayer.get(0) + 10 * position.iterateOverPieces((v, pos, p, s) -> v + p.getValue()));
     }
 
     public int getNumLayers() {
