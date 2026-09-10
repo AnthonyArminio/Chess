@@ -168,38 +168,35 @@ public class DataMath {
      * @param reversed Whether the list should be sorted in reverse (greatest to least)
      */
     public static <T extends Comparable<T>> void quickSort(ArrayList<T> list, boolean reversed) {
+        quickSort(list, 0, list.size() - 1, reversed);
+    }
 
-        T basis = list.remove(0);
-        ArrayList<T> minorList = new ArrayList<>();
-        ArrayList<T> majorList = new ArrayList<>();
+    private static <T extends Comparable<T>> void quickSort(ArrayList<T> list, int s, int e, boolean reversed) {
+        if (e < s) {
+            return;
+        }
+        
+        int basisIndex = DataMath.randomInt(s, e);
+        exchange(list, basisIndex, e);
+        T basis = list.get(e);
 
-        for (T element : list) {
-            if (element.compareTo(basis) < 0) {
-                minorList.add(element);
-            } else {
-                majorList.add(element);
+        int i = s;
+        for (int j = s; j < e; j++) {
+            if ((reversed && basis.compareTo(list.get(j)) < 0) || (!reversed && basis.compareTo(list.get(j)) > 0)) {
+                exchange(list, i, j);
+                i++;
             }
         }
+        exchange(list, i, e);
 
-        if (minorList.size() > 1) {
-            quickSort(minorList, reversed);
-        }
-        if (majorList.size() > 1) {
-            quickSort(majorList, reversed);
-        }
+        quickSort(list, s, i - 1, reversed);
+        quickSort(list, i + 1, e, reversed);
+    }
 
-        ArrayList<T> sortedList;
-        if (reversed) {
-            majorList.add(basis);
-            sortedList = combineLists(majorList, minorList);
-        } else {
-            minorList.add(basis);
-            sortedList = combineLists(minorList, majorList);
-        }
-
-        list.clear();
-        list.addAll(sortedList);
-
+    private static <T> void exchange(ArrayList<T> list, int i1, int i2) {
+        T temp = list.get(i2);
+        list.set(i2, list.get(i1));
+        list.set(i1, temp);
     }
 
     /**
@@ -222,24 +219,10 @@ public class DataMath {
     }
 
     /**
-     * Combines two lists into a single list and returns the result.
-     * @param <T> The list type
-     * @param list1 The first list
-     * @param list2 The second list
-     * @return The new list
-     */
-    private static <T> ArrayList<T> combineLists(ArrayList<T> list1, ArrayList<T> list2) {
-        ArrayList<T> newList = new ArrayList<>();
-        newList.addAll(list1);
-        newList.addAll(list2);
-        return newList;
-    }
-
-    /**
      * Returns a random integer between min and max, inclusive.
      * @throws IllegalArgumentException if max < min.
      */
-    public static int random(int min, int max) {
+    public static int randomInt(int min, int max) {
         if (max < min) {
             throw new IllegalArgumentException("random: max cannot be less than min");
         }
@@ -257,13 +240,10 @@ public class DataMath {
         return (float) ((max - min) * Math.random() + min);
     }
 
-    /**
-     * Returns a copy of a specified array of integers.
-     */
-    public static int[] copy(int[] a) {
-        int[] copy = new int[a.length];
-        for (int i = 0; i < a.length; i++) {
-            copy[i] = a[i];
+    public static int[] copy(int[] array) {
+        int[] copy = new int[array.length];
+        for (int i = 0; i < array.length; i++) {
+            copy[i] = array[i];
         }
         return copy;
     }

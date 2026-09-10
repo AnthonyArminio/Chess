@@ -1,5 +1,6 @@
 package chess.intel.strategy;
 
+import chess.intel.strategy.util.PositionalWeights;
 import chess.logic.ChessPosition;
 
 public class PositionalStrategy extends MaterialisticStrategy {

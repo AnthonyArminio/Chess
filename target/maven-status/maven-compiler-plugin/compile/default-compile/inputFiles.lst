@@ -10,7 +10,9 @@ C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\Player.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\Evaluation.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\MaterialisticStrategy.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\NeuralNetwork.java
+C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\PositionalStrategy.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\Strategy.java
+C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\util\PositionalWeights.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\training\Generation.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\training\InputStrategy.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\training\StandardInputStrategy.java

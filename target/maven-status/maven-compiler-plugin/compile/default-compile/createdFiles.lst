@@ -16,6 +16,8 @@ chess\intel\util\Vector.class
 chess\display\PromotionUI.class
 chess\intel\training\InputStrategy.class
 chess\intel\training\TrainingRunner.class
+chess\intel\strategy\PositionalStrategy.class
+chess\intel\strategy\util\PositionalWeights.class
 chess\logic\ChessPosition.class
 chess\intel\training\Trainee.class
 chess\logic\ChessPiece.class
