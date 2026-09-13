@@ -90,9 +90,9 @@ public class ControlPanel {
             flip = false;
             flipAtStart = !userPlaysWhite;
         }
-        ChessGame game = new ChessGame(whitePlayer, blackPlayer, new ChessBoard(Point2D.ZERO, 504.0, flipAtStart), flip, true);
-        this.app.loadGame(game);
-        game.start();
+        
+        BoardUISettings settings = configureSettings();
+        createNewGame(whitePlayer, blackPlayer, new ChessBoard(Point2D.ZERO, flipAtStart, settings), flip, true);
     }
 
     private void onChoiceBoxUpdated() {
@@ -105,6 +105,30 @@ public class ControlPanel {
                 this.choiceBoxContainer.getChildren().remove(this.playerColorSelectContainer);
             }
         }
+    }
+
+    private BoardUISettings configureSettings() {
+        return new BoardUISettings(true);
+    }
+
+    public ChessGame createNewGame(Player whitePlayer, Player blackPlayer, ChessBoard board, boolean flip, boolean printMoves) {
+        ChessGame game = new ChessGame(whitePlayer, blackPlayer, board, flip, true);
+        this.app.loadGame(game);
+        game.start();
+        return game;
+    }
+
+    public ChessGame createNewGame(Player whitePlayer, Player blackPlayer, boolean printMoves) {
+        ChessGame game = new ChessGame(whitePlayer, blackPlayer, true);
+        this.app.loadGame(game);
+        game.start();
+        return game;
+    }
+
+    public boolean doLegalMoveHighlights() {
+        //
+        return true;
+        //
     }
 
 }

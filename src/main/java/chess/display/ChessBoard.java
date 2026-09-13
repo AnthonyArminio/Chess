@@ -1,9 +1,12 @@
 package chess.display;
 
+import java.util.ArrayList;
+
 import chess.application.ChessGame;
 import chess.intel.Player;
 import chess.logic.ChessMove;
 import chess.logic.ChessPosition;
+import chess.logic.util.ChessLogic;
 import chess.logic.util.GridMath;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
@@ -17,15 +20,14 @@ import javafx.scene.paint.Paint;
  */
 public class ChessBoard {
 
-    private static final String DEFAULT_LIGHT_SQUARE_COLOR = "#999999";
-    private static final String DEFAULT_DARK_SQUARE_COLOR = "#333333";
-
     private Group chessBoard;
     private GridPane checkerboard;
     private Square[] squares;
+    private ArrayList<Square> legalHighlightedSquares;
     private int selectedSquare;
     private boolean isFlipped;
     private ChessGame game;
+    private BoardUISettings settings;
 
     private double squareSize;
     private Color[] squareColors;
@@ -37,44 +39,25 @@ public class ChessBoard {
     /**
      * Initializes a new chess board.
      * @param origin the top-left corner of the chess board.
-     * @param boardSize the width/height of the chess board
-     * @param lightSquareColor the color of the light squares of the chess board
-     * @param darkSquareColor the color of the dark squares of the chess board
+     * @param flipped whether the board starts flipped (black on bottom)
+     * @param settings board interface settings
      */
-    public ChessBoard(Point2D origin, double boardSize, String darkSquareColor, String lightSquareColor, boolean flipped) {
+    public ChessBoard(Point2D origin, boolean flipped, BoardUISettings settings) {
         this.origin = origin;
-        this.squareSize = boardSize / 8.0;
+        this.settings = settings;
+        this.squareSize = settings.getBoardSize() / 8.0;
 
         this.chessBoard = new Group();
         this.checkerboard = new GridPane();
         this.chessBoard.getChildren().add(this.checkerboard);
-        this.checkerboard.setPrefSize(boardSize, boardSize);
+        this.checkerboard.setPrefSize(settings.getBoardSize(), settings.getBoardSize());
         this.checkerboard.setHgap(0);
         this.checkerboard.setVgap(0);
         this.promotionUI = null;
 
-        initializeColors(darkSquareColor, lightSquareColor);
+        this.legalHighlightedSquares = new ArrayList<>();
 
-        makeSquares();
-        this.isFlipped = flipped;
-        drawSquares(this.isFlipped);
-
-        this.selectedSquare = -1;
-    }
-
-    public ChessBoard(Point2D origin, double boardSize, boolean flipped){
-        this.origin = origin;
-        this.squareSize = boardSize / 8.0;
-
-        this.chessBoard = new Group();
-        this.checkerboard = new GridPane();
-        this.chessBoard.getChildren().add(this.checkerboard);
-        this.checkerboard.setPrefSize(boardSize, boardSize);
-        this.checkerboard.setHgap(0);
-        this.checkerboard.setVgap(0);
-        this.promotionUI = null;
-
-        initializeColors(ChessBoard.DEFAULT_DARK_SQUARE_COLOR, ChessBoard.DEFAULT_LIGHT_SQUARE_COLOR);
+        initializeColors(settings.getDarkSquareColor(), settings.getLightSquareColor());
 
         makeSquares();
         this.isFlipped = flipped;
@@ -190,11 +173,34 @@ public class ChessBoard {
             throw new IllegalArgumentException("setSelectedSquare: index must be between 0 and 63, inclusive.");
         }
         this.selectedSquare = index;
+        if (this.settings.doLegalMoveHighlights()) {
+            unhighlightLegalMoves();
+            highlightLegalMoves();
+        }
     }
 
-    //public void deselectSquare() {
-    //    this.selectedSquare = -1;
-    //}
+    public void deselectSquare() {
+        if (this.settings.doLegalMoveHighlights()) {
+            unhighlightLegalMoves();
+        }
+        this.selectedSquare = -1;
+    }
+
+    private void highlightLegalMoves() {
+        ArrayList<ChessMove> relevantMoves = ChessLogic.generateLegalMoves(this.getPosition(), (p, m) -> m.getStart() == this.selectedSquare);
+        for (ChessMove move : relevantMoves) {
+            Square square = this.getSquareAt(move.getEnd());
+            square.legalMoveHighlight();
+            this.legalHighlightedSquares.add(square);
+        }
+    }
+
+    private void unhighlightLegalMoves() {
+        for (Square square : this.legalHighlightedSquares) {
+            square.legalMoveUnhighlight();
+        }
+        this.legalHighlightedSquares.clear();
+    }
 
     public int getSelectedSquareIndex() {
         return this.selectedSquare;

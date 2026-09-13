@@ -1,11 +1,12 @@
 package chess.application;
 
+import chess.display.BoardUISettings;
 import chess.display.ChessBoard;
 import chess.display.ControlPanel;
 import chess.display.Square;
 import chess.intel.Agent;
 import chess.intel.Player;
-import chess.intel.strategy.MaterialisticStrategy;
+import chess.intel.strategy.PositionalStrategy;
 import chess.logic.ChessMove;
 import chess.logic.util.GridMath;
 import javafx.application.Application;
@@ -21,7 +22,6 @@ import javafx.stage.Stage;
 
 public class Chess extends Application {
 
-    private final double boardSize = 504.0;
     private ChessGame displayedGame;
     private ChessBoard selectedBoard;
     private ImageView mouseImageView;
@@ -43,7 +43,7 @@ public class Chess extends Application {
         this.controlPanel = new ControlPanel(this);
 
         //this.defaultAgent = TrainingManager.getBestAgent(3);
-        this.defaultAgent = new Agent(new MaterialisticStrategy(), 5, true);
+        this.defaultAgent = new Agent(new PositionalStrategy(), 5, true);
 
         this.mouseImageView = new ImageView();
         this.pieceInMouse = false;
@@ -67,11 +67,7 @@ public class Chess extends Application {
         stage.setTitle("Chess Application");
         stage.setScene(this.scene);
 
-        //loadGame(new ChessGame(new Player(), new Player(), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor)));
-        //ChessGame game = new ChessGame(this.user, new Agent(new MaterialisticStrategy(), 5), new ChessBoard(Point2D.ZERO, boardSize, darkSquareColor, lightSquareColor));
-        ChessGame game = new ChessGame(new Player(true), this.defaultAgent, new ChessBoard(Point2D.ZERO, boardSize, false), true, true);
-        loadGame(game);
-        game.start();
+        this.controlPanel.createNewGame(new Player(true), this.defaultAgent, new ChessBoard(Point2D.ZERO, false, new BoardUISettings()), true, true);
 
         stage.sizeToScene();
         stage.show();

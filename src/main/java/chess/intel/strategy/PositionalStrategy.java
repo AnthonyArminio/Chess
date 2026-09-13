@@ -7,6 +7,10 @@ public class PositionalStrategy extends MaterialisticStrategy {
 
     private PositionalWeights weights;
 
+    public PositionalStrategy() {
+        this.weights = new PositionalWeights();
+    }
+
     public PositionalStrategy(PositionalWeights weights) {
         this.weights = weights;
     }

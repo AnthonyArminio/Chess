@@ -360,6 +360,13 @@ public class ChessLogic {
         return moves;
     }
 
+    /**
+     * Generate legal moves with no filter
+     */
+    public static ArrayList<ChessMove> generateLegalMoves(ChessPosition position) {
+        return generateLegalMoves(position, (p, m) -> true);
+    }
+
     public static boolean canMove(ChessPosition position) {
 
         char colorToMove = position.colorToMove();
@@ -395,13 +402,6 @@ public class ChessLogic {
         }
 
         return false;
-    }
-    
-    /**
-     * Generate legal moves with no filter
-     */
-    public static ArrayList<ChessMove> generateLegalMoves(ChessPosition position) {
-        return generateLegalMoves(position, (p, m) -> true);
     }
 
     public static Evaluation getBaseEvaluation(ChessPosition position) {
