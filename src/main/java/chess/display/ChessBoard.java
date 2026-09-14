@@ -190,14 +190,14 @@ public class ChessBoard {
         ArrayList<ChessMove> relevantMoves = ChessLogic.generateLegalMoves(this.getPosition(), (p, m) -> m.getStart() == this.selectedSquare);
         for (ChessMove move : relevantMoves) {
             Square square = this.getSquareAt(move.getEnd());
-            square.legalMoveHighlight();
+            //square.legalMoveHighlight();
             this.legalHighlightedSquares.add(square);
         }
     }
 
     private void unhighlightLegalMoves() {
         for (Square square : this.legalHighlightedSquares) {
-            square.legalMoveUnhighlight();
+            //square.legalMoveUnhighlight();
         }
         this.legalHighlightedSquares.clear();
     }
