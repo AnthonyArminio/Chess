@@ -1,5 +1,6 @@
 chess\logic\util\GridMath.class
 chess\application\ChessGame.class
+chess\display\BoardUISettings.class
 chess\intel\util\json\JsonStrategyAdapter.class
 chess\intel\strategy\NeuralNetwork.class
 chess\logic\util\condition\Accumulator.class

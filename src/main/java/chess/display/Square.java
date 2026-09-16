@@ -1,14 +1,21 @@
 package chess.display;
 
 import chess.logic.ChessPiece;
+import javafx.geometry.HPos;
 import javafx.geometry.Point2D;
+import javafx.geometry.VPos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 public class Square {
+
+    private final double LEGAL_MOVE_HIGHLIGHT_RADIUS = 0.15;
+    private final String LEGAL_MOVE_HIGHLIGHT_COLOR = "#000000";
+
     private ChessPiece piece;
     private ImageView imageView;
     private Image image;
@@ -17,6 +24,7 @@ public class Square {
     private double size;
     private int file;
     private int rank;
+    private Circle legalMoveHighlight;
 
     public Square(Point2D origin, double size, Color color, int file, int rank) {
 
@@ -35,6 +43,9 @@ public class Square {
         this.imageView.setFitHeight(size);
         this.imageView.setFitWidth(size);
         this.image = null;
+
+        this.legalMoveHighlight = new Circle(origin.getX() + size / 2, origin.getY() + size / 2, size * LEGAL_MOVE_HIGHLIGHT_RADIUS, Color.web(LEGAL_MOVE_HIGHLIGHT_COLOR));
+        this.legalMoveHighlight.setVisible(false);
     }
 
     /**
@@ -48,6 +59,9 @@ public class Square {
         Rectangle rectangle = new Rectangle(origin.getX(), origin.getY(), size, size);
         rectangle.setFill(this.color);
         checkerboard.add(rectangle, rfile - 1, 8 - rrank);
+        checkerboard.add(this.legalMoveHighlight, rfile - 1, 8 - rrank);
+        GridPane.setHalignment(this.legalMoveHighlight, HPos.CENTER);
+        GridPane.setValignment(this.legalMoveHighlight, VPos.CENTER);
         checkerboard.add(this.imageView, rfile - 1, 8 - rrank);
     }
 
@@ -107,6 +121,15 @@ public class Square {
     public Image detachImage() {
         this.imageView.setImage(null);
         return this.image;
+    }
+
+    public void legalMoveHighlight() {
+        this.legalMoveHighlight.setVisible(true);
+        System.out.println(this.legalMoveHighlight.getCenterX());
+    }
+
+    public void legalMoveUnhighlight() {
+        this.legalMoveHighlight.setVisible(false);
     }
 
     public double getSize() {

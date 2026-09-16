@@ -12,7 +12,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 /**
  * Represents a grid of squares contained within a Pane object. The light square color and dark
@@ -68,8 +67,8 @@ public class ChessBoard {
 
     private void initializeColors(String darkSquareColor, String lightSquareColor) {
         this.squareColors = new Color[2];
-        this.squareColors[0] = (Color) Paint.valueOf(darkSquareColor);
-        this.squareColors[1] = (Color) Paint.valueOf(lightSquareColor);
+        this.squareColors[0] = Color.web(darkSquareColor);
+        this.squareColors[1] = Color.web(lightSquareColor);
     }
 
     /**
@@ -190,14 +189,14 @@ public class ChessBoard {
         ArrayList<ChessMove> relevantMoves = ChessLogic.generateLegalMoves(this.getPosition(), (p, m) -> m.getStart() == this.selectedSquare);
         for (ChessMove move : relevantMoves) {
             Square square = this.getSquareAt(move.getEnd());
-            //square.legalMoveHighlight();
+            square.legalMoveHighlight();
             this.legalHighlightedSquares.add(square);
         }
     }
 
     private void unhighlightLegalMoves() {
         for (Square square : this.legalHighlightedSquares) {
-            //square.legalMoveUnhighlight();
+            square.legalMoveUnhighlight();
         }
         this.legalHighlightedSquares.clear();
     }
