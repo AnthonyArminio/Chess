@@ -8,6 +8,7 @@ import chess.intel.Agent;
 import chess.intel.Player;
 import chess.intel.strategy.PositionalStrategy;
 import chess.logic.ChessMove;
+import chess.logic.ChessPiece;
 import chess.logic.util.GridMath;
 import javafx.application.Application;
 import javafx.geometry.Point2D;
@@ -99,19 +100,20 @@ public class Chess extends Application {
             //System.out.println(e.getX() + " " + e.getY());
 
             if (selectedSquareIndex >= 0) {
-                this.selectedBoard.setSelectedSquare(selectedSquareIndex);
-                Square selectedSquare = this.selectedBoard.getSelectedSquare();
+                Square selectedSquare = this.selectedBoard.getSquareAt(selectedSquareIndex);
 
                 this.mouseImageView.setFitWidth(selectedSquare.getSize());
                 this.mouseImageView.setFitHeight(selectedSquare.getSize());
 
                 //System.out.println("Mouse pressed on square " + selectedSquare.getFile() + " " + selectedSquare.getRank());
 
-                if (selectedSquare.getPiece() != null) {
-                    attachImage(selectedSquare.detachImage());
-                    moveImageToMouse(e);
-                } else {
-                    System.out.println("No piece at that location.");
+                ChessPiece piece = selectedSquare.getPiece();
+                if (piece != null && piece.getColor() == this.selectedBoard.getPosition().colorToMove()) {
+                    if (this.selectedBoard.getGame().getPlayer(piece.getColor()).isUser()) {
+                        this.selectedBoard.setSelectedSquare(selectedSquareIndex);
+                        attachImage(selectedSquare.detachImage());
+                        moveImageToMouse(e);
+                    }
                 }
             } else {
                 //System.out.println("Clicked out of bounds of the chess board.");

@@ -237,6 +237,10 @@ public class ChessBoard {
         return this.chessBoard;
     }
 
+    public ChessGame getGame() {
+        return this.game;
+    }
+
     public boolean isFlipped() {
         return this.isFlipped;
     }

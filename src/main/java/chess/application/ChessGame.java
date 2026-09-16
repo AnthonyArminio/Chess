@@ -147,6 +147,13 @@ public class ChessGame {
         return false;
     }
 
+    public Player getPlayer(char color) {
+        if (color == 'w') {
+            return this.whitePlayer;
+        }
+        return this.blackPlayer;
+    }
+
     protected void onWinForWhite() {
         System.out.println("White wins. Move number: " + this.moveNumber);
     }
