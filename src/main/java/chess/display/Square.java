@@ -8,7 +8,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Arc;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
@@ -17,27 +16,28 @@ public class Square {
     private final double LEGAL_MOVE_HIGHLIGHT_RADIUS = 0.15;
     private final double LEGAL_CAPTURE_HIGHLIGHT_RADIUS = 0.3;
     private final double LEGAL_CAPTURE_HIGHLIGHT_STOKE_WIDTH = 10.0;
-    private final String LEGAL_MOVE_HIGHLIGHT_COLOR = "#AF0000";
 
     private ChessPiece piece;
-    private ImageView imageView;
+    private final ImageView imageView;
     private Image image;
-    private Point2D origin;
+    private final Point2D origin;
     private Color color;
-    private double size;
-    private int file;
-    private int rank;
+    private final double size;
+    private final int file;
+    private final int rank;
     private Circle legalMoveHighlight;
-    private Arc legalCaptureHighlight;
+    private Circle legalCaptureHighlight;
+    private final Color legalMoveHighlightColor;
 
-    public Square(Point2D origin, double size, Color color, int file, int rank) {
+    public Square(Point2D origin, double size, int file, int rank, BoardUISettings settings) {
 
         this.file = file;
         this.rank = rank;
         
         this.origin = origin;
         this.size = size;
-        this.color = color;
+        this.color = Color.web(Square.isDarkSquare(file, rank) ? settings.getDarkSquareColor() : settings.getLightSquareColor());
+        this.legalMoveHighlightColor = Color.web(settings.getLegalMoveHighlightColor());
 
         this.piece = null;
 
@@ -53,11 +53,12 @@ public class Square {
     }
 
     private void initializeLegalMoveHighlights() {
-        this.legalMoveHighlight = new Circle(origin.getX() + size / 2, origin.getY() + size / 2, size * LEGAL_MOVE_HIGHLIGHT_RADIUS, Color.web(LEGAL_MOVE_HIGHLIGHT_COLOR));
+        this.legalMoveHighlight = new Circle(origin.getX() + size / 2, origin.getY() + size / 2, size * LEGAL_MOVE_HIGHLIGHT_RADIUS, legalMoveHighlightColor);
         this.legalMoveHighlight.setVisible(false);
-        this.legalCaptureHighlight = new Arc(origin.getX(), origin.getY(), size * LEGAL_CAPTURE_HIGHLIGHT_RADIUS, size * LEGAL_CAPTURE_HIGHLIGHT_RADIUS, 0.0, 360.0);
+        
+        this.legalCaptureHighlight = new Circle(origin.getX() + size / 2, origin.getY() + size / 2, size * LEGAL_CAPTURE_HIGHLIGHT_RADIUS, legalMoveHighlightColor);
         this.legalCaptureHighlight.setFill(null);
-        this.legalCaptureHighlight.setStroke(Color.web(LEGAL_MOVE_HIGHLIGHT_COLOR));
+        this.legalCaptureHighlight.setStroke(legalMoveHighlightColor);
         this.legalCaptureHighlight.setStrokeWidth(LEGAL_CAPTURE_HIGHLIGHT_STOKE_WIDTH);
         this.legalCaptureHighlight.setVisible(false);
     }
@@ -73,12 +74,15 @@ public class Square {
         Rectangle rectangle = new Rectangle(origin.getX(), origin.getY(), size, size);
         rectangle.setFill(this.color);
         checkerboard.add(rectangle, rfile - 1, 8 - rrank);
+
         checkerboard.add(this.legalMoveHighlight, rfile - 1, 8 - rrank);
         GridPane.setHalignment(this.legalMoveHighlight, HPos.CENTER);
         GridPane.setValignment(this.legalMoveHighlight, VPos.CENTER);
+
         checkerboard.add(this.legalCaptureHighlight, rfile - 1, 8 - rrank);
         GridPane.setHalignment(this.legalCaptureHighlight, HPos.CENTER);
         GridPane.setValignment(this.legalCaptureHighlight, VPos.CENTER);
+
         checkerboard.add(this.imageView, rfile - 1, 8 - rrank);
     }
 
@@ -163,5 +167,9 @@ public class Square {
 
     public int getRank() {
         return this.rank;
+    }
+
+    public static boolean isDarkSquare(int file, int rank) {
+        return (file + rank) % 2 == 0;
     }
 }

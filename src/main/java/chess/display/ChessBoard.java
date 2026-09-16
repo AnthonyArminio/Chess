@@ -19,8 +19,8 @@ import javafx.scene.paint.Color;
  */
 public class ChessBoard {
 
-    private Group chessBoard;
-    private GridPane checkerboard;
+    private final Group chessBoard;
+    private final GridPane checkerboard;
     private Square[] squares;
     private ArrayList<Square> legalHighlightedSquares;
     private int selectedSquare;
@@ -82,8 +82,7 @@ public class ChessBoard {
             for (int rank = 1; rank <= 8; rank++) {
                 Point2D squareOrigin = new Point2D(this.origin.getX() + this.squareSize * (file - 1), 
                                                    this.origin.getY() + this.squareSize * (8 - rank));
-                this.squares[GridMath.index(file, rank)] = new Square(squareOrigin, this.squareSize, this.squareColors[(file + rank) % 2], 
-                                                              file, rank);
+                this.squares[GridMath.index(file, rank)] = new Square(squareOrigin, this.squareSize, file, rank, this.settings);
             }
         }
     }
