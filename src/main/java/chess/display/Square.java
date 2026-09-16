@@ -8,13 +8,16 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Arc;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 public class Square {
 
     private final double LEGAL_MOVE_HIGHLIGHT_RADIUS = 0.15;
-    private final String LEGAL_MOVE_HIGHLIGHT_COLOR = "#000000";
+    private final double LEGAL_CAPTURE_HIGHLIGHT_RADIUS = 0.3;
+    private final double LEGAL_CAPTURE_HIGHLIGHT_STOKE_WIDTH = 10.0;
+    private final String LEGAL_MOVE_HIGHLIGHT_COLOR = "#AF0000";
 
     private ChessPiece piece;
     private ImageView imageView;
@@ -25,6 +28,7 @@ public class Square {
     private int file;
     private int rank;
     private Circle legalMoveHighlight;
+    private Arc legalCaptureHighlight;
 
     public Square(Point2D origin, double size, Color color, int file, int rank) {
 
@@ -44,8 +48,18 @@ public class Square {
         this.imageView.setFitWidth(size);
         this.image = null;
 
+        initializeLegalMoveHighlights();
+
+    }
+
+    private void initializeLegalMoveHighlights() {
         this.legalMoveHighlight = new Circle(origin.getX() + size / 2, origin.getY() + size / 2, size * LEGAL_MOVE_HIGHLIGHT_RADIUS, Color.web(LEGAL_MOVE_HIGHLIGHT_COLOR));
         this.legalMoveHighlight.setVisible(false);
+        this.legalCaptureHighlight = new Arc(origin.getX(), origin.getY(), size * LEGAL_CAPTURE_HIGHLIGHT_RADIUS, size * LEGAL_CAPTURE_HIGHLIGHT_RADIUS, 0.0, 360.0);
+        this.legalCaptureHighlight.setFill(null);
+        this.legalCaptureHighlight.setStroke(Color.web(LEGAL_MOVE_HIGHLIGHT_COLOR));
+        this.legalCaptureHighlight.setStrokeWidth(LEGAL_CAPTURE_HIGHLIGHT_STOKE_WIDTH);
+        this.legalCaptureHighlight.setVisible(false);
     }
 
     /**
@@ -62,6 +76,9 @@ public class Square {
         checkerboard.add(this.legalMoveHighlight, rfile - 1, 8 - rrank);
         GridPane.setHalignment(this.legalMoveHighlight, HPos.CENTER);
         GridPane.setValignment(this.legalMoveHighlight, VPos.CENTER);
+        checkerboard.add(this.legalCaptureHighlight, rfile - 1, 8 - rrank);
+        GridPane.setHalignment(this.legalCaptureHighlight, HPos.CENTER);
+        GridPane.setValignment(this.legalCaptureHighlight, VPos.CENTER);
         checkerboard.add(this.imageView, rfile - 1, 8 - rrank);
     }
 
@@ -124,12 +141,16 @@ public class Square {
     }
 
     public void legalMoveHighlight() {
-        this.legalMoveHighlight.setVisible(true);
-        System.out.println(this.legalMoveHighlight.getCenterX());
+        if (getPiece() != null) {
+            this.legalCaptureHighlight.setVisible(true);
+        } else {
+            this.legalMoveHighlight.setVisible(true);
+        }
     }
 
     public void legalMoveUnhighlight() {
         this.legalMoveHighlight.setVisible(false);
+        this.legalCaptureHighlight.setVisible(false);
     }
 
     public double getSize() {

@@ -157,7 +157,7 @@ public class Chess extends Application {
                 // move attempt failed; snap the image back.
                 this.selectedBoard.getSelectedSquare().reattachImage();
             }
-            //this.selectedBoard.deselectSquare();
+            this.selectedBoard.deselectSquare();
             this.selectedBoard = null;
         }
     }
