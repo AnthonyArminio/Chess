@@ -108,7 +108,7 @@ public class ControlPanel {
     }
 
     private BoardUISettings configureSettings() {
-        return new BoardUISettings(true);
+        return new BoardUISettings();
     }
 
     public ChessGame createNewGame(Player whitePlayer, Player blackPlayer, ChessBoard board, boolean flip, boolean printMoves) {

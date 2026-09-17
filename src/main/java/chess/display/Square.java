@@ -21,12 +21,14 @@ public class Square {
     private final ImageView imageView;
     private Image image;
     private final Point2D origin;
-    private Color color;
+    private final Color baseColor;
     private final double size;
     private final int file;
     private final int rank;
+    private Rectangle baseSquare;
     private Circle legalMoveHighlight;
     private Circle legalCaptureHighlight;
+    private final Color highlightColor;
     private final Color legalMoveHighlightColor;
 
     public Square(Point2D origin, double size, int file, int rank, BoardUISettings settings) {
@@ -36,8 +38,11 @@ public class Square {
         
         this.origin = origin;
         this.size = size;
-        this.color = Color.web(Square.isDarkSquare(file, rank) ? settings.getDarkSquareColor() : settings.getLightSquareColor());
+        this.baseColor = Color.web(Square.isDarkSquare(file, rank) ? settings.getDarkSquareColor() : settings.getLightSquareColor());
+        this.highlightColor = Color.web(Square.isDarkSquare(file, rank) ? settings.getDarkSquareHighlightColor() : settings.getLightSquareHighlightColor());
         this.legalMoveHighlightColor = Color.web(settings.getLegalMoveHighlightColor());
+
+        this.baseSquare = null;
 
         this.piece = null;
 
@@ -48,11 +53,14 @@ public class Square {
         this.imageView.setFitWidth(size);
         this.image = null;
 
-        initializeLegalMoveHighlights();
+        initializeShapes();
 
     }
 
-    private void initializeLegalMoveHighlights() {
+    private void initializeShapes() {
+        this.baseSquare = new Rectangle(origin.getX(), origin.getY(), size, size);
+        this.baseSquare.setFill(this.baseColor);
+
         this.legalMoveHighlight = new Circle(origin.getX() + size / 2, origin.getY() + size / 2, size * LEGAL_MOVE_HIGHLIGHT_RADIUS, legalMoveHighlightColor);
         this.legalMoveHighlight.setVisible(false);
         
@@ -71,9 +79,7 @@ public class Square {
      * @param rrank the relative rank to draw the square on.
      */
     public void draw(GridPane checkerboard, int rfile, int rrank) {
-        Rectangle rectangle = new Rectangle(origin.getX(), origin.getY(), size, size);
-        rectangle.setFill(this.color);
-        checkerboard.add(rectangle, rfile - 1, 8 - rrank);
+        checkerboard.add(this.baseSquare, rfile - 1, 8 - rrank);
 
         checkerboard.add(this.legalMoveHighlight, rfile - 1, 8 - rrank);
         GridPane.setHalignment(this.legalMoveHighlight, HPos.CENTER);
@@ -142,6 +148,18 @@ public class Square {
     public Image detachImage() {
         this.imageView.setImage(null);
         return this.image;
+    }
+
+    public void highlight() {
+        if (this.baseSquare != null) {
+            this.baseSquare.setFill(this.highlightColor);
+        }
+    }
+
+    public void unhighlight() {
+        if (this.baseSquare != null) {
+            this.baseSquare.setFill(this.baseColor);
+        }
     }
 
     public void legalMoveHighlight() {

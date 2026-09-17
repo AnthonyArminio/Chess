@@ -11,7 +11,6 @@ import chess.logic.util.GridMath;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
 
 /**
  * Represents a grid of squares contained within a Pane object. The light square color and dark
@@ -26,10 +25,10 @@ public class ChessBoard {
     private int selectedSquare;
     private boolean isFlipped;
     private ChessGame game;
+    private ArrayList<ChessMove> highlightedMoves;
     private BoardUISettings settings;
 
     private double squareSize;
-    private Color[] squareColors;
     private Point2D origin;
 
     private boolean waitingForPromotion;
@@ -55,20 +54,13 @@ public class ChessBoard {
         this.promotionUI = null;
 
         this.legalHighlightedSquares = new ArrayList<>();
-
-        initializeColors(settings.getDarkSquareColor(), settings.getLightSquareColor());
+        this.highlightedMoves = new ArrayList<>();
 
         makeSquares();
         this.isFlipped = flipped;
         drawSquares(this.isFlipped);
 
         this.selectedSquare = -1;
-    }
-
-    private void initializeColors(String darkSquareColor, String lightSquareColor) {
-        this.squareColors = new Color[2];
-        this.squareColors[0] = Color.web(darkSquareColor);
-        this.squareColors[1] = Color.web(lightSquareColor);
     }
 
     /**
@@ -164,6 +156,10 @@ public class ChessBoard {
         }
         
         releaseSquare.setPiece(move.getPiece());
+        unhighlightMoves();
+        if (settings.doPreviousMoveHighlights()) {
+            highlightMove(move);
+        }
     }
 
     public void setSelectedSquare(int index) {
@@ -182,6 +178,20 @@ public class ChessBoard {
             unhighlightLegalMoves();
         }
         this.selectedSquare = -1;
+    }
+
+    private void highlightMove(ChessMove move) {
+        this.getSquareAt(move.getStart()).highlight();
+        this.getSquareAt(move.getEnd()).highlight();
+        this.highlightedMoves.add(move);
+    }
+
+    private void unhighlightMoves() {
+        for (ChessMove move : this.highlightedMoves) {
+            this.getSquareAt(move.getStart()).unhighlight();
+            this.getSquareAt(move.getEnd()).unhighlight();
+        }
+        this.highlightedMoves.clear();
     }
 
     private void highlightLegalMoves() {
