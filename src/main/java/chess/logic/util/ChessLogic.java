@@ -254,12 +254,33 @@ public class ChessLogic {
     }
 
     /**
-     * Returns true if the player to move in the specified position has a piece of the specified type.
+     * Returns the first location of a specified piece type/color.
      * @param position The position to test.
-     * @return true if the piece is on the board, and false otherwise.
+     * @return the first location of the piece if the piece is on the board, and -1 otherwise.
      */
-    public static boolean containsMatchingPiece(ChessPosition position, char pieceType, char pieceColor) {
-        return (int) position.iterateOverPieces((v, pos, p, s) -> p.getType() == pieceType && p.getColor() == pieceColor ? v + 1 : v) >= 1;
+    public static int findMatchingPiece(ChessPosition position, char pieceType, char pieceColor) {
+        for (int i = 0; i < 64; i++) {
+            ChessPiece piece = position.getPieceAt(i);
+            if (piece.getType() == pieceType && piece.getColor() == pieceColor) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Returns the first location of a specified piece type.
+     * @param position The position to test.
+     * @return the first location of the piece if the piece is on the board, and -1 otherwise.
+     */
+    public static int findMatchingPiece(ChessPosition position, char pieceType) {
+        for (int i = 0; i < 64; i++) {
+            ChessPiece piece = position.getPieceAt(i);
+            if (piece.getType() == pieceType) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public static char opponentOf(char color) {

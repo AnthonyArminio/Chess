@@ -16,11 +16,15 @@ public abstract class Strategy {
     protected ArrayList<Technique> techniques = new ArrayList<>();
 
     public Evaluation evaluate(ChessPosition position) {
-        Evaluation baseEval = ChessLogic.getBaseEvaluation(position);
+        Evaluation baseEval = objectiveEvaluate(position);
         if (baseEval == Evaluation.UNDECIDED) {
             return subjectiveEvaluate(position);
         }
         return baseEval;
+    }
+
+    public Evaluation objectiveEvaluate(ChessPosition position) {
+        return ChessLogic.getBaseEvaluation(position); // TO DO: Add technique handling
     }
 
     public boolean evaluateStability(ChessPosition position, ChessMove previousMove) {

@@ -57,6 +57,14 @@ public class GridMath {
         return index(getFile(index), 9 - getRank(index));
     }
 
+    public static boolean isAdjacent(int s1, int s2) {
+        int s1File = GridMath.getFile(s1);
+        int s1Rank = GridMath.getRank(s1);
+        int s2File = GridMath.getFile(s2);
+        int s2Rank = GridMath.getRank(s2);
+        return Math.abs(s1File - s2File) < 2 && Math.abs(s1Rank - s2Rank) < 2;
+    }
+
     /**
      * Determines if the step between the square indices 'previous' and 'next' implies a movement
      * out of the bounds of the chess board.

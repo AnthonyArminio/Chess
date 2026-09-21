@@ -24,6 +24,13 @@ public class Evaluation implements Comparable<Evaluation> {
     // the best move according to the evaluation (updates as this Evaluation steps up the tree)
     private ChessMove bestMove;
 
+    public static Evaluation mateIn(int clock, char color) {
+        if (color == 'w') {
+            return new Evaluation(Float.POSITIVE_INFINITY, clock);
+        }
+        return new Evaluation(Float.NEGATIVE_INFINITY, clock);
+    }
+
     public Evaluation(float value) {
         this.value = value;
         this.clock = -1;

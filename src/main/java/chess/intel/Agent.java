@@ -81,10 +81,10 @@ public class Agent extends Player {
      */
     private Evaluation minimaxEvaluate(ChessPosition position, ChessMove previousMove, char color, int depth, Evaluation alphabeta) {
 
-        // standard evaluation
-        Evaluation baseEvaluation = ChessLogic.getBaseEvaluation(position);
-        if (baseEvaluation != Evaluation.UNDECIDED) {
-            return baseEvaluation;
+        // standard evaluation/apply techniques
+        Evaluation objectiveEvaluation = this.strategy.objectiveEvaluate(position);
+        if (objectiveEvaluation != Evaluation.UNDECIDED) {
+            return objectiveEvaluation;
         }
 
         MoveFilter filter = (p, m) -> true;
