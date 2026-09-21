@@ -2,7 +2,6 @@ package chess.intel.technique;
 
 import chess.intel.strategy.Evaluation;
 import chess.logic.ChessPosition;
-
 import chess.logic.util.condition.PositionalCondition;
 
 /**
@@ -20,7 +19,7 @@ public abstract class Technique {
     }
 
     /**
-     * Return the known evaluation of a position relevant to this Technique. If the position is unknown, returns `Evaluation.UNDECIDED`.
+     * Returns the known evaluation of a position relevant to this Technique. If the position is unknown, returns `Evaluation.UNDECIDED`.
      * @param position The position to evaluate
      * @return The known evaluation of the position, or `Evaluation.UNDECIDED` if the position is unknown.
      */

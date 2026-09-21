@@ -253,6 +253,15 @@ public class ChessLogic {
         return false;
     }
 
+    /**
+     * Returns true if the player to move in the specified position has a piece of the specified type.
+     * @param position The position to test.
+     * @return true if the piece is on the board, and false otherwise.
+     */
+    public static boolean containsMatchingPiece(ChessPosition position, char pieceType, char pieceColor) {
+        return (int) position.iterateOverPieces((v, pos, p, s) -> p.getType() == pieceType && p.getColor() == pieceColor ? v + 1 : v) >= 1;
+    }
+
     public static char opponentOf(char color) {
         if (color == 'w') {
             return 'b';
