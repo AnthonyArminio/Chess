@@ -1,5 +1,8 @@
 package chess.intel.strategy;
 
+import java.util.ArrayList;
+
+import chess.intel.technique.Technique;
 import chess.logic.ChessMove;
 import chess.logic.ChessPosition;
 import chess.logic.util.ChessLogic;
@@ -9,6 +12,8 @@ import chess.logic.util.condition.MoveFilter;
  * Abstract class that represents a strategy for evaluating a ChessPosition
  */
 public abstract class Strategy {
+
+    protected ArrayList<Technique> techniques = new ArrayList<>();
 
     public Evaluation evaluate(ChessPosition position) {
         Evaluation baseEval = ChessLogic.getBaseEvaluation(position);
@@ -24,6 +29,10 @@ public abstract class Strategy {
 
     public MoveFilter unstableCaseFilter(ChessPosition position, ChessMove previousMove) {
         return (p, m) -> false;
+    }
+
+    public void addTechnique(Technique t) {
+        this.techniques.add(t);
     }
 
     /**

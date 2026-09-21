@@ -8,6 +8,7 @@ import chess.logic.ChessPiece;
 import chess.logic.ChessPosition;
 import chess.logic.CompressedPosition;
 import chess.logic.util.condition.MoveFilter;
+import chess.logic.util.condition.DisplacementCondition;
 
 /**
  * Class with static functions to help with chess logic such as checks, legal moves, and checkmate.
@@ -38,7 +39,7 @@ public class ChessLogic {
         }
 
         // must move according to the capabilities of each piece
-        chess.logic.util.condition.ChessCondition condition = (p, s, e) -> e == end;
+        DisplacementCondition condition = (p, s, e) -> e == end;
         if (!searchVision(position, start, move.getPiece(), condition)) {
             return false;
         }
@@ -96,7 +97,7 @@ public class ChessLogic {
                 }
             } else {
                 
-                chess.logic.util.condition.ChessCondition condition = (p, s, e) -> piece.equals(p.getPieceAt(e));
+                DisplacementCondition condition = (p, s, e) -> piece.equals(p.getPieceAt(e));
                 
                 if (searchVision(position, kingLocation, piece, condition)) {
                     return true;
@@ -265,10 +266,10 @@ public class ChessLogic {
      * condition.
      * @param origin
      * @param piece
-     * @param condition implements chess.logic.util.ChessCondition.
+     * @param condition implements chess.logic.util.DisplacementCondition.
      * @return true if a square matching the condition was found, false otherwise.
      */
-    private static boolean searchVision(ChessPosition position, int origin, ChessPiece piece, chess.logic.util.condition.ChessCondition condition) {
+    private static boolean searchVision(ChessPosition position, int origin, ChessPiece piece, DisplacementCondition condition) {
         
         boolean success = false;
         

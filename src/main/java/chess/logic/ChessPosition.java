@@ -285,6 +285,10 @@ public class ChessPosition {
         return v;
     }
 
+    public int countPieces() {
+        return (int) iterateOverPieces((v, pos, p, s) -> v + 1);
+    }
+
     public int getMaterialEvaluation() {
         return (int) iterateOverPieces((v, pos, p, s) -> v + p.getValue());
     }

@@ -2,7 +2,7 @@ package chess.logic.util.condition;
 
 import chess.logic.ChessPosition;
 
-public interface ChessCondition {
+public interface DisplacementCondition {
 
     /**
      * Test a condition as a function of a ChessPosition along with a start and end location.
