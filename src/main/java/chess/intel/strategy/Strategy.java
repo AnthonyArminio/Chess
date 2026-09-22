@@ -24,7 +24,14 @@ public abstract class Strategy {
     }
 
     public Evaluation objectiveEvaluate(ChessPosition position) {
-        return ChessLogic.getBaseEvaluation(position); // TO DO: Add technique handling
+        Evaluation eval = ChessLogic.getBaseEvaluation(position);
+        for (Technique technique : this.techniques) {
+            if (eval != Evaluation.UNDECIDED) return eval;
+            if (technique.isActive()) {
+                eval = technique.evaluate(position);
+            }
+        }
+        return eval;
     }
 
     public boolean evaluateStability(ChessPosition position, ChessMove previousMove) {
@@ -37,6 +44,12 @@ public abstract class Strategy {
 
     public void addTechnique(Technique t) {
         this.techniques.add(t);
+    }
+
+    public void tryActivateTechniques(ChessPosition position) {
+        for (Technique technique : this.techniques) {
+            technique.tryActivate(position);
+        }
     }
 
     /**

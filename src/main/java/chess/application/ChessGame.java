@@ -20,8 +20,8 @@ public class ChessGame {
     private int moveNumber;
     private int plyNumber;
     private boolean isIdle;
+    private boolean isOver;
     private boolean printMoves;
-    private boolean flip;
     
     public ChessGame(Player whitePlayer, Player blackPlayer, boolean printMoves) {
         this.whitePlayer = whitePlayer;
@@ -33,31 +33,11 @@ public class ChessGame {
 
         this.board = null;
 
-        this.flip = false;
-
         this.moveNumber = 0;
         this.plyNumber = 0;
 
         this.isIdle = true;
-    }
-
-    public ChessGame(Player whitePlayer, Player blackPlayer, ChessBoard board, boolean flip, boolean printMoves) {
-        this.whitePlayer = whitePlayer;
-        this.blackPlayer = blackPlayer;
-        this.position = new ChessPosition();
-        this.playerToMove = null;
-
-        this.printMoves = printMoves;
-
-        this.board = board;
-        this.board.loadGame(this);
-
-        this.flip = flip;
-
-        this.moveNumber = 0;
-        this.plyNumber = 0;
-
-        this.isIdle = true;
+        this.isOver = false;
     }
 
     public void start() {
@@ -75,9 +55,6 @@ public class ChessGame {
      * @param move the ChessMove to make
      */
     public void makeMove(ChessMove move) {
-        if (this.board != null) {
-            Platform.runLater(() -> this.board.makeMove(move));
-        }
         this.position.makeMove(move);
 
         if (this.printMoves) {
@@ -88,7 +65,13 @@ public class ChessGame {
             }
         }
 
-        if (!handleGameEnd()) {
+        this.isOver = handleGameEnd();
+
+        if (this.board != null) {
+            Platform.runLater(() -> this.board.makeMove(move));
+        }
+
+        if (!this.isOver) {
             advanceGame();
         }
     }
@@ -106,14 +89,8 @@ public class ChessGame {
     private void passTurn() {
         if (this.playerToMove == this.whitePlayer) {
             this.playerToMove = this.blackPlayer;
-            if (this.flip) {
-                Platform.runLater(() -> this.board.flipTo('b'));
-            }
         } else {
             this.playerToMove = this.whitePlayer;
-            if (this.flip) {
-                Platform.runLater(() -> this.board.flipTo('w'));
-            }
         }
     }
 
@@ -192,5 +169,9 @@ public class ChessGame {
 
     public boolean isIdle() {
         return this.isIdle;
+    }
+
+    public boolean isOver() {
+        return this.isOver;
     }
 }

@@ -7,6 +7,8 @@ import chess.display.Square;
 import chess.intel.Agent;
 import chess.intel.Player;
 import chess.intel.strategy.PositionalStrategy;
+import chess.intel.strategy.Strategy;
+import chess.intel.technique.SingleQueenEndgame;
 import chess.logic.ChessMove;
 import chess.logic.ChessPiece;
 import chess.logic.util.GridMath;
@@ -27,7 +29,6 @@ public class Chess extends Application {
     private ChessBoard selectedBoard;
     private ImageView mouseImageView;
     private boolean pieceInMouse;
-    private Player defaultAgent;
 
     private Group root;
     private HBox layout;
@@ -42,9 +43,6 @@ public class Chess extends Application {
         this.layout = new HBox();
         this.gameView = new VBox();
         this.controlPanel = new ControlPanel(this);
-
-        //this.defaultAgent = TrainingManager.getBestAgent(3);
-        this.defaultAgent = new Agent(new PositionalStrategy(), 5, true);
 
         this.mouseImageView = new ImageView();
         this.pieceInMouse = false;
@@ -68,7 +66,7 @@ public class Chess extends Application {
         stage.setTitle("Chess Application");
         stage.setScene(this.scene);
 
-        this.controlPanel.createNewGame(new Player(true), this.defaultAgent, new ChessBoard(Point2D.ZERO, false, new BoardUISettings()), true, true);
+        this.controlPanel.createNewGame(new Player(true), getDefaultAgent(), new ChessBoard(Point2D.ZERO, false, true, new BoardUISettings()), true);
 
         stage.sizeToScene();
         stage.show();
@@ -181,7 +179,9 @@ public class Chess extends Application {
         this.pieceInMouse = false;
     }
 
-    public Player getDefaultAgent() {
-        return this.defaultAgent;
+    public static Player getDefaultAgent() {
+        Strategy strategy = new PositionalStrategy();
+        strategy.addTechnique(new SingleQueenEndgame());
+        return new Agent(strategy, 5, true);
     }
 }

@@ -24,6 +24,7 @@ public class ChessBoard {
     private ArrayList<Square> legalHighlightedSquares;
     private int selectedSquare;
     private boolean isFlipped;
+    private boolean flip;
     private ChessGame game;
     private ArrayList<ChessMove> highlightedMoves;
     private BoardUISettings settings;
@@ -38,9 +39,10 @@ public class ChessBoard {
      * Initializes a new chess board.
      * @param origin the top-left corner of the chess board.
      * @param flipped whether the board starts flipped (black on bottom)
+     * @param flip whiether the board should flip after every move
      * @param settings board interface settings
      */
-    public ChessBoard(Point2D origin, boolean flipped, BoardUISettings settings) {
+    public ChessBoard(Point2D origin, boolean flipped, boolean flip, BoardUISettings settings) {
         this.origin = origin;
         this.settings = settings;
         this.squareSize = settings.getBoardSize() / 8.0;
@@ -58,6 +60,7 @@ public class ChessBoard {
 
         makeSquares();
         this.isFlipped = flipped;
+        this.flip = flip;
         drawSquares(this.isFlipped);
 
         this.selectedSquare = -1;
@@ -108,6 +111,7 @@ public class ChessBoard {
 
     public void loadGame(ChessGame game) {
         this.game = game;
+        game.setBoard(this);
         loadPosition(game.getPosition());
     }
 
@@ -159,6 +163,10 @@ public class ChessBoard {
         unhighlightMoves();
         if (settings.doPreviousMoveHighlights()) {
             highlightMove(move);
+        }
+
+        if (!this.game.isOver() && this.flip) {
+            this.flip();
         }
     }
 

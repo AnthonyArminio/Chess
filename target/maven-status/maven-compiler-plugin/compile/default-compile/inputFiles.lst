@@ -14,6 +14,8 @@ C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\NeuralNe
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\PositionalStrategy.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\Strategy.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\util\PositionalWeights.java
+C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\technique\SingleQueenEndgame.java
+C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\technique\Technique.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\training\Generation.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\training\InputStrategy.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\training\StandardInputStrategy.java
@@ -32,8 +34,9 @@ C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\ChessPosition.jav
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\CompressedPosition.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\util\ChessLogic.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\util\condition\Accumulator.java
-C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\util\condition\ChessCondition.java
+C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\util\condition\DisplacementCondition.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\util\condition\MoveFilter.java
+C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\util\condition\PositionalCondition.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\logic\util\GridMath.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\test\HelloWorld.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\test\Test.java

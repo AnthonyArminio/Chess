@@ -18,6 +18,10 @@ public abstract class Technique {
         }
     }
 
+    public boolean isActive() {
+        return this.active;
+    }
+
     /**
      * Returns the known evaluation of a position relevant to this Technique. If the position is unknown, returns `Evaluation.UNDECIDED`.
      * @param position The position to evaluate

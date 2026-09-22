@@ -85,14 +85,14 @@ public class ControlPanel {
                 userPlaysWhite = Math.random() > 0.5;
             }
 
-            whitePlayer = userPlaysWhite ? whitePlayer : this.app.getDefaultAgent();
-            blackPlayer = userPlaysWhite ? this.app.getDefaultAgent() : blackPlayer;
+            whitePlayer = userPlaysWhite ? whitePlayer : Chess.getDefaultAgent();
+            blackPlayer = userPlaysWhite ? Chess.getDefaultAgent() : blackPlayer;
             flip = false;
             flipAtStart = !userPlaysWhite;
         }
         
         BoardUISettings settings = configureSettings();
-        createNewGame(whitePlayer, blackPlayer, new ChessBoard(Point2D.ZERO, flipAtStart, settings), flip, true);
+        createNewGame(whitePlayer, blackPlayer, new ChessBoard(Point2D.ZERO, flipAtStart, flip, settings), true);
     }
 
     private void onChoiceBoxUpdated() {
@@ -111,8 +111,9 @@ public class ControlPanel {
         return new BoardUISettings();
     }
 
-    public ChessGame createNewGame(Player whitePlayer, Player blackPlayer, ChessBoard board, boolean flip, boolean printMoves) {
-        ChessGame game = new ChessGame(whitePlayer, blackPlayer, board, flip, true);
+    public ChessGame createNewGame(Player whitePlayer, Player blackPlayer, ChessBoard board, boolean printMoves) {
+        ChessGame game = new ChessGame(whitePlayer, blackPlayer, true);
+        board.loadGame(game);
         this.app.loadGame(game);
         game.start();
         return game;
