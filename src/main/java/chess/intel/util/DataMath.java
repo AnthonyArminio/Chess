@@ -247,4 +247,12 @@ public class DataMath {
         }
         return copy;
     }
+
+    public static void printArray(float[] array) {
+        System.out.print("[");
+        for (float elem : array) {
+            System.out.printf("%.2f, ", elem);
+        }
+        System.out.println();
+    }
 }
