@@ -1,9 +1,8 @@
 package chess.logic;
 
-import chess.logic.util.GridMath;
-
 import java.util.ArrayList;
 
+import chess.logic.util.GridMath;
 import chess.logic.util.condition.Accumulator;
 
 /**
@@ -53,10 +52,11 @@ public class ChessPosition {
         this.stateArray = startingState;
 
         this.compressedPosition = new CompressedPosition(this);
-        this.reachedPositions = new ArrayList<CompressedPosition>();
+        this.reachedPositions = new ArrayList<>();
+        this.reachedPositions.add(this.compressedPosition.copy());
     }
 
-    public ChessPosition(int[] positionArray, int[] stateArray, CompressedPosition compressedPosition, ArrayList<CompressedPosition> reachedPositions) {
+    public ChessPosition(int[] positionArray, int[] stateArray) {
         this.positionArray = new int[positionArray.length];
         this.stateArray = new int[stateArray.length];
         for (int i = 0; i < positionArray.length; i++) {
@@ -66,8 +66,24 @@ public class ChessPosition {
             this.stateArray[i] = stateArray[i];
         }
 
-        this.compressedPosition = compressedPosition.copy();
-        this.reachedPositions = new ArrayList<CompressedPosition>();
+        this.compressedPosition = new CompressedPosition(this);
+        this.reachedPositions = new ArrayList<>();
+        this.reachedPositions.add(this.compressedPosition.copy());
+        
+    }
+
+    public ChessPosition(int[] positionArray, int[] stateArray, ArrayList<CompressedPosition> reachedPositions) {
+        this.positionArray = new int[positionArray.length];
+        this.stateArray = new int[stateArray.length];
+        for (int i = 0; i < positionArray.length; i++) {
+            this.positionArray[i] = positionArray[i];
+        }
+        for (int i = 0; i < stateArray.length; i++) {
+            this.stateArray[i] = stateArray[i];
+        }
+
+        this.compressedPosition = new CompressedPosition(this);
+        this.reachedPositions = new ArrayList<>();
         for (CompressedPosition position : reachedPositions) {
             this.reachedPositions.add(position);
         }
@@ -75,7 +91,7 @@ public class ChessPosition {
     }
 
     public ChessPosition copy() {
-        return new ChessPosition(this.positionArray, this.stateArray, this.compressedPosition, this.reachedPositions);
+        return new ChessPosition(this.positionArray, this.stateArray, this.reachedPositions);
     }
 
     /**

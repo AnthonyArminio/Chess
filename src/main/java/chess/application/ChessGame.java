@@ -40,6 +40,23 @@ public class ChessGame {
         this.isOver = false;
     }
 
+    public ChessGame(Player whitePlayer, Player blackPlayer, ChessPosition startingPosition, boolean printMoves) {
+        this.whitePlayer = whitePlayer;
+        this.blackPlayer = blackPlayer;
+        this.position = startingPosition;
+        this.playerToMove = null;
+
+        this.printMoves = printMoves;
+
+        this.board = null;
+
+        this.moveNumber = 0;
+        this.plyNumber = 0;
+
+        this.isIdle = true;
+        this.isOver = false;
+    }
+
     public void start() {
         this.isIdle = false;
         this.moveNumber = 1;

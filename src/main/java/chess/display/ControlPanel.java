@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import chess.application.Chess;
 import chess.application.ChessGame;
 import chess.intel.Player;
+import chess.logic.ChessPosition;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
@@ -109,6 +110,14 @@ public class ControlPanel {
 
     private BoardUISettings configureSettings() {
         return new BoardUISettings();
+    }
+
+    public ChessGame createNewGame(Player whitePlayer, Player blackPlayer, ChessPosition startingPosition, ChessBoard board, boolean printMoves) {
+        ChessGame game = new ChessGame(whitePlayer, blackPlayer, startingPosition, true);
+        board.loadGame(game);
+        this.app.loadGame(game);
+        game.start();
+        return game;
     }
 
     public ChessGame createNewGame(Player whitePlayer, Player blackPlayer, ChessBoard board, boolean printMoves) {

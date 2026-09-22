@@ -276,7 +276,7 @@ public class ChessLogic {
     public static int findMatchingPiece(ChessPosition position, char pieceType) {
         for (int i = 0; i < 64; i++) {
             ChessPiece piece = position.getPieceAt(i);
-            if (piece.getType() == pieceType) {
+            if (piece != null && piece.getType() == pieceType) {
                 return i;
             }
         }

@@ -6,6 +6,21 @@ import chess.logic.util.ChessLogic;
 import chess.logic.util.GridMath;
 
 public class SingleQueenEndgame extends Technique {
+
+    public static ChessPosition samplePosition() {
+        int[] positionArray = {0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 5, 0, 0, 0, 0, 0, 0,
+                               0, 0, 6, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0,-6, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0};
+
+        int[] stateArray = {-1, 0, 0, 0, 0, 0};
+
+        return new ChessPosition(positionArray, stateArray);
+    }
     
     public SingleQueenEndgame() {
         this.activateCondition = (pos) -> {
@@ -23,8 +38,7 @@ public class SingleQueenEndgame extends Technique {
         int kingSquare = ChessLogic.findMatchingPiece(position, 'K', queenColor);
         int enemyKingSquare = ChessLogic.findMatchingPiece(position, 'K', ChessLogic.opponentOf(queenColor));
 
-        if (GridMath.isAdjacent(queenSquare, enemyKingSquare)) {
-            // In case the enemy king can capture the queen.
+        if (ChessLogic.isCheck(position)) {
             return Evaluation.UNDECIDED;
         }
 
@@ -48,7 +62,8 @@ public class SingleQueenEndgame extends Technique {
         int timeToBorderFile = Math.abs(queenFile - borderFile) - 1;
         int timeToBorderRank = Math.abs(queenRank - borderRank) - 1;
 
-        int clock = 2 * (Math.max(2 * timeToBorderFile + timeToBorderRank, 2 * timeToBorderRank + timeToBorderFile) + 7);
+        int clock = 2 * ((timeToBorderFile > timeToBorderRank ? 2 * timeToBorderRank + timeToBorderFile : 2 * timeToBorderFile + timeToBorderRank) + 7);
+
         if (timeToBorderFile == 0) {
             clock = kingAssistToFile(kingFile, kingRank, queenRank, enemyKingRank, quadrant);
         } else if (timeToBorderRank == 0) {
@@ -129,7 +144,7 @@ public class SingleQueenEndgame extends Technique {
         int goalRank = keyRank(quadrant, 3, 6);
 
         if (kingRank == enemyKingRank) {
-            return Math.abs(borderFile - kingFile) - 1;
+            return 2 * (Math.abs(borderFile - kingFile) - 1);
         } else if (Math.abs(borderRank - kingRank) > Math.abs(borderRank - enemyKingRank)) {
             return timeTo(kingFile, kingRank, goalFile, goalRank) + 2;
         } else {
@@ -148,9 +163,9 @@ public class SingleQueenEndgame extends Technique {
         int goalRank = keyRank(quadrant, 3, 6);
 
         if (kingFile == enemyKingFile) {
-            return Math.abs(borderRank - kingRank) - 1;
+            return 2 * (Math.abs(borderRank - kingRank) - 1);
         } else if (Math.abs(borderFile - kingFile) > Math.abs(borderFile - enemyKingFile)) {
-            return timeTo(kingFile, kingRank, goalFile, goalRank);
+            return timeTo(kingFile, kingRank, goalFile, goalRank) + 2;
         } else {
             if ("bottom-left".equals(quadrant) || "top-left".equals(quadrant)) {
                 return timeTo(kingFile, kingRank, Math.max(queenFile - 3, 1), goalRank) + 2;

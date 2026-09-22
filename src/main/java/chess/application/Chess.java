@@ -66,7 +66,8 @@ public class Chess extends Application {
         stage.setTitle("Chess Application");
         stage.setScene(this.scene);
 
-        this.controlPanel.createNewGame(new Player(true), getDefaultAgent(), new ChessBoard(Point2D.ZERO, false, true, new BoardUISettings()), true);
+        //this.controlPanel.createNewGame(new Player(true), getDefaultAgent(), new ChessBoard(Point2D.ZERO, false, false, new BoardUISettings()), true);
+        this.controlPanel.createNewGame(getDefaultAgent(), new Player(true), SingleQueenEndgame.samplePosition(), new ChessBoard(Point2D.ZERO, false, false, new BoardUISettings()), true);
 
         stage.sizeToScene();
         stage.show();
