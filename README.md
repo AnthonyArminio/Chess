@@ -9,6 +9,8 @@ To run the program, clone the repository and run the following commands in the h
 
 ```
 chmod u+x run.sh
+```
+```
 ./run.sh
 ```
 

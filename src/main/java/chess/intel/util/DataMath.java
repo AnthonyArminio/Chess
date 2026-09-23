@@ -249,10 +249,41 @@ public class DataMath {
     }
 
     public static void printArray(float[] array) {
-        System.out.print("[");
-        for (float elem : array) {
-            System.out.printf("%.2f, ", elem);
+        System.out.printf("[%.2f", array[0]);
+        for (int i = 1; i < array.length; i++) {
+            System.out.printf(", %.2f", array[i]);
         }
-        System.out.println();
+        System.out.print("]\n");
+    }
+
+    /**
+     * Prints an array as an 8 by 8 grid from the bottom up; useful for visualizing chess board states. 
+     * @param array
+     * @throws IllegalArgumentException if the array does not contain exactly 64 elements.
+     */
+    public static void printArrayBoard(float[] array) {
+        if (array.length != 64) {
+            throw new IllegalArgumentException("Array must have length 64 to be printed in a grid.");
+        }
+
+        System.out.print("[");
+        for (int r = 1; r <= 8; r++) {
+            for (int c = 0; c < 8; c++) {
+                int i = 64 - r*8 + c;
+                if (c != 0) {
+                    System.out.print(", ");
+                }
+                if (Float.floatToRawIntBits(array[i]) >> 31 != 0) {
+                    System.out.printf("%.1f", array[i]);
+                } else {
+                    System.out.printf("%.2f", array[i]);
+                }
+            }
+            if (r == 8) {
+                System.out.printf("]\n");
+            } else {
+                System.out.printf("\n ");
+            }
+        }
     }
 }

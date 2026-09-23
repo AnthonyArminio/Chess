@@ -1,8 +1,6 @@
 package chess.intel.strategy;
 
 import chess.intel.strategy.util.PositionalWeights;
-import chess.intel.util.DataMath;
-import chess.logic.ChessPiece;
 import chess.logic.ChessPosition;
 
 public class PositionalStrategy extends MaterialisticStrategy {
@@ -11,7 +9,7 @@ public class PositionalStrategy extends MaterialisticStrategy {
 
     public PositionalStrategy() {
         this.weights = new PositionalWeights();
-        DataMath.printArray(weights.getWeightMap(ChessPiece.B_KING));
+        //DataMath.printArrayBoard(this.weights.getWeightMap(ChessPiece.B_KING));
     }
 
     public PositionalStrategy(PositionalWeights weights) {
