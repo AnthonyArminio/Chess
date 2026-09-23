@@ -124,7 +124,8 @@ public class PositionalWeights {
         }
         for (int id = 6; id < 12; id++) {
             for (int s = 0; s < 64; s++) {
-                weightsCopy[id][s] = weightsCopy[id-6][GridMath.getReflection(s)];
+                // use reflected, negative values for black pieces
+                weightsCopy[id][s] = -weightsCopy[id-6][GridMath.getReflection(s)];
             }
         }
 
