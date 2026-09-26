@@ -31,9 +31,6 @@ public class SingleQueenEndgame extends Technique {
     @Override public Evaluation evaluate(ChessPosition position) {
         int queenSquare = ChessLogic.findMatchingPiece(position, 'Q');
         char queenColor = position.getPieceAt(queenSquare).getColor();
-        if (queenColor == position.colorToMove()) {
-            return Evaluation.UNDECIDED;
-        }
 
         int kingSquare = ChessLogic.findMatchingPiece(position, 'K', queenColor);
         int enemyKingSquare = ChessLogic.findMatchingPiece(position, 'K', ChessLogic.opponentOf(queenColor));
@@ -68,6 +65,10 @@ public class SingleQueenEndgame extends Technique {
             clock = kingAssistToFile(kingFile, kingRank, queenRank, enemyKingRank, quadrant);
         } else if (timeToBorderRank == 0) {
             clock = kingAssistToRank(kingFile, kingRank, queenFile, enemyKingFile, quadrant);
+        }
+
+        if (queenColor == position.colorToMove()) {
+            clock++;
         }
 
         return Evaluation.mateIn(clock, queenColor);

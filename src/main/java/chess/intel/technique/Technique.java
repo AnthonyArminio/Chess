@@ -24,6 +24,8 @@ public abstract class Technique {
 
     /**
      * Returns the known evaluation of a position relevant to this Technique. If the position is unknown, returns `Evaluation.UNDECIDED`.
+     * To be useful, mathematically determine a worst-case evaluation which still strictly decreases as the computer makes progress towards a
+     * terminal state.
      * @param position The position to evaluate
      * @return The known evaluation of the position, or `Evaluation.UNDECIDED` if the position is unknown.
      */
