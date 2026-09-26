@@ -30,6 +30,9 @@ public class SingleRookEndgame extends Technique {
 
     @Override public Evaluation evaluate(ChessPosition position) {
         int rookSquare = ChessLogic.findMatchingPiece(position, 'R');
+        if (rookSquare < 0) {
+            return Evaluation.UNDECIDED;
+        }
         char rookColor = position.getPieceAt(rookSquare).getColor();
 
         int kingSquare = ChessLogic.findMatchingPiece(position, 'K', rookColor);

@@ -26,8 +26,11 @@ public abstract class Strategy {
 
     public Evaluation objectiveEvaluate(ChessPosition position) {
         Evaluation eval = ChessLogic.getBaseEvaluation(position);
-        if (eval != Evaluation.UNDECIDED && activatedTechnique != null) {
-            return activatedTechnique.evaluate(position);
+        for (Technique technique : this.techniques) {
+            if (eval != Evaluation.UNDECIDED) return eval;
+            if (technique.isActive()) {
+                eval = technique.evaluate(position);
+            }
         }
         return eval;
     }
@@ -49,6 +52,10 @@ public abstract class Strategy {
      * @param position
      */
     public void tryActivateTechniques(ChessPosition position) {
+        for (Technique t : this.techniques) {
+            t.tryActivate(position);
+        }
+        /**
         if (this.activatedTechnique != null && !this.activatedTechnique.tryActivate(position)) {
             this.activatedTechnique = null;
         }
@@ -60,6 +67,7 @@ public abstract class Strategy {
             }
             t++;
         }
+            */
     }
 
     /**

@@ -26,6 +26,7 @@ chess\logic\ChessPosition.class
 chess\logic\util\condition\DisplacementCondition.class
 chess\intel\training\Trainee.class
 chess\logic\ChessPiece.class
+chess\intel\technique\SinglePawnEndgame.class
 chess\intel\training\StandardInputStrategy.class
 chess\application\Chess.class
 test\Test.class

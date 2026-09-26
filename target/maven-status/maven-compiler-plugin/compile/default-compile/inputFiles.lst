@@ -14,6 +14,7 @@ C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\NeuralNe
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\PositionalStrategy.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\Strategy.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\util\PositionalWeights.java
+C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\technique\SinglePawnEndgame.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\technique\SingleQueenEndgame.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\technique\SingleRookEndgame.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\technique\Technique.java
