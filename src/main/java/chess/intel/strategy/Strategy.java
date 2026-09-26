@@ -14,6 +14,7 @@ import chess.logic.util.condition.MoveFilter;
 public abstract class Strategy {
 
     protected ArrayList<Technique> techniques = new ArrayList<>();
+    protected Technique activatedTechnique = null;
 
     public Evaluation evaluate(ChessPosition position) {
         Evaluation baseEval = objectiveEvaluate(position);
@@ -25,11 +26,8 @@ public abstract class Strategy {
 
     public Evaluation objectiveEvaluate(ChessPosition position) {
         Evaluation eval = ChessLogic.getBaseEvaluation(position);
-        for (Technique technique : this.techniques) {
-            if (eval != Evaluation.UNDECIDED) return eval;
-            if (technique.isActive()) {
-                eval = technique.evaluate(position);
-            }
+        if (eval != Evaluation.UNDECIDED && activatedTechnique != null) {
+            return activatedTechnique.evaluate(position);
         }
         return eval;
     }
@@ -46,9 +44,21 @@ public abstract class Strategy {
         this.techniques.add(t);
     }
 
+    /**
+     * Updates the current active technique
+     * @param position
+     */
     public void tryActivateTechniques(ChessPosition position) {
-        for (Technique technique : this.techniques) {
-            technique.tryActivate(position);
+        if (this.activatedTechnique != null && !this.activatedTechnique.tryActivate(position)) {
+            this.activatedTechnique = null;
+        }
+        
+        int t = 0;
+        while (this.activatedTechnique == null && t < this.techniques.size()) {
+            if (this.techniques.get(t).tryActivate(position)) {
+                this.activatedTechnique = this.techniques.get(t);
+            }
+            t++;
         }
     }
 

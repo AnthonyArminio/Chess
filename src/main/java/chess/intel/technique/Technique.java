@@ -12,12 +12,10 @@ public abstract class Technique {
     protected boolean active = false;
     protected PositionalCondition activateCondition = (pos) -> pos.countPieces() <= 4;
 
-    public void tryActivate(ChessPosition position) {
-        if (!this.active) {
-            this.active = activateCondition.test(position);
-        }
+    public boolean tryActivate(ChessPosition position) {
+        this.active = activateCondition.test(position);
+        return this.active;
     }
-
     public boolean isActive() {
         return this.active;
     }
