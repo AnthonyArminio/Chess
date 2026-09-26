@@ -82,28 +82,26 @@ public class Agent extends Player {
      */
     private Evaluation minimaxEvaluate(ChessPosition position, ChessMove previousMove, char color, int depth, Evaluation alphabeta) {
 
-        // standard evaluation/apply techniques
-        if (depth < this.depth) {
-            Evaluation objectiveEvaluation = this.strategy.objectiveEvaluate(position);
-            if (objectiveEvaluation != Evaluation.UNDECIDED) {
-                return objectiveEvaluation;
-            }
+        // standard evaluation
+        Evaluation baseEvaluation = ChessLogic.getBaseEvaluation(position);
+        if (baseEvaluation != Evaluation.UNDECIDED) {
+            return baseEvaluation;
         }
 
         MoveFilter filter = (p, m) -> true;
         if (depth <= 0) {
-            if (!this.strategy.evaluateStability(position, previousMove)) {
+            if (previousMove != null && !this.strategy.evaluateStability(position, previousMove)) {
                 filter = this.strategy.unstableCaseFilter(position, previousMove);
             } else {
                 // base case 1: reached the max depth and the position is stable
-                return this.strategy.subjectiveEvaluate(position);
+                return this.strategy.evaluate(position);
             }
         }
 
         ArrayList<ChessMove> possibleMoves = ChessLogic.generateLegalMoves(position, filter);
         if (possibleMoves.isEmpty()) { // only occurs when a filter is used; otherwise, there will always be at least one legal move at this point
             // base case 2: reached an unstable position with no way to respond
-            return this.strategy.subjectiveEvaluate(position);
+            return this.strategy.evaluate(position);
         }
 
         if (color == 'w') {

@@ -35,6 +35,7 @@ chess\intel\util\json\JsonInputStrategyAdapter.class
 chess\logic\util\condition\PositionalCondition.class
 chess\logic\ChessMove.class
 chess\display\ControlPanel.class
+chess\intel\technique\SingleRookEndgame.class
 chess\logic\CompressedPosition.class
 chess\intel\strategy\MaterialisticStrategy.class
 chess\intel\training\Generation.class
