@@ -25,15 +25,33 @@ public class Evaluation implements Comparable<Evaluation> {
     private ChessMove bestMove;
 
     public static Evaluation mateIn(int clock, char color) {
-        if (color == 'w') {
-            return new Evaluation(Float.POSITIVE_INFINITY, clock);
-        }
-        return new Evaluation(Float.NEGATIVE_INFINITY, clock);
+        return new Evaluation(clock, color);
     }
 
     public Evaluation(float value) {
         this.value = value;
         this.clock = -1;
+        this.movePath = new ArrayList<ChessMove>();
+        this.bestMove = null;
+    }
+
+    public Evaluation(float value, char color) {
+        if (color == 'w') {
+            this.value = Math.abs(value);
+        } else {
+            this.value = -Math.abs(value);
+        }
+        this.clock = -1;
+        this.movePath = new ArrayList<ChessMove>();
+        this.bestMove = null;
+    }
+
+    public Evaluation(int clock, char color) {
+        if (color == 'w') {
+            initialize(Float.POSITIVE_INFINITY, clock);
+        } else {
+            initialize(Float.NEGATIVE_INFINITY, clock);
+        }
         this.movePath = new ArrayList<ChessMove>();
         this.bestMove = null;
     }

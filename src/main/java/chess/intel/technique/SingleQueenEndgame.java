@@ -30,6 +30,9 @@ public class SingleQueenEndgame extends Technique {
 
     @Override public Evaluation evaluate(ChessPosition position) {
         int queenSquare = ChessLogic.findMatchingPiece(position, 'Q');
+        if (queenSquare < 0) {
+            return Evaluation.UNDECIDED;
+        }
         char queenColor = position.getPieceAt(queenSquare).getColor();
 
         int kingSquare = ChessLogic.findMatchingPiece(position, 'K', queenColor);
