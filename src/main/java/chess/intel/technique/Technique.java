@@ -21,6 +21,16 @@ public abstract class Technique {
     }
 
     /**
+     * Optional function that improves performance by evaluating a position before branching. If a conclusion is reached,
+     * the agent will not branch.
+     * @param position
+     * @return
+     */
+    public Evaluation objectiveEvaluate(ChessPosition position) {
+        return Evaluation.INCONCLUSIVE;
+    }
+
+    /**
      * Returns the known evaluation of a position relevant to this Technique. If the position is unknown, returns `Evaluation.REJECTED`.
      * To be useful, mathematically determine a worst-case evaluation which still strictly decreases as the computer makes progress towards a
      * terminal state.

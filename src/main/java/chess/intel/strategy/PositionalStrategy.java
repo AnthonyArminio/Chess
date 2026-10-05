@@ -18,7 +18,7 @@ public class PositionalStrategy extends MaterialisticStrategy {
 
     @Override public Evaluation subjectiveEvaluate(ChessPosition position) {
 
-        return new Evaluation(position.getMaterialEvaluation() + weigh(position));
+        return new Evaluation(position.getMaterialEvaluation() + 0.5f * weigh(position));
     }
 
     private float weigh(ChessPosition position) {

@@ -82,10 +82,10 @@ public class Agent extends Player {
      */
     private Evaluation minimaxEvaluate(ChessPosition position, ChessMove previousMove, char color, int depth, Evaluation alphabeta) {
 
-        // standard evaluation
-        Evaluation baseEvaluation = ChessLogic.getBaseEvaluation(position);
-        if (baseEvaluation != Evaluation.INCONCLUSIVE) {
-            return baseEvaluation;
+        // objective evaluation
+        Evaluation objectiveEval = this.strategy.objectiveEvaluate(position);
+        if (objectiveEval != Evaluation.INCONCLUSIVE) {
+            return objectiveEval;
         }
 
         MoveFilter filter = (p, m) -> true;
@@ -139,6 +139,8 @@ public class Agent extends Player {
                         bestMove = move;
                         bestEval = eval;
                     }
+                } else {
+                    System.out.println("SOMETHING WENT WRONG");
                 }
             }
 
@@ -161,6 +163,8 @@ public class Agent extends Player {
                         bestEval = eval;
                         bestMove = move;
                     }
+                } else {
+                    System.out.println("SOMETHING WENT WRONG");
                 }
             }
         }
