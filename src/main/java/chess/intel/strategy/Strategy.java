@@ -17,19 +17,21 @@ public abstract class Strategy {
     protected Technique activatedTechnique = null;
 
     public Evaluation evaluate(ChessPosition position) {
-        Evaluation baseEval = objectiveEvaluate(position);
-        if (baseEval == Evaluation.UNDECIDED) {
+        Evaluation baseEval = ChessLogic.getBaseEvaluation(position);
+        if (baseEval == Evaluation.INCONCLUSIVE) {
+            baseEval = techniqueEvaluate(position);
+        }
+        if (baseEval == Evaluation.INCONCLUSIVE) {
             return subjectiveEvaluate(position);
         }
         return baseEval;
     }
 
-    public Evaluation objectiveEvaluate(ChessPosition position) {
-        Evaluation eval = ChessLogic.getBaseEvaluation(position);
-        if (this.activatedTechnique != null && eval == Evaluation.UNDECIDED) {
-            eval = this.activatedTechnique.evaluate(position);
+    public Evaluation techniqueEvaluate(ChessPosition position) {
+        if (this.activatedTechnique != null) {
+            return this.activatedTechnique.evaluate(position);
         }
-        return eval;
+        return Evaluation.INCONCLUSIVE;
     }
 
     public boolean evaluateStability(ChessPosition position, ChessMove previousMove) {

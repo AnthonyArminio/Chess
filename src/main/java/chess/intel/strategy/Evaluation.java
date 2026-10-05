@@ -13,7 +13,8 @@ public class Evaluation implements Comparable<Evaluation> {
     public static final Evaluation CHECKMATE_FOR_WHITE = new Evaluation(Float.POSITIVE_INFINITY, 0);
     public static final Evaluation CHECKMATE_FOR_BLACK = new Evaluation(Float.NEGATIVE_INFINITY, 0);
     public static final Evaluation DRAW = new Evaluation(0);
-    public static final Evaluation UNDECIDED = new Evaluation(0);
+    public static final Evaluation INCONCLUSIVE = new Evaluation(0);
+    public static final Evaluation REJECTED = new Evaluation(0);
 
     // raw value of the position (positive means advantageous for White, negative means advantageous for Black).
     private float value;

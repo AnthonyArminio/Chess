@@ -31,15 +31,19 @@ public class SingleRookEndgame extends Technique {
     @Override public Evaluation evaluate(ChessPosition position) {
         int rookSquare = ChessLogic.findMatchingPiece(position, 'R');
         if (rookSquare < 0) {
-            return Evaluation.UNDECIDED;
+            return Evaluation.INCONCLUSIVE;
         }
         char rookColor = position.getPieceAt(rookSquare).getColor();
+
+        if (rookColor == position.colorToMove()) {
+            return Evaluation.REJECTED;
+        }
 
         int kingSquare = ChessLogic.findMatchingPiece(position, 'K', rookColor);
         int enemyKingSquare = ChessLogic.findMatchingPiece(position, 'K', ChessLogic.opponentOf(rookColor));
 
         if (!GridMath.isAdjacent(kingSquare, rookSquare)) {
-            return Evaluation.UNDECIDED;
+            return Evaluation.INCONCLUSIVE;
         }
 
         int rookFile = GridMath.getFile(rookSquare);
@@ -50,13 +54,13 @@ public class SingleRookEndgame extends Technique {
         int enemyKingRank = GridMath.getRank(enemyKingSquare);
 
         if (sameLine(rookFile, rookRank, enemyKingFile, enemyKingRank)) {
-            return Evaluation.UNDECIDED;
+            return Evaluation.INCONCLUSIVE;
         }
 
         String quadrant = quadrantOf(enemyKingFile, enemyKingRank, rookFile, rookRank);
 
         if (isInQuadrant(kingFile, kingRank, rookFile, rookRank, quadrant)) {
-            return Evaluation.UNDECIDED;
+            return Evaluation.INCONCLUSIVE;
         }
 
         int borderFile = keyFile(quadrant, 1, 8);
@@ -68,10 +72,6 @@ public class SingleRookEndgame extends Technique {
             int goalFile = Math.abs(rookFile - borderFile) == 1 ? keyFile(quadrant, 3, 6) : keyFile(quadrant, 2, 7);
             int goalRank = Math.abs(rookRank - borderRank) == 1 ? keyRank(quadrant, 3, 6) : keyRank(quadrant, 2, 7);
             clock = 6 + timeTo(kingFile, kingRank, goalFile, goalRank);
-        }
-
-        if (rookColor == position.colorToMove()) {
-            clock++;
         }
 
         return Evaluation.mateIn(clock, rookColor);

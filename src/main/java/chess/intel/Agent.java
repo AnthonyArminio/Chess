@@ -84,7 +84,7 @@ public class Agent extends Player {
 
         // standard evaluation
         Evaluation baseEvaluation = ChessLogic.getBaseEvaluation(position);
-        if (baseEvaluation != Evaluation.UNDECIDED) {
+        if (baseEvaluation != Evaluation.INCONCLUSIVE) {
             return baseEvaluation;
         }
 
@@ -104,84 +104,72 @@ public class Agent extends Player {
             return this.strategy.evaluate(position);
         }
 
+        // sort moves before analyzing them
+        ArrayList<Evaluation> staticEvaluations = new ArrayList<>();
+        for (ChessMove move : possibleMoves) {
+            staticEvaluations.add(this.strategy.evaluate(position.afterMove(move)).step(move));
+        }
+        DataMath.quickSort(staticEvaluations, color == 'w');
+        possibleMoves.clear();
+        for (Evaluation staticEval : staticEvaluations) {
+            possibleMoves.add(staticEval.getBestMove());
+            //staticEval.getBestMove().printMove();
+        }
+
+        Evaluation eval;
+        Evaluation bestEval = Evaluation.REJECTED;
+        ChessMove bestMove = possibleMoves.get(0);
+
         if (color == 'w') {
-            // maximizing case
+            // maximizing case            
 
-            // sort moves before analyzing them
-            
-            ArrayList<Evaluation> staticEvaluations = new ArrayList<>();
-            for (ChessMove move : possibleMoves) {
-                staticEvaluations.add(this.strategy.evaluate(position.afterMove(move)).step(move));
-            }
-            DataMath.quickSort(staticEvaluations, true);
-            possibleMoves.clear();
-            for (Evaluation staticEval : staticEvaluations) {
-                possibleMoves.add(staticEval.getBestMove());
-                //staticEval.getBestMove().printMove();
-            }
-            
-
-            Evaluation bestEval = Evaluation.CHECKMATE_FOR_BLACK;
-            Evaluation eval;
-            ChessMove bestMove = possibleMoves.get(0);
             //ChessMove move = null;
             for (ChessMove move : possibleMoves) {
             //for (Evaluation staticEval : staticEvaluations) {
                 //move = staticEval.getBestMove();
                 eval = minimaxEvaluate(position.afterMove(move), move, ChessLogic.opponentOf(color), depth - 1, bestEval);
                 
-                // alpha-beta pruning
-                if (eval.compareTo(alphabeta) >= 0) {
-                    return eval.step(move);
-                }
+                if (eval != Evaluation.REJECTED) {
+                    // alpha-beta pruning
+                    if (eval.compareTo(alphabeta) >= 0) {
+                        return eval.step(move);
+                    }
 
-                if (eval.compareTo(bestEval) > 0) {
-                    bestMove = move;
-                    bestEval = eval;
+                    if (bestEval == Evaluation.REJECTED || eval.compareTo(bestEval) > 0) {
+                        bestMove = move;
+                        bestEval = eval;
+                    }
                 }
             }
-
-            return bestEval.step(bestMove);
 
         } else { 
-            // minimizing case
+            // minimizing case            
 
-            // sort moves before analyzing them
-            
-            ArrayList<Evaluation> staticEvaluations = new ArrayList<>();
-            for (ChessMove move : possibleMoves) {
-                staticEvaluations.add(this.strategy.evaluate(position.afterMove(move)).step(move));
-            }
-            DataMath.quickSort(staticEvaluations, false);
-            possibleMoves.clear();
-            for (Evaluation staticEval : staticEvaluations) {
-                possibleMoves.add(staticEval.getBestMove());
-                //staticEval.getBestMove().printMove();
-            }
-            
-
-            Evaluation bestEval = Evaluation.CHECKMATE_FOR_WHITE;
-            Evaluation eval;
-            ChessMove bestMove = possibleMoves.get(0);
             //ChessMove move = null;
             for (ChessMove move : possibleMoves) {
             //for (Evaluation staticEval : staticEvaluations) {
                 //move = staticEval.getBestMove();
                 eval = minimaxEvaluate(position.afterMove(move), move, ChessLogic.opponentOf(color), depth - 1, bestEval);
 
-                // alpha-beta pruning
-                if (eval.compareTo(alphabeta) <= 0) {
-                    return eval.step(move);
-                }
+                if (eval != Evaluation.REJECTED) {
+                    // alpha-beta pruning
+                    if (eval.compareTo(alphabeta) <= 0) {
+                        return eval.step(move);
+                    }
 
-                if (eval.compareTo(bestEval) < 0) {
-                    bestEval = eval;
-                    bestMove = move;
+                    if (bestEval == Evaluation.REJECTED || eval.compareTo(bestEval) < 0) {
+                        bestEval = eval;
+                        bestMove = move;
+                    }
                 }
             }
-
-            return bestEval.step(bestMove);
         }
+
+        if (bestEval == Evaluation.REJECTED) {
+            bestEval = this.strategy.evaluate(position);
+        }
+
+        return bestEval.step(bestMove);
     }
 
     public Strategy getStrategy() {

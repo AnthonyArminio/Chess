@@ -445,7 +445,7 @@ public class ChessLogic {
         } else if (isStalemate(position) || isThreefoldRepetition(position) || isInsufficientMaterial(position)) {
             return Evaluation.DRAW;
         } else {
-            return Evaluation.UNDECIDED;
+            return Evaluation.INCONCLUSIVE;
         }
     }
 }

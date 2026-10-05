@@ -12,7 +12,6 @@ import chess.intel.technique.SingleQueenEndgame;
 import chess.intel.technique.SingleRookEndgame;
 import chess.logic.ChessMove;
 import chess.logic.ChessPiece;
-import chess.logic.ChessPosition;
 import chess.logic.util.GridMath;
 import javafx.application.Application;
 import javafx.geometry.Point2D;
@@ -69,7 +68,7 @@ public class Chess extends Application {
         stage.setScene(this.scene);
 
         //this.controlPanel.createNewGame(getDefaultAgent(), getDefaultAgent(), SingleRookEndgame.samplePosition(), new ChessBoard(Point2D.ZERO, false, false, new BoardUISettings()), true);
-        this.controlPanel.createNewGame(getDefaultAgent(), getDefaultAgent(), new ChessPosition(), new ChessBoard(Point2D.ZERO, false, false, new BoardUISettings()), true);
+        this.controlPanel.createNewGame(getDefaultAgent(), getDefaultAgent(), SingleQueenEndgame.samplePosition(), new ChessBoard(Point2D.ZERO, false, false, new BoardUISettings()), true);
 
         stage.sizeToScene();
         stage.show();
@@ -186,6 +185,6 @@ public class Chess extends Application {
         Strategy strategy = new PositionalStrategy();
         strategy.addTechnique(new SingleQueenEndgame());
         strategy.addTechnique(new SingleRookEndgame());
-        return new Agent(strategy, 5, true);
+        return new Agent(strategy, 6, true);
     }
 }

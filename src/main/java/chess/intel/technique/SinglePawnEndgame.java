@@ -16,7 +16,7 @@ public class SinglePawnEndgame extends Technique {
     @Override public Evaluation evaluate(ChessPosition position) {
         int pawnSquare = ChessLogic.findMatchingPiece(position, 'P');
         if (pawnSquare < 0) {
-            return Evaluation.UNDECIDED;
+            return Evaluation.INCONCLUSIVE;
         }
         char pawnColor = position.getPieceAt(pawnSquare).getColor();
 
@@ -38,11 +38,23 @@ public class SinglePawnEndgame extends Technique {
         }
 
         if (timeTo(kingFile, kingRank, pawnFile, pawnRank) - (pawnColor == position.colorToMove() ? 2 : 0) > timeTo(enemyKingFile, enemyKingRank, pawnFile, pawnRank)) {
-            return Evaluation.UNDECIDED;
+            return Evaluation.INCONCLUSIVE;
+        }
+
+        if (pawnColor == position.colorToMove()) {
+            return Evaluation.REJECTED;
+        }
+
+        if (isFlankPawn(pawnFile)) {
+
+        } else {
+            //if (aheadOfPawn(kingRank, pawnRank, pawnColor) && pawnColor == position.colorToMove() && ChessLogic.containsConfiguration(PieceConfiguration.OPPOSITION)) {
+            //    return new Evaluation(9.0f, pawnColor);
+            //}
         }
 
 
-        return Evaluation.UNDECIDED;
+        return Evaluation.INCONCLUSIVE;
     }
 
     private static int timeTo(int kingFile, int kingRank, int destinationFile, int destinationRank) {
