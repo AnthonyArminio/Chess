@@ -62,9 +62,11 @@ public class ChessGame {
         this.moveNumber = 1;
         this.plyNumber = 1;
         this.playerToMove = this.whitePlayer;
-        Thread t = new Thread(() -> this.playerToMove.alertToMove(this));
-        t.setDaemon(true);
-        t.start();
+        if (!handleGameEnd()) {
+            Thread t = new Thread(() -> this.playerToMove.alertToMove(this));
+            t.setDaemon(true);
+            t.start();
+        }
     }
 
     /**
@@ -82,7 +84,7 @@ public class ChessGame {
             }
         }
 
-        this.isOver = handleGameEnd();
+        handleGameEnd();
 
         if (this.board != null) {
             Platform.runLater(() -> this.board.makeMove(move));
@@ -117,28 +119,30 @@ public class ChessGame {
      * @return true if the game is over, and false otherwise.
      */
     protected boolean handleGameEnd() {
+        boolean gameEnd = false;
         if (ChessLogic.isCheckmate(this.position)) {
             if (this.position.colorToMove() == 'b') {
                 onWinForWhite();
             } else {
                 onWinForBlack();
             }
-            return true;
+            gameEnd = true;
         } else if (ChessLogic.isStalemate(this.position)) {
             onDraw(0);
-            return true;
+            gameEnd = true;
         } else if (ChessLogic.isThreefoldRepetition(position)) {
             onDraw(1);
-            return true;
+            gameEnd = true;
         } else if (ChessLogic.isFiftyMoveRule(position)) {
             onDraw(2);
-            return true;
+            gameEnd = true;
         } else if (ChessLogic.isInsufficientMaterial(position)) {
             onDraw(3);
-            return true;
+            gameEnd = true;
         }
 
-        return false;
+        this.isOver = gameEnd;
+        return gameEnd;
     }
 
     public Player getPlayer(char color) {

@@ -15,6 +15,10 @@ public class SinglePawnEndgame extends Technique {
         };
     }
 
+    @Override public Evaluation objectiveEvaluate(ChessPosition position) {
+        return Evaluation.INCONCLUSIVE;
+    }
+
     @Override public Evaluation evaluate(ChessPosition position) {
         int queenSquare = ChessLogic.findMatchingPiece(position, 'Q');
         if (queenSquare >= 0) {
@@ -38,15 +42,7 @@ public class SinglePawnEndgame extends Technique {
 
         int promotionRank = pawnColor == 'w' ? 8 : 1;
 
-        if (pawnColor == position.colorToMove()) {
-            // runaway pawn
-            if (!(blockingPawn(kingFile, kingRank, pawnFile, pawnRank, pawnColor) && isFlankPawn(pawnFile)) && !inPawnBox(enemyKingFile, enemyKingRank, pawnFile, adjustedPawnRank(pawnRank, pawnColor), promotionRank)) {
-                return Evaluation.mateIn(QUEEN_ON_BOARD_CLOCK + 2 * Math.abs(promotionRank - adjustedPawnRank(pawnRank, pawnColor)), pawnColor);
-            }
-        } 
-        if (timeTo(kingFile, kingRank, pawnFile, pawnRank) > timeTo(enemyKingFile, enemyKingRank, pawnFile, pawnRank)) {
-            return Evaluation.REJECTED;
-        }
+        
         
 
         if (isFlankPawn(pawnFile)) {

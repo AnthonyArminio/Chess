@@ -49,7 +49,7 @@ public class Agent extends Player {
 
         char color = position.colorToMove();
 
-        Evaluation eval = this.strategy.minimaxEvaluate(position, null, color, this.depth, Evaluation.REJECTED);
+        Evaluation eval = this.strategy.minimaxEvaluate(position, null, color, this.depth, Evaluation.REJECTED, true);
 
         if (this.printMoves) {
             System.out.println("\n" + eval.pathString(this.currentGame.getMoveNumber(), color) + " (" + eval.evalString() + ")");

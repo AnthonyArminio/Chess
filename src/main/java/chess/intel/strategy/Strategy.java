@@ -18,7 +18,10 @@ public abstract class Strategy {
     protected Technique activatedTechnique = null;
 
     public Evaluation evaluate(ChessPosition position) {
-        Evaluation baseEval = objectiveEvaluate(position);
+        Evaluation baseEval = Strategy.baseEvaluate(position);
+        if (baseEval == Evaluation.INCONCLUSIVE) {
+            baseEval = objectiveEvaluate(position);
+        }
         if (baseEval == Evaluation.INCONCLUSIVE) {
             baseEval = technicalEvaluate(position);
         }
@@ -28,15 +31,18 @@ public abstract class Strategy {
         return baseEval;
     }
 
-    public Evaluation objectiveEvaluate(ChessPosition position) {
-        Evaluation baseEval = ChessLogic.getBaseEvaluation(position);
-        if (baseEval == Evaluation.INCONCLUSIVE && this.activatedTechnique != null) {
-            baseEval = this.activatedTechnique.objectiveEvaluate(position);
-        }
-        return baseEval;
+    public static Evaluation baseEvaluate(ChessPosition position) {
+        return ChessLogic.getBaseEvaluation(position);
     }
 
-    private Evaluation technicalEvaluate(ChessPosition position) {
+    public Evaluation objectiveEvaluate(ChessPosition position) {
+        if (this.activatedTechnique != null) {
+            return this.activatedTechnique.objectiveEvaluate(position);
+        }
+        return Evaluation.INCONCLUSIVE;
+    }
+
+    public Evaluation technicalEvaluate(ChessPosition position) {
         if (this.activatedTechnique != null) {
             return this.activatedTechnique.evaluate(position);
         }
@@ -91,11 +97,15 @@ public abstract class Strategy {
      * @param alphabeta the best achieved value of the siblings of this instance of the method call.
      * @return An Evaluation representing how advantageous the given position is for one player
      */
-    public Evaluation minimaxEvaluate(ChessPosition position, ChessMove previousMove, char color, int depth, Evaluation alphabeta) {
+    public Evaluation minimaxEvaluate(ChessPosition position, ChessMove previousMove, char color, int depth, Evaluation alphabeta, boolean rootcall) {
 
-        // objective evaluation
+        // base and objective evaluations
+        Evaluation baseEval = Strategy.baseEvaluate(position);
+        if (baseEval != Evaluation.INCONCLUSIVE) {
+            return baseEval;
+        }
         Evaluation objectiveEval = this.objectiveEvaluate(position);
-        if (objectiveEval != Evaluation.INCONCLUSIVE) {
+        if (!rootcall && objectiveEval != Evaluation.INCONCLUSIVE) {
             return objectiveEval;
         }
 
@@ -138,7 +148,7 @@ public abstract class Strategy {
             for (ChessMove move : possibleMoves) {
             //for (Evaluation staticEval : staticEvaluations) {
                 //move = staticEval.getBestMove();
-                eval = minimaxEvaluate(position.afterMove(move), move, ChessLogic.opponentOf(color), depth - 1, bestEval);
+                eval = minimaxEvaluate(position.afterMove(move), move, ChessLogic.opponentOf(color), depth - 1, bestEval, false);
                 
                 if (eval != Evaluation.REJECTED) {
                     // alpha-beta pruning
@@ -160,7 +170,7 @@ public abstract class Strategy {
             for (ChessMove move : possibleMoves) {
             //for (Evaluation staticEval : staticEvaluations) {
                 //move = staticEval.getBestMove();
-                eval = minimaxEvaluate(position.afterMove(move), move, ChessLogic.opponentOf(color), depth - 1, bestEval);
+                eval = minimaxEvaluate(position.afterMove(move), move, ChessLogic.opponentOf(color), depth - 1, bestEval, false);
 
                 if (eval != Evaluation.REJECTED) {
                     // alpha-beta pruning
