@@ -118,7 +118,7 @@ public class Agent extends Player {
 
         Evaluation eval;
         Evaluation bestEval = Evaluation.REJECTED;
-        ChessMove bestMove = possibleMoves.get(0);
+        ChessMove bestMove = null;
 
         if (color == 'w') {
             // maximizing case            
@@ -131,7 +131,7 @@ public class Agent extends Player {
                 
                 if (eval != Evaluation.REJECTED) {
                     // alpha-beta pruning
-                    if (eval.compareTo(alphabeta) >= 0) {
+                    if (alphabeta != Evaluation.REJECTED && eval.compareTo(alphabeta) >= 0) {
                         return eval.step(move);
                     }
 
@@ -139,8 +139,6 @@ public class Agent extends Player {
                         bestMove = move;
                         bestEval = eval;
                     }
-                } else {
-                    System.out.println("SOMETHING WENT WRONG");
                 }
             }
 
@@ -155,7 +153,7 @@ public class Agent extends Player {
 
                 if (eval != Evaluation.REJECTED) {
                     // alpha-beta pruning
-                    if (eval.compareTo(alphabeta) <= 0) {
+                    if (alphabeta != Evaluation.REJECTED && eval.compareTo(alphabeta) <= 0) {
                         return eval.step(move);
                     }
 
@@ -163,14 +161,12 @@ public class Agent extends Player {
                         bestEval = eval;
                         bestMove = move;
                     }
-                } else {
-                    System.out.println("SOMETHING WENT WRONG");
                 }
             }
         }
 
         if (bestEval == Evaluation.REJECTED) {
-            bestEval = this.strategy.evaluate(position);
+            return this.strategy.evaluate(position);
         }
 
         return bestEval.step(bestMove);
