@@ -7,6 +7,8 @@ import chess.logic.util.GridMath;
 
 public class SinglePawnEndgame extends Technique {
 
+    private static final int QUEEN_ON_BOARD_CLOCK = 50;
+
     public SinglePawnEndgame() {
         this.activateCondition = (pos) -> {
             return pos.countPieces() == 3 && ChessLogic.findMatchingPiece(pos, 'P') >= 0;
@@ -14,9 +16,13 @@ public class SinglePawnEndgame extends Technique {
     }
 
     @Override public Evaluation evaluate(ChessPosition position) {
+        int queenSquare = ChessLogic.findMatchingPiece(position, 'Q');
+        if (queenSquare >= 0) {
+            return Evaluation.mateIn(QUEEN_ON_BOARD_CLOCK, position.getPieceAt(queenSquare).getColor());
+        }
         int pawnSquare = ChessLogic.findMatchingPiece(position, 'P');
         if (pawnSquare < 0) {
-            return Evaluation.INCONCLUSIVE;
+            return Evaluation.REJECTED;
         }
         char pawnColor = position.getPieceAt(pawnSquare).getColor();
 
@@ -32,50 +38,40 @@ public class SinglePawnEndgame extends Technique {
 
         int promotionRank = pawnColor == 'w' ? 8 : 1;
 
-        // runaway pawn
-        if (!(blockingPawn(kingFile, kingRank, pawnFile, pawnRank, pawnColor) && isFlankPawn(pawnFile)) && !inPawnBox(enemyKingFile, enemyKingRank, pawnFile, adjustedPawnRank(pawnRank, pawnColor, position.colorToMove()), promotionRank)) {
-            return new Evaluation(9.0f, pawnColor);
-        }
-
-        if (timeTo(kingFile, kingRank, pawnFile, pawnRank) - (pawnColor == position.colorToMove() ? 2 : 0) > timeTo(enemyKingFile, enemyKingRank, pawnFile, pawnRank)) {
-            return Evaluation.INCONCLUSIVE;
-        }
-
         if (pawnColor == position.colorToMove()) {
+            // runaway pawn
+            if (!(blockingPawn(kingFile, kingRank, pawnFile, pawnRank, pawnColor) && isFlankPawn(pawnFile)) && !inPawnBox(enemyKingFile, enemyKingRank, pawnFile, adjustedPawnRank(pawnRank, pawnColor), promotionRank)) {
+                return Evaluation.mateIn(QUEEN_ON_BOARD_CLOCK + 2 * Math.abs(promotionRank - adjustedPawnRank(pawnRank, pawnColor)), pawnColor);
+            }
+        } 
+        if (timeTo(kingFile, kingRank, pawnFile, pawnRank) > timeTo(enemyKingFile, enemyKingRank, pawnFile, pawnRank)) {
             return Evaluation.REJECTED;
         }
+        
 
         if (isFlankPawn(pawnFile)) {
 
         } else {
-            //if (aheadOfPawn(kingRank, pawnRank, pawnColor) && pawnColor == position.colorToMove() && ChessLogic.containsConfiguration(PieceConfiguration.OPPOSITION)) {
-            //    return new Evaluation(9.0f, pawnColor);
-            //}
+            
         }
 
 
-        return Evaluation.INCONCLUSIVE;
+        return Evaluation.REJECTED;
     }
 
     private static int timeTo(int kingFile, int kingRank, int destinationFile, int destinationRank) {
         return 2 * Math.max(Math.abs(destinationFile - kingFile), Math.abs(destinationRank - kingRank));
     }
 
-    private static int adjustedPawnRank(int pawnRank, char pawnColor, char colorToMove) {
-        int rank = pawnRank;
-        if (pawnColor == 'w' && pawnRank == 2) {
-            rank++;
-        } else if (pawnColor == 'b' && pawnRank == 7) {
-            rank--;
-        }
-        if (pawnColor != colorToMove) {
-            if (pawnColor == 'w') {
-                rank--;
-            } else {
-                rank++;
+    private static int adjustedPawnRank(int pawnRank, char pawnColor) {
+        if (pawnColor == 'w') {
+            if (pawnRank == 2) {
+                return pawnRank + 1;
             }
+        } else if (pawnRank == 7) {
+            return pawnRank - 1;
         }
-        return rank;
+        return pawnRank;
     }
 
     private static boolean blockingPawn(int kingFile, int kingRank, int pawnFile, int pawnRank, char pawnColor) {

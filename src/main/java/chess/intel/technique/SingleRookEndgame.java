@@ -31,7 +31,7 @@ public class SingleRookEndgame extends Technique {
     @Override public Evaluation evaluate(ChessPosition position) {
         int rookSquare = ChessLogic.findMatchingPiece(position, 'R');
         if (rookSquare < 0) {
-            return Evaluation.INCONCLUSIVE;
+            return Evaluation.REJECTED;
         }
         char rookColor = position.getPieceAt(rookSquare).getColor();
 
@@ -43,7 +43,7 @@ public class SingleRookEndgame extends Technique {
         int enemyKingSquare = ChessLogic.findMatchingPiece(position, 'K', ChessLogic.opponentOf(rookColor));
 
         if (!GridMath.isAdjacent(kingSquare, rookSquare)) {
-            return Evaluation.INCONCLUSIVE;
+            return Evaluation.REJECTED;
         }
 
         int rookFile = GridMath.getFile(rookSquare);
@@ -54,13 +54,13 @@ public class SingleRookEndgame extends Technique {
         int enemyKingRank = GridMath.getRank(enemyKingSquare);
 
         if (sameLine(rookFile, rookRank, enemyKingFile, enemyKingRank)) {
-            return Evaluation.INCONCLUSIVE;
+            return Evaluation.REJECTED;
         }
 
         String quadrant = quadrantOf(enemyKingFile, enemyKingRank, rookFile, rookRank);
 
         if (isInQuadrant(kingFile, kingRank, rookFile, rookRank, quadrant)) {
-            return Evaluation.INCONCLUSIVE;
+            return Evaluation.REJECTED;
         }
 
         int borderFile = keyFile(quadrant, 1, 8);
