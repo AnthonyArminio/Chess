@@ -12,7 +12,7 @@ public class Evaluation implements Comparable<Evaluation> {
 
     public static final Evaluation CHECKMATE_FOR_WHITE = new Evaluation(Float.POSITIVE_INFINITY, 0);
     public static final Evaluation CHECKMATE_FOR_BLACK = new Evaluation(Float.NEGATIVE_INFINITY, 0);
-    public static final Evaluation DRAW = new Evaluation(0);
+    public static final Evaluation DRAW = new Evaluation(0, 0);
     public static final Evaluation INCONCLUSIVE = new Evaluation(0);
     public static final Evaluation REJECTED = new Evaluation(0);
 
@@ -27,6 +27,10 @@ public class Evaluation implements Comparable<Evaluation> {
 
     public static Evaluation mateIn(int clock, char color) {
         return new Evaluation(clock, color);
+    }
+
+    public static Evaluation drawIn(int clock) {
+        return new Evaluation(0, clock);
     }
 
     public Evaluation(float value) {
@@ -80,10 +84,12 @@ public class Evaluation implements Comparable<Evaluation> {
     private void initialize(float value, int clock) {
         if (clock >= 0) {
             this.clock = clock;
-            if (value >= 0) {
+            if (value > 0) {
                 this.value = Float.POSITIVE_INFINITY;
-            } else {
+            } else if (value > 0) {
                 this.value = Float.NEGATIVE_INFINITY;
+            } else {
+                this.value = value;
             }
         } else {
             this.clock = -1;
@@ -134,15 +140,36 @@ public class Evaluation implements Comparable<Evaluation> {
         } else if (this.value < other.value) {
             return -1;
         } else if (!(this.clock < 0 || other.clock < 0)) {
-            if (this.clock == other.clock) {
+            if (this.clock == other.clock || this.value == 0) {
                 return 0;
-            } if (this.clock < other.clock ^ this.value < 0) {
+            } else if (this.clock < other.clock ^ this.value < 0) {
                 return 1;
             } else {
                 return -1;
             }
         } else {
             return 0;
+        }
+    }
+
+    /**
+     * Compares two Evaluations. If both are equal, this function favors the Evaluation with the greater clock.
+     * @param other
+     * @param color
+     * @return
+     */
+    public int compareAndProlong(Evaluation other, char color) {
+        int comparison = this.compareTo(other);
+        if (comparison == 0) {
+            if (this.clock == other.clock) {
+                return 0;
+            } else if (!(this.clock < 0 || other.clock < 0)) {
+                return ChessLogic.colorToInt(color) * (this.clock < other.clock ? -1 : 1);
+            } else {
+                return ChessLogic.colorToInt(color) * (this.clock < other.clock ? 1 : -1);
+            }
+        } else {
+            return comparison;
         }
     }
 
@@ -165,7 +192,7 @@ public class Evaluation implements Comparable<Evaluation> {
         if (this.clock >= 0) {
             if (this.value < 0) {
                 return "-M" + this.clock;
-            } else {
+            } else if (this.value > 0) {
                 return "M" + this.clock;
             }
         }

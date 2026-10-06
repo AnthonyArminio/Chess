@@ -18,17 +18,17 @@ public abstract class Strategy {
     protected Technique activatedTechnique = null;
 
     public Evaluation evaluate(ChessPosition position) {
-        Evaluation baseEval = Strategy.baseEvaluate(position);
-        if (baseEval == Evaluation.INCONCLUSIVE) {
-            baseEval = objectiveEvaluate(position);
+        Evaluation eval = Strategy.baseEvaluate(position);
+        if (eval == Evaluation.INCONCLUSIVE) {
+            eval = objectiveEvaluate(position);
         }
-        if (baseEval == Evaluation.INCONCLUSIVE) {
-            baseEval = technicalEvaluate(position);
+        if (eval == Evaluation.INCONCLUSIVE) {
+            eval = technicalEvaluate(position);
         }
-        if (baseEval == Evaluation.INCONCLUSIVE) {
-            baseEval = subjectiveEvaluate(position);
+        if (eval == Evaluation.INCONCLUSIVE) {
+            eval = subjectiveEvaluate(position);
         }
-        return baseEval;
+        return eval;
     }
 
     public static Evaluation baseEvaluate(ChessPosition position) {
@@ -104,31 +104,31 @@ public abstract class Strategy {
         if (baseEval != Evaluation.INCONCLUSIVE) {
             return baseEval;
         }
-        Evaluation objectiveEval = this.objectiveEvaluate(position);
+        Evaluation objectiveEval = objectiveEvaluate(position);
         if (!rootcall && objectiveEval != Evaluation.INCONCLUSIVE) {
             return objectiveEval;
         }
 
         MoveFilter filter = (p, m) -> true;
         if (depth <= 0) {
-            if (previousMove != null && !this.evaluateStability(position, previousMove)) {
-                filter = this.unstableCaseFilter(position, previousMove);
+            if (previousMove != null && !evaluateStability(position, previousMove)) {
+                filter = unstableCaseFilter(position, previousMove);
             } else {
                 // base case 1: reached the max depth and the position is stable
-                return this.evaluate(position);
+                return evaluate(position);
             }
         }
 
         ArrayList<ChessMove> possibleMoves = ChessLogic.generateLegalMoves(position, filter);
         if (possibleMoves.isEmpty()) { // only occurs when a filter is used; otherwise, there will always be at least one legal move at this point
             // base case 2: reached an unstable position with no way to respond
-            return this.evaluate(position);
+            return evaluate(position);
         }
 
         // sort moves before analyzing them
         ArrayList<Evaluation> staticEvaluations = new ArrayList<>();
         for (ChessMove move : possibleMoves) {
-            staticEvaluations.add(this.evaluate(position.afterMove(move)).step(move));
+            staticEvaluations.add(evaluate(position.afterMove(move)).step(move));
         }
         DataMath.quickSort(staticEvaluations, color == 'w');
         possibleMoves.clear();
@@ -142,7 +142,7 @@ public abstract class Strategy {
         ChessMove bestMove = null;
 
         if (color == 'w') {
-            // maximizing case            
+            // maximizing case
 
             //ChessMove move = null;
             for (ChessMove move : possibleMoves) {
@@ -152,11 +152,11 @@ public abstract class Strategy {
                 
                 if (eval != Evaluation.REJECTED) {
                     // alpha-beta pruning
-                    if (alphabeta != Evaluation.REJECTED && eval.compareTo(alphabeta) >= 0) {
+                    if (alphabeta != Evaluation.REJECTED && eval.compareAndProlong(alphabeta, color) >= 0) {
                         return eval.step(move);
                     }
 
-                    if (bestEval == Evaluation.REJECTED || eval.compareTo(bestEval) > 0) {
+                    if (bestEval == Evaluation.REJECTED || eval.compareAndProlong(bestEval, color) > 0) {
                         bestMove = move;
                         bestEval = eval;
                     }
@@ -174,11 +174,11 @@ public abstract class Strategy {
 
                 if (eval != Evaluation.REJECTED) {
                     // alpha-beta pruning
-                    if (alphabeta != Evaluation.REJECTED && eval.compareTo(alphabeta) <= 0) {
+                    if (alphabeta != Evaluation.REJECTED && eval.compareAndProlong(alphabeta, color) <= 0) {
                         return eval.step(move);
                     }
 
-                    if (bestEval == Evaluation.REJECTED || eval.compareTo(bestEval) < 0) {
+                    if (bestEval == Evaluation.REJECTED || eval.compareAndProlong(bestEval, color) < 0) {
                         bestEval = eval;
                         bestMove = move;
                     }
@@ -187,7 +187,7 @@ public abstract class Strategy {
         }
 
         if (bestEval == Evaluation.REJECTED) {
-            return this.evaluate(position);
+            return evaluate(position);
         }
 
         return bestEval.step(bestMove);

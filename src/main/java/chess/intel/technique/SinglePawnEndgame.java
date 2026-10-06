@@ -15,10 +15,6 @@ public class SinglePawnEndgame extends Technique {
         };
     }
 
-    @Override public Evaluation objectiveEvaluate(ChessPosition position) {
-        return Evaluation.INCONCLUSIVE;
-    }
-
     @Override public Evaluation evaluate(ChessPosition position) {
         int queenSquare = ChessLogic.findMatchingPiece(position, 'Q');
         if (queenSquare >= 0) {
@@ -42,7 +38,9 @@ public class SinglePawnEndgame extends Technique {
 
         int promotionRank = pawnColor == 'w' ? 8 : 1;
 
-        
+        // drawn opposition
+
+        // runaway pawn
         
 
         if (isFlankPawn(pawnFile)) {

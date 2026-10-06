@@ -291,6 +291,14 @@ public class ChessLogic {
         }
     }
 
+    public static int colorToInt(char color) {
+        if (color == 'w') {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
+
     /**
      * Searches the vision of a piece at a given location in a given context for a visible square that matches a specified
      * condition.
