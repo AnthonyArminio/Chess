@@ -14,8 +14,7 @@ public class Evaluation implements Comparable<Evaluation> {
     public static final Evaluation CHECKMATE_FOR_WHITE = new Evaluation(Float.POSITIVE_INFINITY, 0).setConfidence(EvaluationConfidence.OBJECTIVE);
     public static final Evaluation CHECKMATE_FOR_BLACK = new Evaluation(Float.NEGATIVE_INFINITY, 0).setConfidence(EvaluationConfidence.OBJECTIVE);
     public static final Evaluation DRAW = new Evaluation(0, 0).setConfidence(EvaluationConfidence.OBJECTIVE);
-    public static final Evaluation INCONCLUSIVE = new Evaluation(0);
-    public static final Evaluation REJECTED = new Evaluation(0).setConfidence(EvaluationConfidence.REJECTED);
+    public static final Evaluation INCONCLUSIVE = new Evaluation(0).setConfidence(EvaluationConfidence.INCONCLUSIVE);
 
     // raw value of the position (positive means advantageous for White, negative means advantageous for Black).
     private float value;
@@ -146,7 +145,21 @@ public class Evaluation implements Comparable<Evaluation> {
      * @return 1 if this Evaluation is better for White, -1 if it is better for Black, or 0 otherwise
      */
     @Override public int compareTo(Evaluation other) {
-            
+        
+        if (this.compareConfidence(other) > 0) {
+            if (this.value > 0) {
+                return 1;
+            } else if (this.value < 0) {
+                return -1;
+            }
+        } else if (this.compareConfidence(other) < 0) {
+            if (other.value > 0) {
+                return -1;
+            } else if (other.value < 0) {
+                return 1;
+            }
+        }
+        
         if (this.value > other.value) {
             return 1;
         } else if (this.value < other.value) {
@@ -164,12 +177,17 @@ public class Evaluation implements Comparable<Evaluation> {
         }
     }
 
+    public int compareConfidence(Evaluation other) {
+        return this.confidence.compareTo(other.confidence);
+    }
+
     /**
      * Compares two Evaluations. If both are equal, this function favors the Evaluation with the greater clock.
      * @param other
      * @param color
      * @return
      */
+    /**
     public int compareAndProlong(Evaluation other, char color) {
         int comparison = this.compareTo(other);
         if (comparison == 0) {
@@ -184,6 +202,7 @@ public class Evaluation implements Comparable<Evaluation> {
             return comparison;
         }
     }
+    */
 
     /**
      * Returns the sum of this evaluation and another evaluation.

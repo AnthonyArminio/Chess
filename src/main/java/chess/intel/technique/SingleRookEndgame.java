@@ -36,7 +36,7 @@ public class SingleRookEndgame extends Technique {
         char rookColor = position.getPieceAt(rookSquare).getColor();
 
         if (rookColor == position.colorToMove()) {
-            return Evaluation.REJECTED;
+            return Evaluation.INCONCLUSIVE;
         }
 
         int kingSquare = ChessLogic.findMatchingPiece(position, 'K', rookColor);

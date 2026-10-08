@@ -38,14 +38,20 @@ public abstract class Strategy {
 
     public Evaluation objectiveEvaluate(ChessPosition position) {
         if (this.activatedTechnique != null) {
-            return this.activatedTechnique.objectiveEvaluate(position).setConfidence(EvaluationConfidence.OBJECTIVE);
+            Evaluation objectiveEval = this.activatedTechnique.objectiveEvaluate(position);
+            if (objectiveEval != Evaluation.INCONCLUSIVE) {
+                return objectiveEval.setConfidence(EvaluationConfidence.OBJECTIVE);
+            }
         }
         return Evaluation.INCONCLUSIVE;
     }
 
     public Evaluation technicalEvaluate(ChessPosition position) {
         if (this.activatedTechnique != null) {
-            return this.activatedTechnique.evaluate(position).setConfidence(EvaluationConfidence.TECHNICAL);
+            Evaluation technicalEval = this.activatedTechnique.evaluate(position);
+            if (technicalEval != Evaluation.INCONCLUSIVE) {
+                return technicalEval.setConfidence(EvaluationConfidence.TECHNICAL);
+            }
         }
         return Evaluation.INCONCLUSIVE;
     }
@@ -139,56 +145,61 @@ public abstract class Strategy {
         }
 
         Evaluation eval;
-        Evaluation bestEval = Evaluation.REJECTED;
+        Evaluation bestEval = Evaluation.INCONCLUSIVE;
         ChessMove bestMove = null;
 
         if (color == 'w') {
             // maximizing case
 
-            //ChessMove move = null;
-            for (ChessMove move : possibleMoves) {
+            ChessMove move;
+            boolean abExit = false;
+            for (int mvIdx = 0; mvIdx < possibleMoves.size() && !abExit; mvIdx++) {
             //for (Evaluation staticEval : staticEvaluations) {
-                //move = staticEval.getBestMove();
+                move = possibleMoves.get(mvIdx);
                 eval = minimaxEvaluate(position.afterMove(move), move, ChessLogic.opponentOf(color), depth - 1, bestEval, false);
                 
-                if (eval != Evaluation.REJECTED) {
-                    // alpha-beta pruning
-                    if (alphabeta != Evaluation.REJECTED && eval.compareAndProlong(alphabeta, color) >= 0) {
-                        return eval.step(move);
-                    }
-
-                    if (bestEval == Evaluation.REJECTED || eval.compareAndProlong(bestEval, color) > 0) {
-                        bestMove = move;
-                        bestEval = eval;
-                    }
+                // alpha-beta pruning
+                if (alphabeta != Evaluation.INCONCLUSIVE && eval.compareTo(alphabeta) >= 0) {
+                    bestMove = move;
+                    bestEval = eval;
+                    abExit = true;
+                    
+                } else if (bestEval == Evaluation.INCONCLUSIVE || eval.compareTo(bestEval) > 0) {
+                    bestMove = move;
+                    bestEval = eval;
                 }
+                
             }
 
         } else { 
-            // minimizing case            
+            // minimizing case
 
-            //ChessMove move = null;
-            for (ChessMove move : possibleMoves) {
+            ChessMove move;
+            boolean abExit = false;
+            for (int mvIdx = 0; mvIdx < possibleMoves.size() && !abExit; mvIdx++) {
             //for (Evaluation staticEval : staticEvaluations) {
-                //move = staticEval.getBestMove();
+                move = possibleMoves.get(mvIdx);
                 eval = minimaxEvaluate(position.afterMove(move), move, ChessLogic.opponentOf(color), depth - 1, bestEval, false);
 
-                if (eval != Evaluation.REJECTED) {
-                    // alpha-beta pruning
-                    if (alphabeta != Evaluation.REJECTED && eval.compareAndProlong(alphabeta, color) <= 0) {
-                        return eval.step(move);
-                    }
-
-                    if (bestEval == Evaluation.REJECTED || eval.compareAndProlong(bestEval, color) < 0) {
-                        bestEval = eval;
-                        bestMove = move;
-                    }
+                // alpha-beta pruning
+                if (alphabeta != Evaluation.INCONCLUSIVE && eval.compareTo(alphabeta) <= 0) {
+                    bestMove = move;
+                    bestEval = eval;
+                    abExit = true;
+                    
+                } else if (bestEval == Evaluation.INCONCLUSIVE || eval.compareTo(bestEval) < 0) {
+                    bestEval = eval;
+                    bestMove = move;
                 }
+                
             }
         }
 
-        if (bestEval == Evaluation.REJECTED) {
-            return evaluate(position);
+        if (!rootcall) {
+            Evaluation technicalEval = technicalEvaluate(position);
+            if (bestEval.compareConfidence(technicalEval) < 0) {
+                bestEval = technicalEval;
+            }
         }
 
         return bestEval.step(bestMove);

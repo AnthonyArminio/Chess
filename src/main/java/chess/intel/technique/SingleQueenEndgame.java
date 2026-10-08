@@ -36,7 +36,7 @@ public class SingleQueenEndgame extends Technique {
         char queenColor = position.getPieceAt(queenSquare).getColor();
 
         if (queenColor == position.colorToMove()) {
-            return Evaluation.REJECTED;
+            return Evaluation.INCONCLUSIVE;
         }
 
         int kingSquare = ChessLogic.findMatchingPiece(position, 'K', queenColor);

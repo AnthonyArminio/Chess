@@ -8,7 +8,7 @@ public class EvaluationConfidence implements Comparable<EvaluationConfidence> {
     public static EvaluationConfidence OBJECTIVE = new EvaluationConfidence(3);
     public static EvaluationConfidence TECHNICAL = new EvaluationConfidence(2);
     public static EvaluationConfidence SUBJECTIVE = new EvaluationConfidence(1);
-    public static EvaluationConfidence REJECTED = new EvaluationConfidence(0);
+    public static EvaluationConfidence INCONCLUSIVE = new EvaluationConfidence(0);
 
     // Always nonnegative
     private final int confidence;
@@ -23,7 +23,7 @@ public class EvaluationConfidence implements Comparable<EvaluationConfidence> {
         } else if (this.confidence < other.confidence) {
             return -1;
         } else {
-            return 1;
+            return 0;
         }
     }
 }

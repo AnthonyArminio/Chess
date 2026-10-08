@@ -185,6 +185,6 @@ public class Chess extends Application {
         Strategy strategy = new PositionalStrategy();
         strategy.addTechnique(new SingleQueenEndgame());
         strategy.addTechnique(new SingleRookEndgame());
-        return new Agent(strategy, 5, true);
+        return new Agent(strategy, 6, true);
     }
 }
