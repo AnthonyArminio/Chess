@@ -2,6 +2,7 @@ package chess.intel.strategy;
 
 import chess.logic.ChessMove;
 import chess.logic.util.ChessLogic;
+import chess.intel.strategy.util.EvaluationConfidence;
 
 import java.util.ArrayList;
 
@@ -10,11 +11,11 @@ import java.util.ArrayList;
  */
 public class Evaluation implements Comparable<Evaluation> {
 
-    public static final Evaluation CHECKMATE_FOR_WHITE = new Evaluation(Float.POSITIVE_INFINITY, 0);
-    public static final Evaluation CHECKMATE_FOR_BLACK = new Evaluation(Float.NEGATIVE_INFINITY, 0);
-    public static final Evaluation DRAW = new Evaluation(0, 0);
+    public static final Evaluation CHECKMATE_FOR_WHITE = new Evaluation(Float.POSITIVE_INFINITY, 0).setConfidence(EvaluationConfidence.OBJECTIVE);
+    public static final Evaluation CHECKMATE_FOR_BLACK = new Evaluation(Float.NEGATIVE_INFINITY, 0).setConfidence(EvaluationConfidence.OBJECTIVE);
+    public static final Evaluation DRAW = new Evaluation(0, 0).setConfidence(EvaluationConfidence.OBJECTIVE);
     public static final Evaluation INCONCLUSIVE = new Evaluation(0);
-    public static final Evaluation REJECTED = new Evaluation(0);
+    public static final Evaluation REJECTED = new Evaluation(0).setConfidence(EvaluationConfidence.REJECTED);
 
     // raw value of the position (positive means advantageous for White, negative means advantageous for Black).
     private float value;
@@ -24,6 +25,7 @@ public class Evaluation implements Comparable<Evaluation> {
     private ArrayList<ChessMove> movePath;
     // the best move according to the evaluation (updates as this Evaluation steps up the tree)
     private ChessMove bestMove;
+    private EvaluationConfidence confidence;
 
     public static Evaluation mateIn(int clock, char color) {
         return new Evaluation(clock, color);
@@ -38,6 +40,7 @@ public class Evaluation implements Comparable<Evaluation> {
         this.clock = -1;
         this.movePath = new ArrayList<ChessMove>();
         this.bestMove = null;
+        this.confidence = EvaluationConfidence.SUBJECTIVE;
     }
 
     public Evaluation(float value, char color) {
@@ -49,6 +52,7 @@ public class Evaluation implements Comparable<Evaluation> {
         this.clock = -1;
         this.movePath = new ArrayList<ChessMove>();
         this.bestMove = null;
+        this.confidence = EvaluationConfidence.SUBJECTIVE;
     }
 
     public Evaluation(int clock, char color) {
@@ -59,12 +63,14 @@ public class Evaluation implements Comparable<Evaluation> {
         }
         this.movePath = new ArrayList<ChessMove>();
         this.bestMove = null;
+        this.confidence = EvaluationConfidence.SUBJECTIVE;
     }
 
     public Evaluation(float value, int clock) {
         initialize(value, clock);
         this.movePath = new ArrayList<ChessMove>();
         this.bestMove = null;
+        this.confidence = EvaluationConfidence.SUBJECTIVE;
     }
 
     public Evaluation(float value, int clock, ArrayList<ChessMove> movePath) {
@@ -74,6 +80,7 @@ public class Evaluation implements Comparable<Evaluation> {
             this.movePath.add(move);
         }
         this.bestMove = null;
+        this.confidence = EvaluationConfidence.SUBJECTIVE;
     }
 
     /**
@@ -95,6 +102,11 @@ public class Evaluation implements Comparable<Evaluation> {
             this.clock = -1;
             this.value = value;
         }
+    }
+
+    public Evaluation setConfidence(EvaluationConfidence confidence) {
+        this.confidence = confidence;
+        return this;
     }
 
     public Evaluation step() {

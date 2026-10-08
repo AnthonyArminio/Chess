@@ -31,7 +31,7 @@ public class SingleQueenEndgame extends Technique {
     @Override public Evaluation evaluate(ChessPosition position) {
         int queenSquare = ChessLogic.findMatchingPiece(position, 'Q');
         if (queenSquare < 0) {
-            return Evaluation.REJECTED;
+            return Evaluation.DRAW;
         }
         char queenColor = position.getPieceAt(queenSquare).getColor();
 
@@ -43,7 +43,7 @@ public class SingleQueenEndgame extends Technique {
         int enemyKingSquare = ChessLogic.findMatchingPiece(position, 'K', ChessLogic.opponentOf(queenColor));
 
         if (ChessLogic.isCheck(position)) {
-            return Evaluation.REJECTED;
+            return Evaluation.INCONCLUSIVE;
         }
 
         int queenFile = GridMath.getFile(queenSquare);
@@ -57,7 +57,7 @@ public class SingleQueenEndgame extends Technique {
 
         if (isInQuadrant(kingFile, kingRank, queenFile, queenRank, quadrant)) {
             // If the king is on the same side of the queen as the enemy king, the checkmate may not be possible.
-            return Evaluation.REJECTED;
+            return Evaluation.INCONCLUSIVE;
         }
 
         int borderFile = keyFile(quadrant, 1, 8);

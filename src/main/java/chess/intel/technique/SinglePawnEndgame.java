@@ -22,7 +22,7 @@ public class SinglePawnEndgame extends Technique {
         }
         int pawnSquare = ChessLogic.findMatchingPiece(position, 'P');
         if (pawnSquare < 0) {
-            return Evaluation.REJECTED;
+            return Evaluation.INCONCLUSIVE;
         }
         char pawnColor = position.getPieceAt(pawnSquare).getColor();
 
@@ -50,7 +50,7 @@ public class SinglePawnEndgame extends Technique {
         }
 
 
-        return Evaluation.REJECTED;
+        return Evaluation.INCONCLUSIVE;
     }
 
     private static int timeTo(int kingFile, int kingRank, int destinationFile, int destinationRank) {

@@ -2,6 +2,7 @@ package chess.intel.strategy;
 
 import java.util.ArrayList;
 
+import chess.intel.strategy.util.EvaluationConfidence;
 import chess.intel.technique.Technique;
 import chess.intel.util.DataMath;
 import chess.logic.ChessMove;
@@ -37,14 +38,14 @@ public abstract class Strategy {
 
     public Evaluation objectiveEvaluate(ChessPosition position) {
         if (this.activatedTechnique != null) {
-            return this.activatedTechnique.objectiveEvaluate(position);
+            return this.activatedTechnique.objectiveEvaluate(position).setConfidence(EvaluationConfidence.OBJECTIVE);
         }
         return Evaluation.INCONCLUSIVE;
     }
 
     public Evaluation technicalEvaluate(ChessPosition position) {
         if (this.activatedTechnique != null) {
-            return this.activatedTechnique.evaluate(position);
+            return this.activatedTechnique.evaluate(position).setConfidence(EvaluationConfidence.TECHNICAL);
         }
         return Evaluation.INCONCLUSIVE;
     }

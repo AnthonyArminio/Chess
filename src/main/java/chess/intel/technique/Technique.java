@@ -31,11 +31,11 @@ public abstract class Technique {
     }
 
     /**
-     * Returns the known evaluation of a position relevant to this Technique. If the position is unknown, returns `Evaluation.REJECTED`.
+     * Returns the known evaluation of a position relevant to this Technique. If the position is unknown, returns `Evaluation.INCONCLUSIVE` or `Evaluation.REJECTED`.
      * To be useful, mathematically determine a worst-case evaluation which still strictly decreases as the computer makes progress towards a
      * terminal state.
      * @param position The position to evaluate
-     * @return The known evaluation of the position, or `Evaluation.REJECTED` if the position is unknown.
+     * @return The known evaluation of the position, `Evaluation.REJECTED`, or `Evaluation.INCONCLUSIVE` if the position is unknown.
      */
     public abstract Evaluation evaluate(ChessPosition position);
 }
