@@ -1,7 +1,9 @@
 package chess.logic;
 
 import java.util.ArrayList;
+import java.util.Set;
 
+import chess.intel.technique.util.PieceConfiguration;
 import chess.logic.util.GridMath;
 import chess.logic.util.condition.Accumulator;
 
@@ -453,5 +455,15 @@ public class ChessPosition {
         } else {
             return null;
         }
+    }
+
+    public boolean containsConfiguration(Set<PieceConfiguration> configurations) {
+        for (int i = 0; i < this.positionArray.length; i++) {
+            for (PieceConfiguration conf : configurations)
+            if (conf.compare(this, i)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
