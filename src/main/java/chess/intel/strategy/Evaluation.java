@@ -14,6 +14,7 @@ public class Evaluation implements Comparable<Evaluation> {
     public static final Evaluation CHECKMATE_FOR_WHITE = new Evaluation(Float.POSITIVE_INFINITY, 0).setConfidence(EvaluationConfidence.OBJECTIVE);
     public static final Evaluation CHECKMATE_FOR_BLACK = new Evaluation(Float.NEGATIVE_INFINITY, 0).setConfidence(EvaluationConfidence.OBJECTIVE);
     public static final Evaluation DRAW = new Evaluation(0, 0).setConfidence(EvaluationConfidence.OBJECTIVE);
+    public static final Evaluation TECHNICAL_DRAW = new Evaluation(0).setConfidence(EvaluationConfidence.TECHNICAL);
     public static final Evaluation INCONCLUSIVE = new Evaluation(0).setConfidence(EvaluationConfidence.INCONCLUSIVE);
 
     // raw value of the position (positive means advantageous for White, negative means advantageous for Black).

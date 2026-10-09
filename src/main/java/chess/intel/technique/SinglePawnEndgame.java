@@ -37,16 +37,43 @@ public class SinglePawnEndgame extends Technique {
         int enemyKingRank = GridMath.getRank(enemyKingSquare);
 
         int promotionRank = pawnColor == 'w' ? 8 : 1;
-
-        // drawn opposition
-
-        // runaway pawn
-        
+        int adjustedPawnRank = adjustedPawnRank(pawnRank, pawnColor);
 
         if (isFlankPawn(pawnFile)) {
 
-        } else {
-            
+        }
+
+        if (position.containsConfiguration(PieceConfiguration.OPPOSITION)) {
+            // drawn opposition
+            if (kingRelativeLead(kingRank, adjustedPawnRank, pawnColor) == 1 && Math.abs(pawnRank - promotionRank) > 3 && position.colorToMove() == pawnColor) {
+                return Evaluation.TECHNICAL_DRAW;
+            }
+
+            // winning opposition
+            if (kingRelativeLead(kingRank, adjustedPawnRank, pawnColor) > 0 && position.colorToMove() != pawnColor) {
+                int halfclock = Math.abs(kingFile - pawnFile); // horizontal distance to pawn
+                halfclock += 2 * (Math.abs(kingRank - promotionRank) - 2) + 1; // time to secure promotion square
+                halfclock += Math.abs(adjustedPawnRank - promotionRank); // time to walk the pawn down the board.
+                return Evaluation.mateIn(QUEEN_ON_BOARD_CLOCK + 2 * halfclock, pawnColor);
+            }
+        }
+
+        // runaway pawn
+        if (position.colorToMove() == pawnColor && !inPawnBox(enemyKingFile, enemyKingRank, pawnFile, adjustedPawnRank, promotionRank)) {
+            int halfclock = Math.abs(adjustedPawnRank - promotionRank) + (blockingPawn(kingFile, kingRank, pawnFile, pawnRank, pawnColor) ? 1 : 0);
+            return Evaluation.mateIn(QUEEN_ON_BOARD_CLOCK + 2 * halfclock - 1, pawnColor);
+        }
+
+        /**
+        if (kingRelativeLead(enemyKingRank, pawnRank, pawnColor) <= 0 && GridMath.isAdjacent(kingSquare, pawnSquare) && position.colorToMove() == pawnColor) {
+            int halfclock = Math.max(Math.abs(kingRank - promotionRank) - 1, 0) + Math.abs(adjustedPawnRank - promotionRank);
+            return Evaluation.mateIn(QUEEN_ON_BOARD_CLOCK + 2 * halfclock, pawnColor);
+        }
+            */
+
+        // race to pawn
+        if (position.colorToMove() != pawnColor && timeTo(enemyKingFile, enemyKingRank, pawnFile, pawnRank) < timeTo(kingFile, kingRank, pawnFile, pawnRank)) {
+            return Evaluation.TECHNICAL_DRAW;
         }
 
 
