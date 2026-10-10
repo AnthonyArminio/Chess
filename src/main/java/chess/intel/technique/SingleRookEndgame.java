@@ -4,6 +4,7 @@ import chess.intel.strategy.Evaluation;
 import chess.logic.ChessPosition;
 import chess.logic.util.ChessLogic;
 import chess.logic.util.GridMath;
+import chess.intel.technique.util.TechniqueLogic;
 
 public class SingleRookEndgame extends Technique {
 
@@ -35,7 +36,7 @@ public class SingleRookEndgame extends Technique {
         }
         char rookColor = position.getPieceAt(rookSquare).getColor();
 
-        if (rookColor == position.colorToMove()) {
+        if (position.colorToMove() == rookColor) {
             return Evaluation.INCONCLUSIVE;
         }
 
@@ -71,7 +72,7 @@ public class SingleRookEndgame extends Technique {
         if (boxSize == 3) {
             int goalFile = Math.abs(rookFile - borderFile) == 1 ? keyFile(quadrant, 3, 6) : keyFile(quadrant, 2, 7);
             int goalRank = Math.abs(rookRank - borderRank) == 1 ? keyRank(quadrant, 3, 6) : keyRank(quadrant, 2, 7);
-            clock = 6 + timeTo(kingFile, kingRank, goalFile, goalRank);
+            clock = 6 + TechniqueLogic.timeTo(kingFile, kingRank, goalFile, goalRank, false);
         }
 
         return Evaluation.mateIn(clock, rookColor);
@@ -133,10 +134,6 @@ public class SingleRookEndgame extends Technique {
         } else {
             throw new IllegalArgumentException("Error: invalid quadrant alias.");
         }
-    }
-
-    private static int timeTo(int kingFile, int kingRank, int destinationFile, int destinationRank) {
-        return 2 * Math.max(Math.abs(destinationFile - kingFile), Math.abs(destinationRank - kingRank));
     }
 
     private static boolean sameLine(int rookFile, int rookRank, int kingFile, int kingRank) {

@@ -7,6 +7,7 @@ import chess.intel.technique.util.PieceConfiguration;
 import chess.logic.ChessPosition;
 import chess.logic.util.ChessLogic;
 import chess.logic.util.GridMath;
+import chess.intel.technique.util.TechniqueLogic;
 
 public class SinglePawnEndgame extends Technique {
 
@@ -68,12 +69,16 @@ public class SinglePawnEndgame extends Technique {
         }
 
         // race to pawn
-        if (position.colorToMove() == pawnColor && timeTo(enemyKingFile, enemyKingRank, pawnFile, pawnRank) < timeTo(kingFile, kingRank, pawnFile, pawnRank) - 2) {
+        if (position.colorToMove() == pawnColor && TechniqueLogic.timeTo(enemyKingFile, enemyKingRank, pawnFile, pawnRank, false) < TechniqueLogic.timeTo(kingFile, kingRank, pawnFile, pawnRank, true) - 1) {
             return Evaluation.TECHNICAL_DRAW;
         }
 
         if (isFlankPawn(pawnFile)) {
-
+            int keyFile = pawnFile == 1 ? 2 : 7;
+            int keyRank = pawnColor == 'w' ? 7 : 2;
+            if (TechniqueLogic.timeTo(kingFile, kingRank, keyFile, keyRank, position.colorToMove() == pawnColor) < TechniqueLogic.timeTo(enemyKingFile, enemyKingRank, keyFile, keyRank, position.colorToMove() != pawnColor) - 1) {
+                
+            }
         }
 
         if (position.containsConfiguration(OPPOSITION)) {
@@ -100,10 +105,6 @@ public class SinglePawnEndgame extends Technique {
 
 
         return Evaluation.INCONCLUSIVE;
-    }
-
-    private static int timeTo(int kingFile, int kingRank, int destinationFile, int destinationRank) {
-        return 2 * Math.max(Math.abs(destinationFile - kingFile), Math.abs(destinationRank - kingRank));
     }
 
     private static int adjustedPawnRank(int pawnRank, char pawnColor) {

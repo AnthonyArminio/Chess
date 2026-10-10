@@ -1,6 +1,7 @@
 package chess.intel.technique;
 
 import chess.intel.strategy.Evaluation;
+import chess.intel.technique.util.TechniqueLogic;
 import chess.logic.ChessPosition;
 import chess.logic.util.ChessLogic;
 import chess.logic.util.GridMath;
@@ -35,7 +36,7 @@ public class SingleQueenEndgame extends Technique {
         }
         char queenColor = position.getPieceAt(queenSquare).getColor();
 
-        if (queenColor == position.colorToMove()) {
+        if (position.colorToMove() == queenColor) {
             return Evaluation.INCONCLUSIVE;
         }
 
@@ -137,10 +138,6 @@ public class SingleQueenEndgame extends Technique {
         }
     }
 
-    private static int timeTo(int kingFile, int kingRank, int destinationFile, int destinationRank) {
-        return 2 * Math.max(Math.abs(destinationFile - kingFile), Math.abs(destinationRank - kingRank));
-    }
-
     private static int kingAssistToFile(int kingFile, int kingRank, int queenRank, int enemyKingRank, String quadrant) {
         int borderFile = keyFile(quadrant, 1, 8);
         int borderRank = keyRank(quadrant, 1, 8);
@@ -150,12 +147,12 @@ public class SingleQueenEndgame extends Technique {
         if (kingRank == enemyKingRank) {
             return 2 * (Math.abs(borderFile - kingFile) - 1);
         } else if (Math.abs(borderRank - kingRank) > Math.abs(borderRank - enemyKingRank)) {
-            return timeTo(kingFile, kingRank, goalFile, goalRank) + 2;
+            return TechniqueLogic.timeTo(kingFile, kingRank, goalFile, goalRank, false) + 2;
         } else {
             if ("bottom-left".equals(quadrant) || "bottom-right".equals(quadrant)) {
-                return timeTo(kingFile, kingRank, goalFile, Math.max(queenRank - 3, 1)) + 2;
+                return TechniqueLogic.timeTo(kingFile, kingRank, goalFile, Math.max(queenRank - 3, 1), false) + 2;
             } else {
-                return timeTo(kingFile, kingRank, goalFile, Math.min(queenRank + 3, 8)) + 2;
+                return TechniqueLogic.timeTo(kingFile, kingRank, goalFile, Math.min(queenRank + 3, 8), false) + 2;
             }
         }
     }
@@ -169,12 +166,12 @@ public class SingleQueenEndgame extends Technique {
         if (kingFile == enemyKingFile) {
             return 2 * (Math.abs(borderRank - kingRank) - 1);
         } else if (Math.abs(borderFile - kingFile) > Math.abs(borderFile - enemyKingFile)) {
-            return timeTo(kingFile, kingRank, goalFile, goalRank) + 2;
+            return TechniqueLogic.timeTo(kingFile, kingRank, goalFile, goalRank, false) + 2;
         } else {
             if ("bottom-left".equals(quadrant) || "top-left".equals(quadrant)) {
-                return timeTo(kingFile, kingRank, Math.max(queenFile - 3, 1), goalRank) + 2;
+                return TechniqueLogic.timeTo(kingFile, kingRank, Math.max(queenFile - 3, 1), goalRank, false) + 2;
             } else {
-                return timeTo(kingFile, kingRank, Math.min(queenFile + 3, 8), goalRank) + 2;
+                return TechniqueLogic.timeTo(kingFile, kingRank, Math.min(queenFile + 3, 8), goalRank, false) + 2;
             }
         }
     }
