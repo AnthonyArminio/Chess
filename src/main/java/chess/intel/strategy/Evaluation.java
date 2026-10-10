@@ -5,27 +5,29 @@ import chess.logic.util.ChessLogic;
 import chess.intel.strategy.util.EvaluationConfidence;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents an evaluation of a ChessPosition
  */
 public class Evaluation implements Comparable<Evaluation> {
 
-    public static final Evaluation CHECKMATE_FOR_WHITE = new Evaluation(Float.POSITIVE_INFINITY, 0).setConfidence(EvaluationConfidence.OBJECTIVE);
-    public static final Evaluation CHECKMATE_FOR_BLACK = new Evaluation(Float.NEGATIVE_INFINITY, 0).setConfidence(EvaluationConfidence.OBJECTIVE);
-    public static final Evaluation DRAW = new Evaluation(0, 0).setConfidence(EvaluationConfidence.OBJECTIVE);
-    public static final Evaluation TECHNICAL_DRAW = new Evaluation(0).setConfidence(EvaluationConfidence.TECHNICAL);
-    public static final Evaluation INCONCLUSIVE = new Evaluation(0).setConfidence(EvaluationConfidence.INCONCLUSIVE);
+    public static final Evaluation CHECKMATE_FOR_WHITE = new Evaluation(Float.POSITIVE_INFINITY, 0, true).setConfidence(EvaluationConfidence.OBJECTIVE);
+    public static final Evaluation CHECKMATE_FOR_BLACK = new Evaluation(Float.NEGATIVE_INFINITY, 0, true).setConfidence(EvaluationConfidence.OBJECTIVE);
+    public static final Evaluation DRAW = new Evaluation(0, 0, true).setConfidence(EvaluationConfidence.OBJECTIVE);
+    public static final Evaluation TECHNICAL_DRAW = new Evaluation(0, true).setConfidence(EvaluationConfidence.TECHNICAL);
+    public static final Evaluation INCONCLUSIVE = new Evaluation(0, true).setConfidence(EvaluationConfidence.INCONCLUSIVE);
 
     // raw value of the position (positive means advantageous for White, negative means advantageous for Black).
     private float value;
     // checkmate clock (number of ply until checkmate). If this is not equal to -1, value should be infinite.
     private int clock;
     // the sequence of moves that led to this Evaluation (stored in reverse)
-    private ArrayList<ChessMove> movePath;
+    private List<ChessMove> movePath;
     // the best move according to the evaluation (updates as this Evaluation steps up the tree)
-    private ChessMove bestMove;
-    private EvaluationConfidence confidence;
+    private ChessMove bestMove = null;
+    private EvaluationConfidence confidence = EvaluationConfidence.SUBJECTIVE;
+    private boolean mustCopy = false;
 
     public static Evaluation mateIn(int clock, char color) {
         return new Evaluation(clock, color);
@@ -38,9 +40,14 @@ public class Evaluation implements Comparable<Evaluation> {
     public Evaluation(float value) {
         this.value = value;
         this.clock = -1;
-        this.movePath = new ArrayList<ChessMove>();
-        this.bestMove = null;
-        this.confidence = EvaluationConfidence.SUBJECTIVE;
+        this.movePath = new ArrayList<>();
+    }
+
+    public Evaluation(float value, boolean mustCopy) {
+        this.value = value;
+        this.clock = -1;
+        this.movePath = new ArrayList<>();
+        this.mustCopy = mustCopy;
     }
 
     public Evaluation(float value, char color) {
@@ -50,9 +57,7 @@ public class Evaluation implements Comparable<Evaluation> {
             this.value = -Math.abs(value);
         }
         this.clock = -1;
-        this.movePath = new ArrayList<ChessMove>();
-        this.bestMove = null;
-        this.confidence = EvaluationConfidence.SUBJECTIVE;
+        this.movePath = new ArrayList<>();
     }
 
     public Evaluation(int clock, char color) {
@@ -61,26 +66,18 @@ public class Evaluation implements Comparable<Evaluation> {
         } else {
             initialize(Float.NEGATIVE_INFINITY, clock);
         }
-        this.movePath = new ArrayList<ChessMove>();
-        this.bestMove = null;
-        this.confidence = EvaluationConfidence.SUBJECTIVE;
+        this.movePath = new ArrayList<>();
     }
 
     public Evaluation(float value, int clock) {
         initialize(value, clock);
-        this.movePath = new ArrayList<ChessMove>();
-        this.bestMove = null;
-        this.confidence = EvaluationConfidence.SUBJECTIVE;
+        this.movePath = new ArrayList<>();
     }
 
-    public Evaluation(float value, int clock, ArrayList<ChessMove> movePath) {
+    public Evaluation(float value, int clock, boolean mustCopy) {
         initialize(value, clock);
-        this.movePath = new ArrayList<ChessMove>();
-        for (ChessMove move : movePath) {
-            this.movePath.add(move);
-        }
-        this.bestMove = null;
-        this.confidence = EvaluationConfidence.SUBJECTIVE;
+        this.movePath = new ArrayList<>();
+        this.mustCopy = mustCopy;
     }
 
     /**
@@ -110,18 +107,19 @@ public class Evaluation implements Comparable<Evaluation> {
     }
 
     public Evaluation step() {
-        if (this.clock >= 0) {
-            return new Evaluation(this.value, this.clock + 1).setConfidence(this.confidence);
+        Evaluation eval = mustCopy ? this.copy() : this;
+        if (eval.clock >= 0) {
+            eval.clock++;
         }
-        return this;
+        return eval;
     }
 
     public Evaluation step(ChessMove move) {
-        if (this.clock >= 0) {
-            return new Evaluation(this.value, this.clock + 1, this.movePath).setConfidence(this.confidence).addMove(move);
-        } else {
-            return new Evaluation(this.value, this.clock, this.movePath).setConfidence(this.confidence).addMove(move);
+        Evaluation eval = mustCopy ? this.copy() : this;
+        if (eval.clock >= 0) {
+            eval.clock++;
         }
+        return eval.addMove(move);
     }
 
     public Evaluation addMove(ChessMove move) {
@@ -134,12 +132,16 @@ public class Evaluation implements Comparable<Evaluation> {
         return this.bestMove;
     }
 
-    public ArrayList<ChessMove> getMovePath() {
+    public List<ChessMove> getMovePath() {
         return this.movePath;
     }
 
     public EvaluationConfidence getConfidence() {
         return this.confidence;
+    }
+
+    public Evaluation copy() {
+        return new Evaluation(this.value, this.clock, false).setConfidence(this.confidence);
     }
 
     /**
