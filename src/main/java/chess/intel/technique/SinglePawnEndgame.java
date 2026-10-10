@@ -11,7 +11,6 @@ import chess.logic.util.GridMath;
 public class SinglePawnEndgame extends Technique {
 
     private static final int QUEEN_ON_BOARD_CLOCK = 50;
-    private static final Set<PieceConfiguration> KING_ON_PAWN = PieceConfiguration.buildConfigurationSet("@K/P", "p/@k");
     private static final Set<PieceConfiguration> OPPOSITION = PieceConfiguration.buildConfigurationSet("k/*/@K", "K/*/@k");
 
     public static ChessPosition samplePosition() {
@@ -38,7 +37,8 @@ public class SinglePawnEndgame extends Technique {
     @Override public Evaluation evaluate(ChessPosition position) {
         int queenSquare = ChessLogic.findMatchingPiece(position, 'Q');
         if (queenSquare >= 0) {
-            return Evaluation.mateIn(QUEEN_ON_BOARD_CLOCK, position.getPieceAt(queenSquare).getColor());
+            char queenColor = position.getPieceAt(queenSquare).getColor();
+            return Evaluation.mateIn(QUEEN_ON_BOARD_CLOCK - (position.colorToMove() == queenColor ? 1 : 0), queenColor);
         }
         int pawnSquare = ChessLogic.findMatchingPiece(position, 'P');
         if (pawnSquare < 0) {
@@ -82,7 +82,7 @@ public class SinglePawnEndgame extends Technique {
                 return Evaluation.TECHNICAL_DRAW;
             }
             // winning opposition
-            if (kingRelativeLead > 0 && position.colorToMove() != pawnColor) {
+            if (position.colorToMove() != pawnColor && kingRelativeLead > 0) {
                 int halfclock = Math.abs(kingFile - pawnFile); // horizontal distance to pawn
                 halfclock += 2 * (Math.abs(kingRank - (pawnColor == 'w' ? 8 : 1)) - 2) + 1; // time to secure promotion square
                 halfclock += Math.abs(adjustedPawnRank - (pawnColor == 'w' ? 8 : 1)); // time to walk the pawn down the board.

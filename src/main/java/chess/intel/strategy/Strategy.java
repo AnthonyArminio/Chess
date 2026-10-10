@@ -198,8 +198,7 @@ public abstract class Strategy {
         if (!rootcall) {
             Evaluation technicalEval = technicalEvaluate(position);
             if (bestEval.compareConfidence(technicalEval) < 0) {
-                //System.out.printf("%s %s %s %d<%d\n", bestEval.pathString(1, 'w'), bestEval.evalString(), technicalEval.evalString(), bestEval.getConfidence().getValue(), technicalEval.getConfidence().getValue());
-                bestEval = technicalEval;
+                return technicalEval;
             }
         }
 
