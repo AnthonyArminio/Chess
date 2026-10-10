@@ -459,9 +459,10 @@ public class ChessPosition {
 
     public boolean containsConfiguration(Set<PieceConfiguration> configurations) {
         for (int i = 0; i < this.positionArray.length; i++) {
-            for (PieceConfiguration conf : configurations)
-            if (conf.compare(this, i)) {
-                return true;
+            for (PieceConfiguration conf : configurations) {
+                if (conf.compare(this, i)) {
+                    return true;
+                }
             }
         }
         return false;

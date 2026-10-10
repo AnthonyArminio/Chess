@@ -14,8 +14,6 @@ import chess.logic.util.GridMath;
  */
 public class PieceConfiguration {
 
-    public static final Set<PieceConfiguration> OPPOSITION = buildConfigurationSet("k/*/@K", "K/*/@k");
-
     private final String configuration;
     private int windowWidth;
     private int windowHeight;
@@ -27,6 +25,7 @@ public class PieceConfiguration {
     public PieceConfiguration(String configurationString) {
         this.configuration = configurationString;
         initialize(configurationString);
+        System.out.printf("Window Width/Height: %d/%d. Relative Row/Col: %d/%d\n", this.windowWidth, this.windowHeight, this.relativeRow, this.relativeCol);
     }
 
     /**
@@ -53,7 +52,7 @@ public class PieceConfiguration {
                 height++;
                 currentWidth = 0;
             } else if (s.charAt(cIdx) == '@') {
-                if (focusPieceFound) {
+                if (atFound) {
                     throw new IllegalArgumentException("PieceConfiguration: Misplaced at sign found in configuration string.");
                 }
                 atFound = true;
@@ -82,19 +81,20 @@ public class PieceConfiguration {
         if (isValidPiece(observedFocus, this.focusPiece) && isInBounds(square)) {
             int homeFile = GridMath.getFile(square) - relativeCol;
             int file = homeFile;
-            int rank = GridMath.getRank(square) - relativeRow;
+            int rank = GridMath.getRank(square) + relativeRow;
             for (int cIdx = 0; cIdx < this.configuration.length(); cIdx++) {
                 char c = this.configuration.charAt(cIdx);
                 if (c == '/') {
                     file = homeFile;
-                    rank++;
+                    rank--;
                 } else if (c != '@') {
-                    if (!isValidPiece(pieceToChar(position.getPieceAt(GridMath.index(file, rank))), c)) {
+                    if (c != '*' && !isValidPiece(pieceToChar(position.getPieceAt(GridMath.index(file, rank))), c)) {
                         return false;
                     }
                     file++;
                 }
             }
+            return true;
         }
         return false;
     }
@@ -131,7 +131,7 @@ public class PieceConfiguration {
         if (file - this.relativeCol < 1 || file - this.relativeCol + this.windowWidth - 1 > 8) {
             return false;
         }
-        if (rank - this.relativeRow < 1 || rank - this.relativeRow + this.windowHeight - 1 > 8) {
+        if (rank + this.relativeRow > 8 || rank + this.relativeRow - this.windowHeight - 1 < 1) {
             return false;
         }
         return true;

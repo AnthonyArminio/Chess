@@ -11,16 +11,20 @@ public class EvaluationConfidence implements Comparable<EvaluationConfidence> {
     public static EvaluationConfidence INCONCLUSIVE = new EvaluationConfidence(0);
 
     // Always nonnegative
-    private final int confidence;
+    private final int value;
 
-    public EvaluationConfidence(int confidence) {
-        this.confidence = Math.max(confidence, 0);
+    public EvaluationConfidence(int value) {
+        this.value = Math.max(value, 0);
+    }
+
+    public int getValue() {
+        return this.value;
     }
 
     @Override public int compareTo(EvaluationConfidence other) {
-        if (this.confidence > other.confidence) {
+        if (this.value > other.value) {
             return 1;
-        } else if (this.confidence < other.confidence) {
+        } else if (this.value < other.value) {
             return -1;
         } else {
             return 0;

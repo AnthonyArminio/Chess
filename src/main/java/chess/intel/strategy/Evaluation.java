@@ -111,16 +111,16 @@ public class Evaluation implements Comparable<Evaluation> {
 
     public Evaluation step() {
         if (this.clock >= 0) {
-            return new Evaluation(this.value, this.clock + 1);
+            return new Evaluation(this.value, this.clock + 1).setConfidence(this.confidence);
         }
         return this;
     }
 
     public Evaluation step(ChessMove move) {
         if (this.clock >= 0) {
-            return new Evaluation(this.value, this.clock + 1, this.movePath).addMove(move);
+            return new Evaluation(this.value, this.clock + 1, this.movePath).setConfidence(this.confidence).addMove(move);
         } else {
-            return new Evaluation(this.value, this.clock, this.movePath).addMove(move);
+            return new Evaluation(this.value, this.clock, this.movePath).setConfidence(this.confidence).addMove(move);
         }
     }
 
@@ -136,6 +136,10 @@ public class Evaluation implements Comparable<Evaluation> {
 
     public ArrayList<ChessMove> getMovePath() {
         return this.movePath;
+    }
+
+    public EvaluationConfidence getConfidence() {
+        return this.confidence;
     }
 
     /**

@@ -8,6 +8,7 @@ import chess.intel.Agent;
 import chess.intel.Player;
 import chess.intel.strategy.PositionalStrategy;
 import chess.intel.strategy.Strategy;
+import chess.intel.technique.SinglePawnEndgame;
 import chess.intel.technique.SingleQueenEndgame;
 import chess.intel.technique.SingleRookEndgame;
 import chess.logic.ChessMove;
@@ -67,7 +68,7 @@ public class Chess extends Application {
         stage.setTitle("Chess Application");
         stage.setScene(this.scene);
 
-        this.controlPanel.createNewGame(getDefaultAgent(), getDefaultAgent(), SingleRookEndgame.samplePosition(), new ChessBoard(Point2D.ZERO, false, false, new BoardUISettings()), true);
+        this.controlPanel.createNewGame(getDefaultAgent(), new Player(true), SinglePawnEndgame.samplePosition(), new ChessBoard(Point2D.ZERO, false, false, new BoardUISettings()), false);
         //this.controlPanel.createNewGame(getDefaultAgent(), getDefaultAgent(), new ChessPosition(), new ChessBoard(Point2D.ZERO, false, false, new BoardUISettings()), true);
 
         stage.sizeToScene();
@@ -185,6 +186,7 @@ public class Chess extends Application {
         Strategy strategy = new PositionalStrategy();
         strategy.addTechnique(new SingleQueenEndgame());
         strategy.addTechnique(new SingleRookEndgame());
+        strategy.addTechnique(new SinglePawnEndgame());
         return new Agent(strategy, 6, true);
     }
 }

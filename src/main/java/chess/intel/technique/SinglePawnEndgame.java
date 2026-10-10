@@ -1,21 +1,25 @@
 package chess.intel.technique;
 
+import java.util.Set;
+
 import chess.intel.strategy.Evaluation;
+import chess.intel.technique.util.PieceConfiguration;
 import chess.logic.ChessPosition;
 import chess.logic.util.ChessLogic;
 import chess.logic.util.GridMath;
-import chess.intel.technique.util.PieceConfiguration;
 
 public class SinglePawnEndgame extends Technique {
 
     private static final int QUEEN_ON_BOARD_CLOCK = 50;
+    private static final Set<PieceConfiguration> KING_ON_PAWN = PieceConfiguration.buildConfigurationSet("@K/P", "p/@k");
+    private static final Set<PieceConfiguration> OPPOSITION = PieceConfiguration.buildConfigurationSet("k/*/@K", "K/*/@k");
 
     public static ChessPosition samplePosition() {
         int[] positionArray = {0, 0, 6, 0, 0, 0, 0, 0,
                                0, 1, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,
-                               0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0,-6, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0};
@@ -57,50 +61,41 @@ public class SinglePawnEndgame extends Technique {
         int kingRelativeLead = kingRelativeLead(kingRank, adjustedPawnRank, promotionRank);
         int enemyKingRelativeLead = kingRelativeLead(enemyKingRank, adjustedPawnRank, promotionRank);
 
-        if (isFlankPawn(pawnFile)) {
-
-        }
-
-        if (position.containsConfiguration(PieceConfiguration.OPPOSITION)) {
-            // drawn opposition
-            if (kingRelativeLead == 1 && Math.abs(adjustedPawnRank - promotionRank) > 3 && position.colorToMove() == pawnColor) {
-                return Evaluation.TECHNICAL_DRAW;
-            }
-
-            // winning opposition
-            if (kingRelativeLead > 0 && position.colorToMove() != pawnColor) {
-                return typicalWinningEvaluation(kingFile, kingRank, pawnFile, adjustedPawnRank, pawnColor);
-            }
-        }
-
         // runaway pawn
         if (position.colorToMove() == pawnColor && !inPawnBox(enemyKingFile, enemyKingRank, pawnFile, adjustedPawnRank, promotionRank)) {
             int halfclock = Math.abs(adjustedPawnRank - promotionRank) + (blockingPawn(kingFile, kingRank, pawnFile, pawnRank, pawnColor) ? 1 : 0);
             return Evaluation.mateIn(QUEEN_ON_BOARD_CLOCK + 2 * halfclock - 1, pawnColor);
         }
 
-        // flank position
-        if (position.colorToMove() != pawnColor && kingRelativeLead > 0 && kingRelativeLead <= 3 && enemyKingRelativeLead > kingRelativeLead) {
-            if ((kingFile - pawnFile == 1 && enemyKingFile < pawnFile) || (kingFile - pawnFile == -1 && enemyKingFile > pawnFile)) {
-                return typicalWinningEvaluation(kingFile, kingRank, pawnFile, adjustedPawnRank, pawnColor);
-            }
-        }
-
-        /**
-        if (kingRelativeLead(enemyKingRank, pawnRank, pawnColor) <= 0 && GridMath.isAdjacent(kingSquare, pawnSquare) && position.colorToMove() == pawnColor) {
-            int halfclock = Math.max(Math.abs(kingRank - promotionRank) - 1, 0) + Math.abs(adjustedPawnRank - promotionRank);
-            return Evaluation.mateIn(QUEEN_ON_BOARD_CLOCK + 2 * halfclock, pawnColor);
-        }
-            */
-
         // race to pawn
-        if (position.colorToMove() != pawnColor && timeTo(enemyKingFile, enemyKingRank, pawnFile, pawnRank) < timeTo(kingFile, kingRank, pawnFile, pawnRank)) {
+        if (position.colorToMove() == pawnColor && timeTo(enemyKingFile, enemyKingRank, pawnFile, pawnRank) < timeTo(kingFile, kingRank, pawnFile, pawnRank) - 2) {
             return Evaluation.TECHNICAL_DRAW;
         }
 
-        // all pieces on the same rank (assumes race to pawn is already evaluated)
-        if (position.colorToMove() != pawnColor && kingRank == enemyKingRank && enemyKingRank == pawnRank) {
-            return typicalWinningEvaluation(kingFile, kingRank, pawnFile, adjustedPawnRank, pawnColor);
+        if (isFlankPawn(pawnFile)) {
+
+        }
+
+        if (position.containsConfiguration(OPPOSITION)) {
+            // drawn opposition
+            if (kingRelativeLead == 1 && Math.abs(adjustedPawnRank - promotionRank) > 3 && position.colorToMove() == pawnColor) {
+                return Evaluation.TECHNICAL_DRAW;
+            }
+            // winning opposition
+            if (kingRelativeLead > 0 && position.colorToMove() != pawnColor) {
+                int halfclock = Math.abs(kingFile - pawnFile); // horizontal distance to pawn
+                halfclock += 2 * (Math.abs(kingRank - (pawnColor == 'w' ? 8 : 1)) - 2) + 1; // time to secure promotion square
+                halfclock += Math.abs(adjustedPawnRank - (pawnColor == 'w' ? 8 : 1)); // time to walk the pawn down the board.
+                return Evaluation.mateIn(QUEEN_ON_BOARD_CLOCK + 2 * halfclock, pawnColor);
+            }
+        }
+
+        // flank position
+        if (position.colorToMove() == pawnColor && kingRelativeLead > 0 && kingRelativeLead <= 2) {
+            int halfclock = Math.abs(kingFile - pawnFile); // horizontal distance to pawn
+            halfclock += 2 * (Math.abs(kingRank - (pawnColor == 'w' ? 8 : 1)) - 2) + 1; // time to secure promotion square
+            halfclock += Math.abs(adjustedPawnRank - (pawnColor == 'w' ? 8 : 1)); // time to walk the pawn down the board.
+            return Evaluation.mateIn(QUEEN_ON_BOARD_CLOCK + 2 * halfclock - 1, pawnColor);
         }
 
 
@@ -139,12 +134,5 @@ public class SinglePawnEndgame extends Technique {
         boolean withinFiles = kingFile >= pawnFile - squaresToPromotion && kingFile <= pawnFile + squaresToPromotion;
         boolean withinRanks = Math.abs(promotionRank - kingRank) <= Math.abs(promotionRank - pawnRank);
         return withinFiles && withinRanks;
-    }
-
-    private static Evaluation typicalWinningEvaluation(int kingFile, int kingRank, int pawnFile, int pawnRank, char pawnColor) {
-        int halfclock = Math.abs(kingFile - pawnFile); // horizontal distance to pawn
-        halfclock += 2 * (Math.abs(kingRank - (pawnColor == 'w' ? 8 : 1)) - 2) + 1; // time to secure promotion square
-        halfclock += Math.abs(pawnRank - (pawnColor == 'w' ? 8 : 1)); // time to walk the pawn down the board.
-        return Evaluation.mateIn(QUEEN_ON_BOARD_CLOCK + 2 * halfclock, pawnColor);
     }
 }
