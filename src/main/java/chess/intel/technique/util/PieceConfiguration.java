@@ -153,7 +153,7 @@ public class PieceConfiguration {
         return this.windowHeight;
     }
 
-    public static Set<PieceConfiguration> buildConfigurationSet(String... confStrings) {
+    public static Set<PieceConfiguration> buildSet(String... confStrings) {
         Set<PieceConfiguration> confSet = new HashSet<>();
         for (String s : confStrings) {
             confSet.add(new PieceConfiguration(s));

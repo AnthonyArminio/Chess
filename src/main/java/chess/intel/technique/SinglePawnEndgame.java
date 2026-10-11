@@ -12,13 +12,14 @@ import chess.intel.technique.util.TechniqueLogic;
 public class SinglePawnEndgame extends Technique {
 
     private static final int QUEEN_ON_BOARD_CLOCK = 50;
-    private static final Set<PieceConfiguration> OPPOSITION = PieceConfiguration.buildConfigurationSet("k/*/@K", "K/*/@k");
+    private static final Set<PieceConfiguration> VERTICAL_OPPOSITION = PieceConfiguration.buildSet("k/*/@K", "K/*/@k");
+    private static final Set<PieceConfiguration> HORIZONTAL_OPPOSITION = PieceConfiguration.buildSet("@K*k", "@k*K");
 
     public static ChessPosition samplePosition() {
-        int[] positionArray = {0, 0, 6, 0, 0, 0, 0, 0,
-                               0, 1, 0, 0, 0, 0, 0, 0,
+        int[] positionArray = {0, 0, 0, 0, 0, 0, 0, 0,
+                               1, 6, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0,-6, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,
-                               0, 0, 0, 0,-6, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,
@@ -60,7 +61,6 @@ public class SinglePawnEndgame extends Technique {
         int promotionRank = pawnColor == 'w' ? 8 : 1;
         int adjustedPawnRank = adjustedPawnRank(pawnRank, pawnColor);
         int kingRelativeLead = kingRelativeLead(kingRank, adjustedPawnRank, promotionRank);
-        int enemyKingRelativeLead = kingRelativeLead(enemyKingRank, adjustedPawnRank, promotionRank);
 
         // runaway pawn
         if (position.colorToMove() == pawnColor && !inPawnBox(enemyKingFile, enemyKingRank, pawnFile, adjustedPawnRank, promotionRank)) {
@@ -76,12 +76,17 @@ public class SinglePawnEndgame extends Technique {
         if (isFlankPawn(pawnFile)) {
             int keyFile = pawnFile == 1 ? 2 : 7;
             int keyRank = pawnColor == 'w' ? 7 : 2;
-            if (TechniqueLogic.timeTo(kingFile, kingRank, keyFile, keyRank, position.colorToMove() == pawnColor) < TechniqueLogic.timeTo(enemyKingFile, enemyKingRank, keyFile, keyRank, position.colorToMove() != pawnColor) - 1) {
-                
+            int kingAssistTime = TechniqueLogic.timeTo(kingFile, kingRank, keyFile, keyRank, position.colorToMove() == pawnColor);
+            int enemyKingChallengeTime = TechniqueLogic.timeTo(enemyKingFile, enemyKingRank, keyFile, keyRank, position.colorToMove() != pawnColor);
+            if (kingAssistTime < enemyKingChallengeTime - 1 || (Math.abs(kingFile - keyFile) < Math.abs(enemyKingFile - keyFile) && position.containsConfiguration(HORIZONTAL_OPPOSITION))) {
+                int clock = kingAssistTime + 2 * Math.abs(adjustedPawnRank - promotionRank) - (kingAssistTime == 0 && position.colorToMove() == pawnColor ? 1 : 0);
+                return Evaluation.mateIn(QUEEN_ON_BOARD_CLOCK + clock, pawnColor);
             }
+
+            return Evaluation.INCONCLUSIVE;
         }
 
-        if (position.containsConfiguration(OPPOSITION)) {
+        if (position.containsConfiguration(VERTICAL_OPPOSITION)) {
             // drawn opposition
             if (kingRelativeLead == 1 && Math.abs(adjustedPawnRank - promotionRank) > 3 && position.colorToMove() == pawnColor) {
                 return Evaluation.TECHNICAL_DRAW;
