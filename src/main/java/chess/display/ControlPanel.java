@@ -118,7 +118,7 @@ public class ControlPanel {
 
     private void onTestGameButtonPressed() {
         this.app.getDisplayedGame().stop();
-        
+
         BoardUISettings settings = configureSettings();
         createNewGame(Chess.getDefaultAgent(), Chess.getDefaultAgent(), SinglePawnEndgame.randomSamplePosition(), new ChessBoard(Point2D.ZERO, false, false, settings), true);
     }

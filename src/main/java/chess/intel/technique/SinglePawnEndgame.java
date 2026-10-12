@@ -19,11 +19,11 @@ public class SinglePawnEndgame extends Technique {
 
     public static ChessPosition samplePosition() {
         int[] positionArray = {0, 0, 0, 0, 0, 0, 0, 0,
-                               1, 6, 0, 0, 0, 0, 0, 0,
-                               0, 0, 0,-6, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               1, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,
-                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 6, 0,-6, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0,
                                0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -83,9 +83,15 @@ public class SinglePawnEndgame extends Technique {
     }
 
     @Override public TechnicalEvaluation evaluate(ChessPosition position) {
+        int kingSquare, enemyKingSquare;
         int queenSquare = ChessLogic.findMatchingPiece(position, 'Q');
         if (queenSquare >= 0) {
             char queenColor = position.getPieceAt(queenSquare).getColor();
+            kingSquare = ChessLogic.findMatchingPiece(position, 'K', queenColor);
+            enemyKingSquare = ChessLogic.findMatchingPiece(position, 'K', ChessLogic.opponentOf(queenColor));
+            if (GridMath.isAdjacent(enemyKingSquare, queenSquare) && !GridMath.isAdjacent(kingSquare, queenSquare)) {
+                return TechnicalEvaluation.TECHNICAL_INCONCLUSIVE;
+            }
             return TechnicalEvaluation.mateIn(QUEEN_ON_BOARD_CLOCK - (position.colorToMove() == queenColor ? 1 : 0), queenColor, queenColor);
         }
         int pawnSquare = ChessLogic.findMatchingPiece(position, 'P');
@@ -93,9 +99,8 @@ public class SinglePawnEndgame extends Technique {
             return TechnicalEvaluation.TECHNICAL_INCONCLUSIVE;
         }
         char pawnColor = position.getPieceAt(pawnSquare).getColor();
-
-        int kingSquare = ChessLogic.findMatchingPiece(position, 'K', pawnColor);
-        int enemyKingSquare = ChessLogic.findMatchingPiece(position, 'K', ChessLogic.opponentOf(pawnColor));
+        kingSquare = ChessLogic.findMatchingPiece(position, 'K', pawnColor);
+        enemyKingSquare = ChessLogic.findMatchingPiece(position, 'K', ChessLogic.opponentOf(pawnColor));
 
         int pawnFile = GridMath.getFile(pawnSquare);
         int pawnRank = GridMath.getRank(pawnSquare);
@@ -115,7 +120,7 @@ public class SinglePawnEndgame extends Technique {
         }
 
         // race to pawn
-        if (position.colorToMove() == pawnColor && TechniqueLogic.timeTo(enemyKingFile, enemyKingRank, pawnFile, pawnRank, false) < TechniqueLogic.timeTo(kingFile, kingRank, pawnFile, pawnRank, true) - 1) {
+        if (TechniqueLogic.timeTo(enemyKingFile, enemyKingRank, pawnFile, pawnRank, position.colorToMove() != pawnColor) < TechniqueLogic.timeTo(kingFile, kingRank, pawnFile, pawnRank, position.colorToMove() == pawnColor) - 1) {
             return TechnicalEvaluation.technicalDraw(pawnColor);
         }
 

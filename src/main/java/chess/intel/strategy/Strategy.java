@@ -157,6 +157,8 @@ public abstract class Strategy {
             TechnicalEvaluation technicalEval = technicalEvaluate(position);
             if (color == technicalEval.getOptimist()) {
                 bestEval = technicalEval;
+            } else if (color == 'w' && technicalEval.compareTo(alphabeta) < 0 || color == 'b' && technicalEval.compareTo(alphabeta) > 0) {
+                alphabeta = technicalEval;
             }
         }
         ChessMove bestMove = null;
@@ -173,8 +175,8 @@ public abstract class Strategy {
                 
                 // alpha-beta pruning
                 if (alphabeta.getConfidence() != EvaluationConfidence.INCONCLUSIVE && eval.compareTo(alphabeta) >= 0) {
-                    bestMove = move;
-                    bestEval = eval;
+                    bestMove = null;
+                    bestEval = alphabeta;
                     abExit = true;
                     
                 } else if (bestEval.getConfidence() == EvaluationConfidence.INCONCLUSIVE || eval.compareTo(bestEval) > 0) {
@@ -196,8 +198,8 @@ public abstract class Strategy {
 
                 // alpha-beta pruning
                 if (alphabeta.getConfidence() != EvaluationConfidence.INCONCLUSIVE && eval.compareTo(alphabeta) <= 0) {
-                    bestMove = move;
-                    bestEval = eval;
+                    bestMove = null;
+                    bestEval = alphabeta;
                     abExit = true;
                     
                 } else if (bestEval.getConfidence() == EvaluationConfidence.INCONCLUSIVE || eval.compareTo(bestEval) < 0) {
