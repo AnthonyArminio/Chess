@@ -17,6 +17,7 @@ public abstract class Strategy {
 
     protected ArrayList<Technique> techniques = new ArrayList<>();
     protected Technique activatedTechnique = null;
+    protected boolean interrupt = false;
 
     public Evaluation evaluate(ChessPosition position) {
         Evaluation eval = Strategy.baseEvaluate(position);
@@ -103,8 +104,14 @@ public abstract class Strategy {
      * @param depth the depth to search (ply)
      * @param alphabeta the best achieved value of the siblings of this instance of the method call.
      * @return An Evaluation representing how advantageous the given position is for one player
+     * @throws InterruptedException If calculation is interrupted by another Thread.
      */
-    public Evaluation minimaxEvaluate(ChessPosition position, ChessMove previousMove, char color, int depth, Evaluation alphabeta, boolean rootcall) {
+    public Evaluation minimaxEvaluate(ChessPosition position, ChessMove previousMove, char color, int depth, Evaluation alphabeta, boolean rootcall) throws InterruptedException {
+
+        if (this.interrupt) {
+            this.interrupt = false;
+            throw new InterruptedException("Calculation interrupted.");
+        }
 
         // base and objective evaluations
         Evaluation baseEval = Strategy.baseEvaluate(position);
@@ -203,5 +210,13 @@ public abstract class Strategy {
         }
 
         return bestEval.step(bestMove);
+    }
+
+    /**
+     * Interrupts the long-running `minimaxEvaluate` method
+     * @return
+     */
+    public void interrupt() {
+        this.interrupt = true;
     }
 }

@@ -97,6 +97,8 @@ public class ControlPanel {
             flip = false;
             flipAtStart = !userPlaysWhite;
         }
+
+        this.app.getDisplayedGame().stop();
         
         BoardUISettings settings = configureSettings();
         createNewGame(whitePlayer, blackPlayer, new ChessBoard(Point2D.ZERO, flipAtStart, flip, settings), true);
@@ -115,6 +117,8 @@ public class ControlPanel {
     }
 
     private void onTestGameButtonPressed() {
+        this.app.getDisplayedGame().stop();
+        
         BoardUISettings settings = configureSettings();
         createNewGame(Chess.getDefaultAgent(), Chess.getDefaultAgent(), SinglePawnEndgame.randomSamplePosition(), new ChessBoard(Point2D.ZERO, false, false, settings), true);
     }

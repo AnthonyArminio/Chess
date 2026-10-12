@@ -69,6 +69,12 @@ public class ChessGame {
         }
     }
 
+    public void stop() {
+        this.isOver = true;
+        this.whitePlayer.interrupt();
+        this.blackPlayer.interrupt();
+    }
+
     /**
      * Makes a move and advances the game. The move is assumed to be legal.
      * @param move the ChessMove to make

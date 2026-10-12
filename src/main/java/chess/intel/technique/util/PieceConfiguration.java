@@ -34,11 +34,10 @@ public class PieceConfiguration {
      * @throws IllegalArgumentException if the configuration string is not formatted correctly.
      */
     private void initialize(String s) {
+        s = s + "/";
         boolean atFound = false;
         boolean focusPieceFound = false;
-        int width = 0;
-        int height = 1;
-        int currentWidth = 0;
+        int width = 0, height = 0, currentWidth = 0;
         for (int cIdx = 0; cIdx < s.length(); cIdx++) {
             if ("pbnrqkPBNRQK/*?+-0@".indexOf(s.charAt(cIdx)) < 0) {
                 throw new IllegalArgumentException("PieceConfiguration: Invalid character found in configuration string.");
@@ -59,7 +58,7 @@ public class PieceConfiguration {
             } else {
                 if (atFound && !focusPieceFound) {
                     this.focusPiece = s.charAt(cIdx);
-                    this.relativeRow = height - 1;
+                    this.relativeRow = height;
                     this.relativeCol = currentWidth;
                     focusPieceFound = true;
                 }

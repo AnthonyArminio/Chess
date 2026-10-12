@@ -1,6 +1,5 @@
 package chess.application;
 
-import chess.display.BoardUISettings;
 import chess.display.ChessBoard;
 import chess.display.ControlPanel;
 import chess.display.Square;
@@ -181,6 +180,10 @@ public class Chess extends Application {
     public void detachImage() {
         this.mouseImageView.setImage(null);
         this.pieceInMouse = false;
+    }
+
+    public ChessGame getDisplayedGame() {
+        return this.displayedGame;
     }
 
     public static Player getDefaultAgent() {

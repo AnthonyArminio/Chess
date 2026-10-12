@@ -42,4 +42,8 @@ public class Player {
     public boolean isUser() {
         return this.isUser;
     }
+
+    public void interrupt() {
+        this.hasTurn = false;
+    }
 }

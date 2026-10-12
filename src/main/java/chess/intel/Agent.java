@@ -28,7 +28,10 @@ public class Agent extends Player {
         this.hasTurn = true;
         this.strategy.tryActivateTechniques(game.getPosition());
 
-        makeMove(findBestMove(game.getPosition()));
+        ChessMove bestMove = findBestMove(game.getPosition());
+        if (bestMove != null) {
+            makeMove(bestMove);
+        }
     }
 
     @Override public void makeMove(ChessMove move) {
@@ -49,18 +52,26 @@ public class Agent extends Player {
 
         char color = position.colorToMove();
 
-        Evaluation eval = this.strategy.minimaxEvaluate(position, null, color, this.depth, Evaluation.INCONCLUSIVE, true);
+        try {
+            Evaluation eval = this.strategy.minimaxEvaluate(position, null, color, this.depth, Evaluation.INCONCLUSIVE, true);
 
-        if (this.printMoves) {
-            System.out.println("\n" + eval.pathString(this.currentGame.getMoveNumber(), color) + " (" + eval.evalString() + ")");
+            if (this.printMoves) {
+                System.out.println("\n" + eval.pathString(this.currentGame.getMoveNumber(), color) + " (" + eval.evalString() + ")");
+            }
+
+            return eval.getBestMove();
+        } catch (InterruptedException ex) {
+            System.out.println("Agent succesfully interrupted.");
+            return null;
         }
-
-        return eval.getBestMove();
     }
-
-    
 
     public Strategy getStrategy() {
         return this.strategy;
+    }
+
+    @Override public void interrupt() {
+        this.hasTurn = false;
+        this.strategy.interrupt();
     }
 }
