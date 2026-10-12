@@ -4,10 +4,12 @@ import java.util.Set;
 
 import chess.intel.strategy.Evaluation;
 import chess.intel.technique.util.PieceConfiguration;
+import chess.intel.technique.util.TechniqueLogic;
+import chess.intel.util.DataMath;
+import chess.logic.ChessPiece;
 import chess.logic.ChessPosition;
 import chess.logic.util.ChessLogic;
 import chess.logic.util.GridMath;
-import chess.intel.technique.util.TechniqueLogic;
 
 public class SinglePawnEndgame extends Technique {
 
@@ -28,6 +30,50 @@ public class SinglePawnEndgame extends Technique {
         int[] stateArray = {-1, 0, 0, 0, 0, 0};
 
         return new ChessPosition(positionArray, stateArray);
+    }
+
+    public static ChessPosition randomSamplePosition() {
+        int firstKing = DataMath.randomInt(0, 63);
+        Set<Integer> exclusion = ChessLogic.coverage(firstKing, ChessPiece.BASE_KING_MOVEMENT);
+        exclusion.add(firstKing);
+        int secondKing = DataMath.randomInt(0, 63, exclusion);
+
+        int pawnColor = DataMath.randomInt(0, 1); // 0 == 'w'; 1 == 'b'
+        int colorToMove = DataMath.randomInt(0, 1);
+        exclusion.clear();
+        if (pawnColor == colorToMove) {
+            if (pawnColor == 0) {
+                int[][] pawnCheckExclusion = {{-9}, {-7}};
+                exclusion.addAll(ChessLogic.coverage(secondKing, pawnCheckExclusion));
+            } else {
+                int[][] pawnCheckExclusion = {{7}, {9}};
+                exclusion.addAll(ChessLogic.coverage(secondKing, pawnCheckExclusion));
+            }
+        }
+        exclusion.add(firstKing);
+        exclusion.add(secondKing);
+
+        int pawn = DataMath.randomInt(8, 55, exclusion);
+
+        int[] positionArray = {0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0};
+
+        positionArray[firstKing] = colorToMove == 0 ? 6 : -6;
+        positionArray[secondKing] = colorToMove == 0 ? -6 : 6;
+        positionArray[pawn] = pawnColor == 0 ? 1 : -1;
+
+        int[] stateArray = {-1, 0, 0, 0, 0, 0};
+
+        stateArray[5] = colorToMove;
+
+        return new ChessPosition(positionArray, stateArray);
+
     }
 
     public SinglePawnEndgame() {

@@ -4,17 +4,17 @@ import chess.logic.util.GridMath;
 
 public class ChessPiece {
 
-    private static final int[][] BASE_PAWN_MOVEMENT = {{0}, {0, 0}, {0}};
-    private static final int[][] BASE_BISHOP_MOVEMENT = {{7, 14, 21, 28, 35, 42, 49}, 
+    public static final int[][] BASE_PAWN_MOVEMENT = {{0}, {0, 0}, {0}};
+    public static final int[][] BASE_BISHOP_MOVEMENT = {{7, 14, 21, 28, 35, 42, 49}, 
                                                          {9, 18, 27, 36, 45, 54, 63},
                                                          {-7,-14,-21,-28,-35,-42,-49},
                                                          {-9,-18,-27,-36,-45,-54,-63}};
-    private static final int[][] BASE_KNIGHT_MOVEMENT = {{6},{10},{15},{17},{-6},{-10},{-15},{-17}};
-    private static final int[][] BASE_ROOK_MOVEMENT = {{1, 2, 3, 4, 5, 6, 7},
+    public static final int[][] BASE_KNIGHT_MOVEMENT = {{6},{10},{15},{17},{-6},{-10},{-15},{-17}};
+    public static final int[][] BASE_ROOK_MOVEMENT = {{1, 2, 3, 4, 5, 6, 7},
                                                        {8, 16, 24, 32, 40, 48, 56},
                                                        {-1,-2,-3,-4,-5,-6,-7},
                                                        {-8,-16,-24,-32,-40,-48,-56}};
-    private static final int[][] BASE_QUEEN_MOVEMENT = {{7, 14, 21, 28, 35, 42, 49}, 
+    public static final int[][] BASE_QUEEN_MOVEMENT = {{7, 14, 21, 28, 35, 42, 49}, 
                                                         {9, 18, 27, 36, 45, 54, 63},
                                                         {-7,-14,-21,-28,-35,-42,-49},
                                                         {-9,-18,-27,-36,-45,-54,-63},
@@ -22,7 +22,7 @@ public class ChessPiece {
                                                         {8, 16, 24, 32, 40, 48, 56},
                                                         {-1,-2,-3,-4,-5,-6,-7},
                                                         {-8,-16,-24,-32,-40,-48,-56}};
-    private static final int[][] BASE_KING_MOVEMENT = {{1, 0},{7},{8},{9},{-1, 0},{-7},{-8},{-9}};
+    public static final int[][] BASE_KING_MOVEMENT = {{1, 0},{7},{8},{9},{-1, 0},{-7},{-8},{-9}};
 
     public static final ChessPiece W_PAWN = new ChessPiece(1, "file:assets/sprites/White_Pawn.png", 'P', 'w', BASE_PAWN_MOVEMENT, 1);
     public static final ChessPiece W_BISHOP = new ChessPiece(2, "file:assets/sprites/White_Bishop.png", 'B', 'w', BASE_BISHOP_MOVEMENT, 3);

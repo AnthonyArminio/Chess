@@ -13,6 +13,7 @@ import chess.intel.technique.SingleQueenEndgame;
 import chess.intel.technique.SingleRookEndgame;
 import chess.logic.ChessMove;
 import chess.logic.ChessPiece;
+import chess.logic.ChessPosition;
 import chess.logic.util.GridMath;
 import javafx.application.Application;
 import javafx.geometry.Point2D;
@@ -68,8 +69,8 @@ public class Chess extends Application {
         stage.setTitle("Chess Application");
         stage.setScene(this.scene);
 
-        this.controlPanel.createNewGame(getDefaultAgent(), new Player(true), SinglePawnEndgame.samplePosition(), new ChessBoard(Point2D.ZERO, false, false, new BoardUISettings()), false);
-        //this.controlPanel.createNewGame(getDefaultAgent(), getDefaultAgent(), new ChessPosition(), new ChessBoard(Point2D.ZERO, false, false, new BoardUISettings()), true);
+        //this.controlPanel.createNewGame(getDefaultAgent(), new Player(true), SinglePawnEndgame.samplePosition(), new ChessBoard(Point2D.ZERO, false, false, new BoardUISettings()), false);
+        this.controlPanel.createNewGame(new Player(true), getDefaultAgent(), new ChessPosition(), new ChessBoard(Point2D.ZERO, false, false, this.controlPanel.configureSettings()), true);
 
         stage.sizeToScene();
         stage.show();

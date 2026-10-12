@@ -1,6 +1,8 @@
 package chess.logic.util;
 
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 import chess.intel.strategy.Evaluation;
 import chess.logic.ChessMove;
@@ -297,6 +299,30 @@ public class ChessLogic {
         } else {
             return -1;
         }
+    }
+
+    public static Set<Integer> coverage(int origin, int[][] movement) {
+        Set<Integer> coverage = new HashSet<>();
+        
+        for (int[] line : movement) {
+
+            int previous = origin;
+            boolean outOfBounds = false;
+
+            for (int displacement : line) {
+                if (displacement != 0 && !outOfBounds) {
+                    if (GridMath.isOutOfBounds(previous, origin + displacement)) {
+                        outOfBounds = true;
+                    } else {
+                        coverage.add(origin + displacement);
+                    }
+                    previous = origin + displacement;
+                }
+            }
+        }
+
+        return coverage;
+
     }
 
     /**

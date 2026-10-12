@@ -1,6 +1,8 @@
 package chess.intel.util;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class DataMath {
 
@@ -227,6 +229,37 @@ public class DataMath {
             throw new IllegalArgumentException("random: max cannot be less than min");
         }
         return (int) ((max - min + 1) * Math.random() + min);
+    }
+
+    /**
+     * Returns a random integer between min and max, inclusive, excluding the integers in the set `exclusion`.
+     * @param exclusion The set of excluded integers.
+     * @throws IllegalArgumentException if max < min.
+     */
+    public static int randomInt(int min, int max, Set<Integer> exclusion) {
+        Set<Integer> valid = new HashSet<>();
+        for (int element : exclusion) {
+            if (element >= min && element <= max) {
+                valid.add(element);
+            }
+        }
+        
+        int random = DataMath.randomInt(min, max - valid.size());
+        int numSurpassed = 0;
+        for (int element : valid) {
+            if (random >= element) {
+                numSurpassed++;
+            }
+        }
+
+        for (int i = 1; i <= numSurpassed; i++) {
+            if (valid.contains(random + i)) {
+                numSurpassed++;
+            }
+        }
+
+        return random + numSurpassed;
+
     }
 
     /**

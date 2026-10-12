@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import chess.application.Chess;
 import chess.application.ChessGame;
 import chess.intel.Player;
+import chess.intel.technique.SinglePawnEndgame;
 import chess.logic.ChessPosition;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
@@ -21,14 +22,15 @@ public class ControlPanel {
     private static final String[] OPPONENT_TYPE_OPTIONS = {"Human (Hot Seat)", "Computer"};
     private static final String[] PLAYER_COLOR_OPTIONS = {"White", "Black", "Random"};
 
-    private Chess app;
-    private VBox container;
-    private VBox choiceBoxContainer;
-    private VBox opponentTypeSelectContainer;
-    private VBox playerColorSelectContainer;
-    private Button newGameButton;
-    private ChoiceBox<String> opponentTypeSelect;
-    private ChoiceBox<String> playerColorSelect;
+    private final Chess app;
+    private final VBox container;
+    private final VBox choiceBoxContainer;
+    private final VBox opponentTypeSelectContainer;
+    private final VBox playerColorSelectContainer;
+    private final Button newGameButton;
+    private final Button testGameButton;
+    private final ChoiceBox<String> opponentTypeSelect;
+    private final ChoiceBox<String> playerColorSelect;
 
     public ControlPanel(Chess app){
         this.app = app;
@@ -64,6 +66,10 @@ public class ControlPanel {
         this.container.getChildren().add(this.choiceBoxContainer);
         this.container.getChildren().add(new Text(""));
         this.container.getChildren().add(this.newGameButton);
+
+        this.testGameButton = new Button("Test Game");
+        this.testGameButton.setOnAction(e -> onTestGameButtonPressed());
+        this.container.getChildren().add(this.testGameButton);
     }
 
     public VBox getContainer(){
@@ -108,7 +114,12 @@ public class ControlPanel {
         }
     }
 
-    private BoardUISettings configureSettings() {
+    private void onTestGameButtonPressed() {
+        BoardUISettings settings = configureSettings();
+        createNewGame(Chess.getDefaultAgent(), Chess.getDefaultAgent(), SinglePawnEndgame.randomSamplePosition(), new ChessBoard(Point2D.ZERO, false, false, settings), true);
+    }
+
+    public BoardUISettings configureSettings() {
         return new BoardUISettings();
     }
 
