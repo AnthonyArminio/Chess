@@ -1,10 +1,10 @@
 package chess.intel.technique;
 
-import chess.intel.strategy.Evaluation;
+import chess.intel.strategy.TechnicalEvaluation;
+import chess.intel.technique.util.TechniqueLogic;
 import chess.logic.ChessPosition;
 import chess.logic.util.ChessLogic;
 import chess.logic.util.GridMath;
-import chess.intel.technique.util.TechniqueLogic;
 
 public class SingleRookEndgame extends Technique {
 
@@ -29,22 +29,22 @@ public class SingleRookEndgame extends Technique {
         };
     }
 
-    @Override public Evaluation evaluate(ChessPosition position) {
+    @Override public TechnicalEvaluation evaluate(ChessPosition position) {
         int rookSquare = ChessLogic.findMatchingPiece(position, 'R');
         if (rookSquare < 0) {
-            return Evaluation.DRAW;
+            return TechnicalEvaluation.TECHNICAL_INCONCLUSIVE;
         }
         char rookColor = position.getPieceAt(rookSquare).getColor();
 
         if (position.colorToMove() == rookColor) {
-            return Evaluation.INCONCLUSIVE;
+            return TechnicalEvaluation.TECHNICAL_INCONCLUSIVE;
         }
 
         int kingSquare = ChessLogic.findMatchingPiece(position, 'K', rookColor);
         int enemyKingSquare = ChessLogic.findMatchingPiece(position, 'K', ChessLogic.opponentOf(rookColor));
 
         if (!GridMath.isAdjacent(kingSquare, rookSquare)) {
-            return Evaluation.INCONCLUSIVE;
+            return TechnicalEvaluation.TECHNICAL_INCONCLUSIVE;
         }
 
         int rookFile = GridMath.getFile(rookSquare);
@@ -55,13 +55,13 @@ public class SingleRookEndgame extends Technique {
         int enemyKingRank = GridMath.getRank(enemyKingSquare);
 
         if (sameLine(rookFile, rookRank, enemyKingFile, enemyKingRank)) {
-            return Evaluation.INCONCLUSIVE;
+            return TechnicalEvaluation.TECHNICAL_INCONCLUSIVE;
         }
 
         String quadrant = quadrantOf(enemyKingFile, enemyKingRank, rookFile, rookRank);
 
         if (isInQuadrant(kingFile, kingRank, rookFile, rookRank, quadrant)) {
-            return Evaluation.INCONCLUSIVE;
+            return TechnicalEvaluation.TECHNICAL_INCONCLUSIVE;
         }
 
         int borderFile = keyFile(quadrant, 1, 8);
@@ -75,7 +75,7 @@ public class SingleRookEndgame extends Technique {
             clock = 6 + TechniqueLogic.timeTo(kingFile, kingRank, goalFile, goalRank, false);
         }
 
-        return Evaluation.mateIn(clock, rookColor);
+        return TechnicalEvaluation.mateIn(clock, rookColor, rookColor);
     }
 
     /**

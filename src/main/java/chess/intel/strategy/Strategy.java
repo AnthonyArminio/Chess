@@ -21,13 +21,13 @@ public abstract class Strategy {
 
     public Evaluation evaluate(ChessPosition position) {
         Evaluation eval = Strategy.baseEvaluate(position);
-        if (eval == Evaluation.INCONCLUSIVE) {
+        if (eval.getConfidence() == EvaluationConfidence.INCONCLUSIVE) {
             eval = objectiveEvaluate(position);
         }
-        if (eval == Evaluation.INCONCLUSIVE) {
+        if (eval.getConfidence() == EvaluationConfidence.INCONCLUSIVE) {
             eval = technicalEvaluate(position);
         }
-        if (eval == Evaluation.INCONCLUSIVE) {
+        if (eval.getConfidence() == EvaluationConfidence.INCONCLUSIVE) {
             eval = subjectiveEvaluate(position);
         }
         return eval;
@@ -40,21 +40,21 @@ public abstract class Strategy {
     public Evaluation objectiveEvaluate(ChessPosition position) {
         if (this.activatedTechnique != null) {
             Evaluation objectiveEval = this.activatedTechnique.objectiveEvaluate(position);
-            if (objectiveEval != Evaluation.INCONCLUSIVE) {
+            if (objectiveEval.getConfidence() != EvaluationConfidence.INCONCLUSIVE) {
                 return objectiveEval.setConfidence(EvaluationConfidence.OBJECTIVE);
             }
         }
         return Evaluation.INCONCLUSIVE;
     }
 
-    public Evaluation technicalEvaluate(ChessPosition position) {
+    public TechnicalEvaluation technicalEvaluate(ChessPosition position) {
         if (this.activatedTechnique != null) {
-            Evaluation technicalEval = this.activatedTechnique.evaluate(position);
-            if (technicalEval != Evaluation.INCONCLUSIVE) {
-                return technicalEval.setConfidence(EvaluationConfidence.TECHNICAL);
+            TechnicalEvaluation technicalEval = this.activatedTechnique.evaluate(position);
+            if (technicalEval.getConfidence() != EvaluationConfidence.INCONCLUSIVE) {
+                return technicalEval;
             }
         }
-        return Evaluation.INCONCLUSIVE;
+        return TechnicalEvaluation.TECHNICAL_INCONCLUSIVE;
     }
 
     public boolean evaluateStability(ChessPosition position, ChessMove previousMove) {
@@ -115,11 +115,11 @@ public abstract class Strategy {
 
         // base and objective evaluations
         Evaluation baseEval = Strategy.baseEvaluate(position);
-        if (baseEval != Evaluation.INCONCLUSIVE) {
+        if (baseEval.getConfidence() != EvaluationConfidence.INCONCLUSIVE) {
             return baseEval;
         }
         Evaluation objectiveEval = objectiveEvaluate(position);
-        if (!rootcall && objectiveEval != Evaluation.INCONCLUSIVE) {
+        if (!rootcall && objectiveEval.getConfidence() != EvaluationConfidence.INCONCLUSIVE) {
             return objectiveEval;
         }
 
@@ -153,6 +153,12 @@ public abstract class Strategy {
 
         Evaluation eval;
         Evaluation bestEval = Evaluation.INCONCLUSIVE;
+        if (!rootcall) {
+            TechnicalEvaluation technicalEval = technicalEvaluate(position);
+            if (color == technicalEval.getOptimist()) {
+                bestEval = technicalEval;
+            }
+        }
         ChessMove bestMove = null;
 
         if (color == 'w') {
@@ -166,12 +172,12 @@ public abstract class Strategy {
                 eval = minimaxEvaluate(position.afterMove(move), move, ChessLogic.opponentOf(color), depth - 1, bestEval, false);
                 
                 // alpha-beta pruning
-                if (alphabeta != Evaluation.INCONCLUSIVE && eval.compareTo(alphabeta) >= 0) {
+                if (alphabeta.getConfidence() != EvaluationConfidence.INCONCLUSIVE && eval.compareTo(alphabeta) >= 0) {
                     bestMove = move;
                     bestEval = eval;
                     abExit = true;
                     
-                } else if (bestEval == Evaluation.INCONCLUSIVE || eval.compareTo(bestEval) > 0) {
+                } else if (bestEval.getConfidence() == EvaluationConfidence.INCONCLUSIVE || eval.compareTo(bestEval) > 0) {
                     bestMove = move;
                     bestEval = eval;
                 }
@@ -189,12 +195,12 @@ public abstract class Strategy {
                 eval = minimaxEvaluate(position.afterMove(move), move, ChessLogic.opponentOf(color), depth - 1, bestEval, false);
 
                 // alpha-beta pruning
-                if (alphabeta != Evaluation.INCONCLUSIVE && eval.compareTo(alphabeta) <= 0) {
+                if (alphabeta.getConfidence() != EvaluationConfidence.INCONCLUSIVE && eval.compareTo(alphabeta) <= 0) {
                     bestMove = move;
                     bestEval = eval;
                     abExit = true;
                     
-                } else if (bestEval == Evaluation.INCONCLUSIVE || eval.compareTo(bestEval) < 0) {
+                } else if (bestEval.getConfidence() == EvaluationConfidence.INCONCLUSIVE || eval.compareTo(bestEval) < 0) {
                     bestEval = eval;
                     bestMove = move;
                 }
@@ -202,14 +208,7 @@ public abstract class Strategy {
             }
         }
 
-        if (!rootcall) {
-            Evaluation technicalEval = technicalEvaluate(position);
-            if (bestEval.compareConfidence(technicalEval) < 0) {
-                return technicalEval;
-            }
-        }
-
-        return bestEval.step(bestMove);
+        return bestMove == null ? bestEval : bestEval.step(bestMove);
     }
 
     /**

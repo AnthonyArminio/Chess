@@ -1,6 +1,6 @@
 package chess.intel.technique;
 
-import chess.intel.strategy.Evaluation;
+import chess.intel.strategy.TechnicalEvaluation;
 import chess.intel.technique.util.TechniqueLogic;
 import chess.logic.ChessPosition;
 import chess.logic.util.ChessLogic;
@@ -29,22 +29,22 @@ public class SingleQueenEndgame extends Technique {
         };
     }
 
-    @Override public Evaluation evaluate(ChessPosition position) {
+    @Override public TechnicalEvaluation evaluate(ChessPosition position) {
         int queenSquare = ChessLogic.findMatchingPiece(position, 'Q');
         if (queenSquare < 0) {
-            return Evaluation.DRAW;
+            return TechnicalEvaluation.TECHNICAL_INCONCLUSIVE;
         }
         char queenColor = position.getPieceAt(queenSquare).getColor();
 
         if (position.colorToMove() == queenColor) {
-            return Evaluation.INCONCLUSIVE;
+            return TechnicalEvaluation.TECHNICAL_INCONCLUSIVE;
         }
 
         int kingSquare = ChessLogic.findMatchingPiece(position, 'K', queenColor);
         int enemyKingSquare = ChessLogic.findMatchingPiece(position, 'K', ChessLogic.opponentOf(queenColor));
 
         if (ChessLogic.isCheck(position)) {
-            return Evaluation.INCONCLUSIVE;
+            return TechnicalEvaluation.TECHNICAL_INCONCLUSIVE;
         }
 
         int queenFile = GridMath.getFile(queenSquare);
@@ -58,7 +58,7 @@ public class SingleQueenEndgame extends Technique {
 
         if (isInQuadrant(kingFile, kingRank, queenFile, queenRank, quadrant)) {
             // If the king is on the same side of the queen as the enemy king, the checkmate may not be possible.
-            return Evaluation.INCONCLUSIVE;
+            return TechnicalEvaluation.TECHNICAL_INCONCLUSIVE;
         }
 
         int borderFile = keyFile(quadrant, 1, 8);
@@ -75,7 +75,7 @@ public class SingleQueenEndgame extends Technique {
             clock = kingAssistToRank(kingFile, kingRank, queenFile, enemyKingFile, quadrant);
         }
 
-        return Evaluation.mateIn(clock, queenColor);
+        return TechnicalEvaluation.mateIn(clock, queenColor, queenColor);
 
 
     }

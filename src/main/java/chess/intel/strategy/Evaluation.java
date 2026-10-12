@@ -1,11 +1,11 @@
 package chess.intel.strategy;
 
-import chess.logic.ChessMove;
-import chess.logic.util.ChessLogic;
-import chess.intel.strategy.util.EvaluationConfidence;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import chess.intel.strategy.util.EvaluationConfidence;
+import chess.logic.ChessMove;
+import chess.logic.util.ChessLogic;
 
 /**
  * Represents an evaluation of a ChessPosition
@@ -15,7 +15,6 @@ public class Evaluation implements Comparable<Evaluation> {
     public static final Evaluation CHECKMATE_FOR_WHITE = new Evaluation(Float.POSITIVE_INFINITY, 0, true).setConfidence(EvaluationConfidence.OBJECTIVE);
     public static final Evaluation CHECKMATE_FOR_BLACK = new Evaluation(Float.NEGATIVE_INFINITY, 0, true).setConfidence(EvaluationConfidence.OBJECTIVE);
     public static final Evaluation DRAW = new Evaluation(0, 0, true).setConfidence(EvaluationConfidence.OBJECTIVE);
-    public static final Evaluation TECHNICAL_DRAW = new Evaluation(0, true).setConfidence(EvaluationConfidence.TECHNICAL);
     public static final Evaluation INCONCLUSIVE = new Evaluation(0, true).setConfidence(EvaluationConfidence.INCONCLUSIVE);
 
     // raw value of the position (positive means advantageous for White, negative means advantageous for Black).
@@ -26,7 +25,7 @@ public class Evaluation implements Comparable<Evaluation> {
     private List<ChessMove> movePath;
     // the best move according to the evaluation (updates as this Evaluation steps up the tree)
     private ChessMove bestMove = null;
-    private EvaluationConfidence confidence = EvaluationConfidence.SUBJECTIVE;
+    protected EvaluationConfidence confidence = EvaluationConfidence.SUBJECTIVE;
     private boolean mustCopy = false;
 
     public static Evaluation mateIn(int clock, char color) {

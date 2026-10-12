@@ -13,6 +13,7 @@ C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\Material
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\NeuralNetwork.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\PositionalStrategy.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\Strategy.java
+C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\TechnicalEvaluation.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\util\EvaluationConfidence.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\strategy\util\PositionalWeights.java
 C:\Users\tonya\Coding Projects\Chess\src\main\java\chess\intel\technique\SinglePawnEndgame.java
