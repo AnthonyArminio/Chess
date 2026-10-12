@@ -1,6 +1,9 @@
 package chess.intel.strategy;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import chess.intel.strategy.util.EvaluationConfidence;
 import chess.intel.technique.Technique;
@@ -102,11 +105,13 @@ public abstract class Strategy {
      * @param previousMove the move that was most recently made in the position (can be null)
      * @param color the color to play for ('w' to maximize, 'b' to minimize).
      * @param depth the depth to search (ply)
+     * @param static the static Evaluation of `position`, if known.
      * @param alphabeta the best achieved value of the siblings of this instance of the method call.
+     * @param rootcall true if the call was from outside the function itself.
      * @return An Evaluation representing how advantageous the given position is for one player
      * @throws InterruptedException If calculation is interrupted by another Thread.
      */
-    public Evaluation minimaxEvaluate(ChessPosition position, ChessMove previousMove, char color, int depth, Evaluation alphabeta, boolean rootcall) throws InterruptedException {
+    public Evaluation minimaxEvaluate(ChessPosition position, ChessMove previousMove, char color, int depth, Evaluation staticEval, Evaluation alphabeta, boolean rootcall) throws InterruptedException {
 
         if (this.interrupt) {
             this.interrupt = false;
@@ -129,30 +134,31 @@ public abstract class Strategy {
                 filter = unstableCaseFilter(position, previousMove);
             } else {
                 // base case 1: reached the max depth and the position is stable
-                return evaluate(position);
+                return staticEval;
             }
         }
 
-        ArrayList<ChessMove> possibleMoves = ChessLogic.generateLegalMoves(position, filter);
+        List<ChessMove> possibleMoves = ChessLogic.generateLegalMoves(position, filter);
         if (possibleMoves.isEmpty()) { // only occurs when a filter is used; otherwise, there will always be at least one legal move at this point
             // base case 2: reached an unstable position with no way to respond
-            return evaluate(position);
+            return staticEval;
         }
 
         // sort moves before analyzing them
-        ArrayList<Evaluation> staticEvaluations = new ArrayList<>();
+        Map<ChessMove, Evaluation> evalMap = new HashMap<>();
+        Map<ChessMove, ChessPosition> posMap = new HashMap<>();
         for (ChessMove move : possibleMoves) {
-            staticEvaluations.add(evaluate(position.afterMove(move)).step(move));
+            ChessPosition newPos = position.afterMove(move);
+            Evaluation sEval = evaluate(newPos);
+            evalMap.put(move, sEval);
+            posMap.put(move, newPos);
         }
-        DataMath.quickSort(staticEvaluations, color == 'w');
-        possibleMoves.clear();
-        for (Evaluation staticEval : staticEvaluations) {
-            possibleMoves.add(staticEval.getBestMove());
-            //staticEval.getBestMove().printMove();
-        }
+        DataMath.quickSort(possibleMoves, (a, b) -> evalMap.get(a).compareTo(evalMap.get(b)), color == 'w');
 
         Evaluation eval;
         Evaluation bestEval = Evaluation.INCONCLUSIVE;
+        ChessMove bestMove = null;
+
         if (!rootcall) {
             TechnicalEvaluation technicalEval = technicalEvaluate(position);
             if (color == technicalEval.getOptimist()) {
@@ -161,23 +167,17 @@ public abstract class Strategy {
                 alphabeta = technicalEval;
             }
         }
-        ChessMove bestMove = null;
-
+        
         if (color == 'w') {
             // maximizing case
 
-            ChessMove move;
-            boolean abExit = false;
-            for (int mvIdx = 0; mvIdx < possibleMoves.size() && !abExit; mvIdx++) {
+            for (ChessMove move : possibleMoves) {
             //for (Evaluation staticEval : staticEvaluations) {
-                move = possibleMoves.get(mvIdx);
-                eval = minimaxEvaluate(position.afterMove(move), move, ChessLogic.opponentOf(color), depth - 1, bestEval, false);
+                eval = minimaxEvaluate(posMap.get(move), move, ChessLogic.opponentOf(color), depth - 1, evalMap.get(move), bestEval, false);
                 
                 // alpha-beta pruning
                 if (alphabeta.getConfidence() != EvaluationConfidence.INCONCLUSIVE && eval.compareTo(alphabeta) >= 0) {
-                    bestMove = null;
-                    bestEval = alphabeta;
-                    abExit = true;
+                    return alphabeta;
                     
                 } else if (bestEval.getConfidence() == EvaluationConfidence.INCONCLUSIVE || eval.compareTo(bestEval) > 0) {
                     bestMove = move;
@@ -189,18 +189,13 @@ public abstract class Strategy {
         } else { 
             // minimizing case
 
-            ChessMove move;
-            boolean abExit = false;
-            for (int mvIdx = 0; mvIdx < possibleMoves.size() && !abExit; mvIdx++) {
+            for (ChessMove move : possibleMoves) {
             //for (Evaluation staticEval : staticEvaluations) {
-                move = possibleMoves.get(mvIdx);
-                eval = minimaxEvaluate(position.afterMove(move), move, ChessLogic.opponentOf(color), depth - 1, bestEval, false);
+                eval = minimaxEvaluate(posMap.get(move), move, ChessLogic.opponentOf(color), depth - 1, evalMap.get(move), bestEval, false);
 
                 // alpha-beta pruning
                 if (alphabeta.getConfidence() != EvaluationConfidence.INCONCLUSIVE && eval.compareTo(alphabeta) <= 0) {
-                    bestMove = null;
-                    bestEval = alphabeta;
-                    abExit = true;
+                    return alphabeta;
                     
                 } else if (bestEval.getConfidence() == EvaluationConfidence.INCONCLUSIVE || eval.compareTo(bestEval) < 0) {
                     bestEval = eval;

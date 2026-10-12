@@ -4,8 +4,13 @@ import java.util.ArrayList;
 
 import chess.application.Chess;
 import chess.application.ChessGame;
+import chess.intel.Agent;
 import chess.intel.Player;
+import chess.intel.strategy.PositionalStrategy;
+import chess.intel.strategy.Strategy;
 import chess.intel.technique.SinglePawnEndgame;
+import chess.intel.technique.SingleQueenEndgame;
+import chess.intel.technique.SingleRookEndgame;
 import chess.logic.ChessPosition;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
@@ -92,8 +97,8 @@ public class ControlPanel {
                 userPlaysWhite = Math.random() > 0.5;
             }
 
-            whitePlayer = userPlaysWhite ? whitePlayer : Chess.getDefaultAgent();
-            blackPlayer = userPlaysWhite ? Chess.getDefaultAgent() : blackPlayer;
+            whitePlayer = userPlaysWhite ? whitePlayer : getDefaultAgent();
+            blackPlayer = userPlaysWhite ? getDefaultAgent() : blackPlayer;
             flip = false;
             flipAtStart = !userPlaysWhite;
         }
@@ -120,7 +125,7 @@ public class ControlPanel {
         this.app.getDisplayedGame().stop();
 
         BoardUISettings settings = configureSettings();
-        createNewGame(Chess.getDefaultAgent(), Chess.getDefaultAgent(), SinglePawnEndgame.randomSamplePosition(), new ChessBoard(Point2D.ZERO, false, false, settings), true);
+        createNewGame(getDefaultAgent(), new Player(), SinglePawnEndgame.randomSamplePosition(), new ChessBoard(Point2D.ZERO, false, false, settings), true);
     }
 
     public BoardUISettings configureSettings() {
@@ -154,6 +159,14 @@ public class ControlPanel {
         //
         return true;
         //
+    }
+
+    public static Player getDefaultAgent() {
+        Strategy strategy = new PositionalStrategy();
+        strategy.addTechnique(new SingleQueenEndgame());
+        strategy.addTechnique(new SingleRookEndgame());
+        strategy.addTechnique(new SinglePawnEndgame());
+        return new Agent(strategy, 6, true);
     }
 
 }

@@ -1,13 +1,12 @@
 package test;
 
+import chess.intel.strategy.Evaluation;
+import chess.intel.technique.SinglePawnEndgame;
+
 public class Test {
     public static void main(String[] args) {
-        float a = Float.POSITIVE_INFINITY;
-        float b = Float.POSITIVE_INFINITY;
-
-        System.out.println(a < b);
-        System.out.println(b < a);
-        System.out.println(a == b);
+        Evaluation eval = new SinglePawnEndgame().evaluate(SinglePawnEndgame.samplePosition());
+        System.out.printf("%s\n", eval.evalString());
 
     }
 }

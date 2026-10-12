@@ -1,7 +1,8 @@
 package chess.intel.util;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class DataMath {
@@ -169,11 +170,11 @@ public class DataMath {
      * @param list The list to sort
      * @param reversed Whether the list should be sorted in reverse (greatest to least)
      */
-    public static <T extends Comparable<T>> void quickSort(ArrayList<T> list, boolean reversed) {
+    public static <T extends Comparable<T>> void quickSort(List<T> list, boolean reversed) {
         quickSort(list, 0, list.size() - 1, reversed);
     }
 
-    private static <T extends Comparable<T>> void quickSort(ArrayList<T> list, int s, int e, boolean reversed) {
+    private static <T extends Comparable<T>> void quickSort(List<T> list, int s, int e, boolean reversed) {
         if (e < s) {
             return;
         }
@@ -195,7 +196,39 @@ public class DataMath {
         quickSort(list, i + 1, e, reversed);
     }
 
-    private static <T> void exchange(ArrayList<T> list, int i1, int i2) {
+    /**
+     * Sorts a specified list using quick sort
+     * @param <T> The list type
+     * @param list The list to sort
+     * @param reversed Whether the list should be sorted in reverse (greatest to least)
+     */
+    public static <T> void quickSort(List<T> list, Comparator<T> comp, boolean reversed) {
+        quickSort(list, 0, list.size() - 1, comp, reversed);
+    }
+
+    private static <T> void quickSort(List<T> list, int s, int e, Comparator<T> comp, boolean reversed) {
+        if (e < s) {
+            return;
+        }
+        
+        int basisIndex = DataMath.randomInt(s, e);
+        exchange(list, basisIndex, e);
+        T basis = list.get(e);
+
+        int i = s;
+        for (int j = s; j < e; j++) {
+            if ((reversed && comp.compare(basis, list.get(j)) < 0) || (!reversed && comp.compare(basis, list.get(j)) > 0)) {
+                exchange(list, i, j);
+                i++;
+            }
+        }
+        exchange(list, i, e);
+
+        quickSort(list, s, i - 1, comp, reversed);
+        quickSort(list, i + 1, e, comp, reversed);
+    }
+
+    private static <T> void exchange(List<T> list, int i1, int i2) {
         T temp = list.get(i2);
         list.set(i2, list.get(i1));
         list.set(i1, temp);
@@ -243,7 +276,7 @@ public class DataMath {
                 valid.add(element);
             }
         }
-        
+
         int random = DataMath.randomInt(min, max - valid.size());
         int numSurpassed = 0;
         for (int element : valid) {

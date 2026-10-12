@@ -61,7 +61,7 @@ public class ChessGame {
         this.isIdle = false;
         this.moveNumber = 1;
         this.plyNumber = 1;
-        this.playerToMove = this.whitePlayer;
+        this.playerToMove = this.position.colorToMove() == 'w' ? this.whitePlayer : this.blackPlayer;
         if (!handleGameEnd()) {
             Thread t = new Thread(() -> this.playerToMove.alertToMove(this));
             t.setDaemon(true);

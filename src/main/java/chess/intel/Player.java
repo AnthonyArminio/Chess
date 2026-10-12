@@ -15,6 +15,11 @@ public class Player {
     @Expose protected boolean hasTurn;
     @Expose protected boolean isUser;
 
+    public Player() {
+        this.hasTurn = false;
+        this.isUser = true;
+    }
+
     public Player(boolean isUser) {
         this.hasTurn = false;
         this.isUser = isUser;
