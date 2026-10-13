@@ -126,57 +126,19 @@ public class ChessBoard {
      * Loads a given position onto the board.
      */
     private void loadPosition(ChessPosition position) {
-        for (int file = 1; file <= 8; file++) {
-            for (int rank = 1; rank <= 8; rank++) {                
-                this.squares[GridMath.index(file, rank)].setPiece(position.getPieceAt(file, rank));
-            }
+        for (int s = 0; s < 64; s++) {             
+            this.squares[s].setPiece(position.getPieceAt(s));
         }
     }
 
     /**
-    public void makeMove(ChessMove move) {
-
-        Square startSquare = getSquareAt(move.getStart());
-        Square releaseSquare = getSquareAt(move.getEnd());
-
-        startSquare.removePiece();
-        
-        if (move.isCapture()) {
-            releaseSquare.capture();
+     * Loads a given position onto the board, optimized so that only the squares affected by `move` are updated.
+     */
+    private void loadPosition(ChessPosition position, ChessMove move) {
+        for (int s : move.getAffectedSquares()) {
+            this.squares[s].setPiece(position.getPieceAt(s));
         }
-        if (move.isEnPassant()) {
-            if (move.getColor() == 'w') {
-                getSquareAt(move.getEnd() - 8).capture();
-            } else {
-                getSquareAt(move.getEnd() + 8).capture();
-            }
-        } else if (move.isPromotion()) {
-            // special effects, if desired
-
-        } else if (move.isKingsideCastle()) {
-            if (move.getColor() == 'w') {
-                getSquareAt(5).setPiece(getSquareAt(7).removePiece());
-            } else {
-                getSquareAt(61).setPiece(getSquareAt(63).removePiece());
-            }
-        } else if (move.isQueensideCastle()) {
-            if (move.getColor() == 'w') {
-                getSquareAt(3).setPiece(getSquareAt(0).removePiece());
-            } else {
-                getSquareAt(59).setPiece(getSquareAt(56).removePiece());
-            }
-        }
-        
-        releaseSquare.setPiece(move.getPiece());
-        unhighlightMoves();
-        if (settings.doPreviousMoveHighlights()) {
-            highlightMove(move);
-        }
-
-        if (!this.game.isOver() && this.flip) {
-            this.flip();
-        }
-    } */
+    }
 
     public void update(ChessMove move) {
 
@@ -186,7 +148,7 @@ public class ChessBoard {
 
         if (!this.setView(this.game.getPlyNumber())) {
             unhighlightMoves();
-            loadPosition(this.game.getCurrentPosition()); //loadPosition(this.game.getCurrentPosition(), move);
+            loadPosition(this.game.getCurrentPosition(), move);
             this.view++;
             if (settings.doPreviousMoveHighlights()) {
                 highlightMove(move);
@@ -200,7 +162,16 @@ public class ChessBoard {
 
     public boolean setView(int ply) {
         if (this.view != ply) {
-            loadPosition(this.game.getPosition(ply));
+            if (this.home != ply) {
+                cancelPromotion();
+            }
+            if (ply == this.view - 1) {
+                loadPosition(this.game.getPosition(ply), this.game.getMove(ply + 1));
+            } else if (ply == this.view + 1) {
+                loadPosition(this.game.getPosition(ply), this.game.getMove(ply));
+            } else {
+                loadPosition(this.game.getPosition(ply));
+            }
             this.view = ply;
             unhighlightMoves();
             if (ply > 0 && settings.doPreviousMoveHighlights()) {
@@ -231,6 +202,10 @@ public class ChessBoard {
             return setView(this.view + 1);
         }
         return false;
+    }
+
+    public boolean isAtHome() {
+        return this.view == this.home;
     }
 
     public void setSelectedSquare(int index) {
@@ -326,28 +301,46 @@ public class ChessBoard {
         return this.isFlipped;
     }
 
-    public void waitForPromotion() {
-        this.waitingForPromotion = true;
-    }
-
     public boolean isWaitingForPromotion() {
         return this.waitingForPromotion;
     }
 
-    public void openPromotionUI(ChessMove move) {
-        this.promotionUI = new PromotionUI(this, move);
-        this.chessBoard.getChildren().add(this.promotionUI.getDisplay());
+    public void openPromotionUI() {
+        if (this.promotionUI != null) {
+            this.promotionUI.open();
+        }
     }
 
     public void closePromotionUI() {
         if (this.promotionUI != null) {
-            this.chessBoard.getChildren().remove(this.promotionUI.getDisplay());
+            this.promotionUI.close();
+        }
+    }
+
+    public void requestPromotion(ChessMove move) {
+        this.waitingForPromotion = true;
+        this.promotionUI = new PromotionUI(this, move);
+        openPromotionUI();
+    }
+
+    public void cancelPromotion() {
+        System.out.println("DEBUG: CANCEL PROMOTION");
+        if (this.waitingForPromotion) {
+            closePromotionUI();
+            this.waitingForPromotion = false;
+            this.promotionUI = null;
+        }
+    }
+
+    public void submitPromotion(ChessMove move) {
+        if (this.waitingForPromotion) {
+            closePromotionUI();
             Player player = this.game.getPlayerToMove();
             if (player.isUser()) {
-                player.makeMove(this.promotionUI.getMove());
+                player.makeMove(move);
             }
-            this.promotionUI = null;
             this.waitingForPromotion = false;
+            this.promotionUI = null;
         }
     }
 }

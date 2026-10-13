@@ -107,7 +107,7 @@ public class Chess extends Application {
                 //System.out.println("Mouse pressed on square " + selectedSquare.getFile() + " " + selectedSquare.getRank());
 
                 ChessPiece piece = selectedSquare.getPiece();
-                if (piece != null && piece.getColor() == this.selectedBoard.getPosition().colorToMove()) {
+                if (piece != null && piece.getColor() == this.selectedBoard.getPosition().colorToMove() && this.selectedBoard.isAtHome()) {
                     if (this.selectedBoard.getGame().getPlayer(piece.getColor()).isUser()) {
                         this.selectedBoard.setSelectedSquare(selectedSquareIndex);
                         attachImage(selectedSquare.detachImage());
@@ -146,8 +146,7 @@ public class Chess extends Application {
                     if (!move.isPromotion()) {
                         player.makeMove(move);
                     } else {
-                        this.selectedBoard.openPromotionUI(move);
-                        this.selectedBoard.waitForPromotion();
+                        this.selectedBoard.requestPromotion(move);
                     }
                     
                 } else {

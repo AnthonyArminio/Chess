@@ -1,6 +1,8 @@
 package chess.logic;
 
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 import chess.logic.util.ChessLogic;
 import chess.logic.util.GridMath;
@@ -18,6 +20,8 @@ public class ChessMove {
     private boolean isLegal;
     private boolean isPromotion;
     private ChessPosition position;
+    
+    private Set<Integer> affectedSquares = null;
 
     /**
      * Creates a new ChessMove.
@@ -148,6 +152,29 @@ public class ChessMove {
 
     public int getEnd() {
         return this.end;
+    }
+
+    public Set<Integer> getAffectedSquares() {
+        if (this.affectedSquares == null) {
+        
+            this.affectedSquares = new HashSet<>();
+            this.affectedSquares.add(this.start);
+            this.affectedSquares.add(this.end);
+            if (this.isEnPassant()) {
+                if (this.color == 'w') {
+                    this.affectedSquares.add(this.end - 8);
+                } else {
+                    this.affectedSquares.add(this.end + 8);
+                }
+            } else if (this.isKingsideCastle()) {
+                this.affectedSquares.add(this.end + 1);
+                this.affectedSquares.add(this.end - 1);
+            } else if (this.isQueensideCastle()) {
+                this.affectedSquares.add(this.end - 2);
+                this.affectedSquares.add(this.end + 1);
+            }
+        }
+        return this.affectedSquares;
     }
 
     public void printMove() {

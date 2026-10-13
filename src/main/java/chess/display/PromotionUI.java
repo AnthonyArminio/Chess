@@ -38,6 +38,7 @@ public class PromotionUI {
     private int numPromotionCandidates;
     private double width;
     private double height;
+    private boolean isOpen;
 
     /**
      * Creates a new PromotionUI that allows the user to select a piece to promote to.
@@ -146,6 +147,26 @@ public class PromotionUI {
         return this.move;
     }
 
+    public boolean isOpen() {
+        return this.isOpen;
+    }
+
+    public void open() {
+        if (!this.isOpen) {
+            this.chessBoard.getRoot().getChildren().add(this.display);
+            this.chessBoard.getSquareAt(this.move.getStart()).detachImage();
+            this.isOpen = true;
+        }
+    }
+
+    public void close() {
+        if (this.isOpen) {
+            this.chessBoard.getRoot().getChildren().remove(this.display);
+            this.chessBoard.getSquareAt(this.move.getStart()).reattachImage();
+            this.isOpen = false;
+        }
+    }
+
     private void onMouseClicked(MouseEvent e) {
 
         if (this.chessBoard.isWaitingForPromotion()) {
@@ -161,9 +182,9 @@ public class PromotionUI {
                 candidateIndex = this.numPromotionCandidates - (candidateIndex + 1);
             }
                 
-            move.promoteTo(this.promotionCandidates[candidateIndex].getType());
+            this.move.promoteTo(this.promotionCandidates[candidateIndex].getType());
 
-            this.chessBoard.closePromotionUI();
+            this.chessBoard.submitPromotion(this.move);
         }
     }
 }
