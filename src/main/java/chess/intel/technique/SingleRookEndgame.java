@@ -1,7 +1,11 @@
 package chess.intel.technique;
 
+import java.util.Set;
+
 import chess.intel.strategy.TechnicalEvaluation;
 import chess.intel.technique.util.TechniqueLogic;
+import chess.intel.util.DataMath;
+import chess.logic.ChessPiece;
 import chess.logic.ChessPosition;
 import chess.logic.util.ChessLogic;
 import chess.logic.util.GridMath;
@@ -19,6 +23,38 @@ public class SingleRookEndgame extends Technique {
                                0, 0, 0, 0, 0, 0, 0, 0};
 
         int[] stateArray = {-1, 0, 0, 0, 0, 0};
+
+        return new ChessPosition(positionArray, stateArray);
+    }
+
+    public static ChessPosition randomSamplePosition() {
+        int firstKing = DataMath.randomInt(0, 63);
+        Set<Integer> exclusion = ChessLogic.coverage(firstKing, ChessPiece.BASE_KING_MOVEMENT);
+        exclusion.add(firstKing);
+        int secondKing = DataMath.randomInt(0, 63, exclusion);
+
+        exclusion.clear();
+        exclusion.add(firstKing);
+        exclusion.add(secondKing);
+        int rook = DataMath.randomInt(0, 63, exclusion);
+        int rookColor = DataMath.randomInt(0, 1);
+
+        int[] positionArray = {0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0,
+                               0, 0, 0, 0, 0, 0, 0, 0};
+
+        positionArray[firstKing] = rookColor == 0 ? -6 : 6;
+        positionArray[secondKing] = rookColor == 0 ? 6 : -6;
+        positionArray[rook] = rookColor == 0 ? 4 : -4;
+
+        int[] stateArray = {-1, 0, 0, 0, 0, 0};
+
+        stateArray[5] = -1 * (rookColor - 1);
 
         return new ChessPosition(positionArray, stateArray);
     }

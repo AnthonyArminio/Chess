@@ -125,7 +125,7 @@ public class ControlPanel {
         this.app.getDisplayedGame().stop();
 
         BoardUISettings settings = configureSettings();
-        createNewGame(getDefaultAgent(), new Player(), SinglePawnEndgame.randomSamplePosition(), new ChessBoard(Point2D.ZERO, false, false, settings), true);
+        createNewGame(getDefaultAgent(), getDefaultAgent(), SingleRookEndgame.randomSamplePosition(), new ChessBoard(Point2D.ZERO, false, false, settings), true);
     }
 
     public BoardUISettings configureSettings() {
