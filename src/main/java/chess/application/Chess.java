@@ -133,7 +133,7 @@ public class Chess extends Application {
             detachImage();
 
             if (releaseIndex >= 0) {
-                ChessMove move = new ChessMove(this.displayedGame.getPosition(), startIndex, releaseIndex);
+                ChessMove move = new ChessMove(this.displayedGame.getCurrentPosition(), startIndex, releaseIndex);
                 Player player = this.displayedGame.getPlayerToMove();
 
                 //if (true && move.isLegal()) {

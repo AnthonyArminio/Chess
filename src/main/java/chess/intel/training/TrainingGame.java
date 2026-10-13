@@ -20,7 +20,7 @@ public class TrainingGame extends ChessGame {
     }
 
     @Override protected void advanceGame() {
-        this.averageMaterial += (this.getPosition().getMaterialEvaluation() - this.averageMaterial) / (float) this.getPlyNumber();
+        this.averageMaterial += (this.getCurrentPosition().getMaterialEvaluation() - this.averageMaterial) / (float) this.getPlyNumber();
         super.advanceGame();
     }
 

@@ -1,5 +1,8 @@
 package chess.application;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import chess.display.ChessBoard;
 import chess.intel.Player;
 import chess.logic.ChessMove;
@@ -14,7 +17,9 @@ public class ChessGame {
 
     private Player whitePlayer;
     private Player blackPlayer;
-    private ChessPosition position;
+    private ChessPosition currentPosition;
+    private List<ChessPosition> positions;
+    private List<ChessMove> moves;
     private ChessBoard board;
     private Player playerToMove;
     private int moveNumber;
@@ -26,7 +31,9 @@ public class ChessGame {
     public ChessGame(Player whitePlayer, Player blackPlayer, boolean printMoves) {
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
-        this.position = new ChessPosition();
+        this.currentPosition = new ChessPosition();
+        this.positions = new ArrayList<>();
+        this.moves = new ArrayList<>();
         this.playerToMove = null;
 
         this.printMoves = printMoves;
@@ -43,7 +50,9 @@ public class ChessGame {
     public ChessGame(Player whitePlayer, Player blackPlayer, ChessPosition startingPosition, boolean printMoves) {
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
-        this.position = startingPosition;
+        this.currentPosition = startingPosition;
+        this.positions = new ArrayList<>();
+        this.moves = new ArrayList<>();
         this.playerToMove = null;
 
         this.printMoves = printMoves;
@@ -60,8 +69,8 @@ public class ChessGame {
     public void start() {
         this.isIdle = false;
         this.moveNumber = 1;
-        this.plyNumber = 1;
-        this.playerToMove = this.position.colorToMove() == 'w' ? this.whitePlayer : this.blackPlayer;
+        this.playerToMove = this.currentPosition.colorToMove() == 'w' ? this.whitePlayer : this.blackPlayer;
+        this.positions.add(this.currentPosition.copy());
         if (!handleGameEnd()) {
             Thread t = new Thread(() -> this.playerToMove.alertToMove(this));
             t.setDaemon(true);
@@ -80,10 +89,13 @@ public class ChessGame {
      * @param move the ChessMove to make
      */
     public void makeMove(ChessMove move) {
-        this.position.makeMove(move);
-
+        this.currentPosition.makeMove(move);
+        this.plyNumber++;
+        this.positions.add(this.currentPosition.copy());
+        this.moves.add(move);
+        
         if (this.printMoves) {
-            if (this.position.colorToMove() == 'b') {
+            if (this.currentPosition.colorToMove() == 'b') {
                 System.out.printf("%d. %s ", this.moveNumber, move.getNotation());
             } else {
                 System.out.printf("%s\n", move.getNotation());
@@ -93,7 +105,7 @@ public class ChessGame {
         handleGameEnd();
 
         if (this.board != null) {
-            Platform.runLater(() -> this.board.makeMove(move));
+            Platform.runLater(() -> this.board.update(move));
         }
 
         if (!this.isOver) {
@@ -106,7 +118,6 @@ public class ChessGame {
         if (this.playerToMove == this.whitePlayer) {
             this.moveNumber++;
         }
-        this.plyNumber++;
         this.playerToMove.alertToMove(this);
 
     }
@@ -126,23 +137,23 @@ public class ChessGame {
      */
     protected boolean handleGameEnd() {
         boolean gameEnd = false;
-        if (ChessLogic.isCheckmate(this.position)) {
-            if (this.position.colorToMove() == 'b') {
+        if (ChessLogic.isCheckmate(this.currentPosition)) {
+            if (this.currentPosition.colorToMove() == 'b') {
                 onWinForWhite();
             } else {
                 onWinForBlack();
             }
             gameEnd = true;
-        } else if (ChessLogic.isStalemate(this.position)) {
+        } else if (ChessLogic.isStalemate(this.currentPosition)) {
             onDraw(0);
             gameEnd = true;
-        } else if (ChessLogic.isThreefoldRepetition(position)) {
+        } else if (ChessLogic.isThreefoldRepetition(currentPosition)) {
             onDraw(1);
             gameEnd = true;
-        } else if (ChessLogic.isFiftyMoveRule(position)) {
+        } else if (ChessLogic.isFiftyMoveRule(currentPosition)) {
             onDraw(2);
             gameEnd = true;
-        } else if (ChessLogic.isInsufficientMaterial(position)) {
+        } else if (ChessLogic.isInsufficientMaterial(currentPosition)) {
             onDraw(3);
             gameEnd = true;
         }
@@ -174,8 +185,22 @@ public class ChessGame {
         return this.playerToMove;
     }
 
-    public ChessPosition getPosition() {
-        return this.position;
+    public ChessPosition getCurrentPosition() {
+        return this.currentPosition;
+    }
+
+    public ChessPosition getPosition(int ply) {
+        if (ply < 0 || ply >= this.positions.size()) {
+            throw new IndexOutOfBoundsException("getPosition: Game position index out of bounds.");
+        }
+        return this.positions.get(ply);
+    }
+
+    public ChessMove getMove(int ply) {
+        if (ply <= 0 || ply - 1 >= this.moves.size()) {
+            throw new IndexOutOfBoundsException("getMove: Game move index out of bounds.");
+        }
+        return this.moves.get(ply - 1);
     }
 
     public int getMoveNumber() {

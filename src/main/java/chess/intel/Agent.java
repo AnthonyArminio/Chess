@@ -26,9 +26,9 @@ public class Agent extends Player {
     @Override public void alertToMove(ChessGame game) {
         this.currentGame = game;
         this.hasTurn = true;
-        this.strategy.tryActivateTechniques(game.getPosition());
+        this.strategy.tryActivateTechniques(game.getCurrentPosition());
 
-        ChessMove bestMove = findBestMove(game.getPosition());
+        ChessMove bestMove = findBestMove(game.getCurrentPosition());
         if (bestMove != null) {
             makeMove(bestMove);
         }

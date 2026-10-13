@@ -1,6 +1,8 @@
 package chess.display;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import chess.application.ChessGame;
 import chess.intel.Player;
@@ -21,12 +23,12 @@ public class ChessBoard {
     private final Group chessBoard;
     private final GridPane checkerboard;
     private Square[] squares;
-    private ArrayList<Square> legalHighlightedSquares;
+    private Set<Square> legalHighlightedSquares;
     private int selectedSquare;
     private boolean isFlipped;
     private boolean flip;
     private ChessGame game;
-    private ArrayList<ChessMove> highlightedMoves;
+    private Set<ChessMove> highlightedMoves;
     private BoardUISettings settings;
 
     private double squareSize;
@@ -34,6 +36,8 @@ public class ChessBoard {
 
     private boolean waitingForPromotion;
     private PromotionUI promotionUI;
+    private int view;
+    private int home;
 
     /**
      * Initializes a new chess board.
@@ -55,8 +59,11 @@ public class ChessBoard {
         this.checkerboard.setVgap(0);
         this.promotionUI = null;
 
-        this.legalHighlightedSquares = new ArrayList<>();
-        this.highlightedMoves = new ArrayList<>();
+        this.view = 0;
+        this.home = 0;
+
+        this.legalHighlightedSquares = new HashSet<>();
+        this.highlightedMoves = new HashSet<>();
 
         makeSquares();
         this.isFlipped = flipped;
@@ -112,7 +119,7 @@ public class ChessBoard {
     public void loadGame(ChessGame game) {
         this.game = game;
         game.setBoard(this);
-        loadPosition(game.getPosition());
+        loadPosition(game.getCurrentPosition());
     }
 
     /**
@@ -126,6 +133,7 @@ public class ChessBoard {
         }
     }
 
+    /**
     public void makeMove(ChessMove move) {
 
         Square startSquare = getSquareAt(move.getStart());
@@ -168,11 +176,43 @@ public class ChessBoard {
         if (!this.game.isOver() && this.flip) {
             this.flip();
         }
+    } */
+
+    public void update(ChessMove move) {
+
+        System.out.printf("Before:%d\n", this.home);
+        this.home = this.game.getPlyNumber();
+        System.out.printf("After:%d\n", this.home);
+
+        if (!this.setView(this.game.getPlyNumber())) {
+            unhighlightMoves();
+            loadPosition(this.game.getCurrentPosition()); //loadPosition(this.game.getCurrentPosition(), move);
+            if (settings.doPreviousMoveHighlights()) {
+                highlightMove(move);
+            }
+        }
+    
+        if (!this.game.isOver() && this.flip) {
+            this.flipTo(this.game.getCurrentPosition().colorToMove());
+        }
+    }
+
+    public boolean setView(int ply) {
+        if (this.view != ply) {
+            loadPosition(this.game.getPosition(ply));
+            this.view = ply;
+            unhighlightMoves();
+            if (ply > 0 && settings.doPreviousMoveHighlights()) {
+                highlightMove(this.game.getMove(ply));
+            }
+            return true;
+        }
+        return false;
     }
 
     public void setSelectedSquare(int index) {
         if (index < 0 || index >= 64) {
-            throw new IllegalArgumentException("setSelectedSquare: index must be between 0 and 63, inclusive.");
+            throw new IndexOutOfBoundsException("setSelectedSquare: index must be between 0 and 63, inclusive.");
         }
         this.selectedSquare = index;
         if (this.settings.doLegalMoveHighlights()) {
@@ -234,7 +274,7 @@ public class ChessBoard {
 
     public Square getSquareAt(int index) {
         if (index < 0 || index >= 64) {
-            throw new IllegalArgumentException("getSquareAt: index must be between 0 and 63, inclusive.");
+            throw new IndexOutOfBoundsException("getSquareAt: index must be between 0 and 63, inclusive.");
         }
         return this.squares[index];
     }
@@ -248,7 +288,7 @@ public class ChessBoard {
     }
 
     public ChessPosition getPosition() {
-        return this.game.getPosition();
+        return this.game.getCurrentPosition();
     }
 
     public Group getRoot() {

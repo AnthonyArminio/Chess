@@ -57,7 +57,7 @@ public class ChessMove {
         
         this.isPromotion = ChessLogic.isPromotion(this);
         if (this.isPromotion) {
-            promoteTo(promotionType);
+            this.piece = ChessPiece.getPiece(this.color, promotionType);
         }
     }
 
