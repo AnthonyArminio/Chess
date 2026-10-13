@@ -187,6 +187,7 @@ public class ChessBoard {
         if (!this.setView(this.game.getPlyNumber())) {
             unhighlightMoves();
             loadPosition(this.game.getCurrentPosition()); //loadPosition(this.game.getCurrentPosition(), move);
+            this.view++;
             if (settings.doPreviousMoveHighlights()) {
                 highlightMove(move);
             }
@@ -206,6 +207,28 @@ public class ChessBoard {
                 highlightMove(this.game.getMove(ply));
             }
             return true;
+        }
+        return false;
+    }
+
+    /**
+     * Changes the view of this chess board to one ply back.
+     * @return true if the step was successful, false otherwise
+     */
+    public boolean stepBack() {
+        if (this.view > 0) {
+            return setView(this.view - 1);
+        }
+        return false;
+    }
+
+    /**
+     * Changes the view of this chess board to one ply forward.
+     * @return true if the step was successful, false otherwise
+     */
+    public boolean stepForward() {
+        if (this.view < this.home) {
+            return setView(this.view + 1);
         }
         return false;
     }

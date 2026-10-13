@@ -18,6 +18,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.KeyCode;
 
 public class Chess extends Application {
 
@@ -36,6 +38,7 @@ public class Chess extends Application {
         System.out.println("Test Init");
 
         this.root = new Group();
+
         this.layout = new HBox();
         this.gameView = new VBox();
         this.controlPanel = new ControlPanel(this);
@@ -52,6 +55,7 @@ public class Chess extends Application {
         this.root.setOnMousePressed(e -> onMousePressed(e));
         this.root.setOnMouseDragged(e -> onMouseDragged(e));
         this.root.setOnMouseReleased(e -> onMouseReleased(e));
+        this.root.addEventFilter(KeyEvent.KEY_PRESSED, e -> onKeyPressed(e));
 
         this.scene = new Scene(root);
     }
@@ -80,12 +84,12 @@ public class Chess extends Application {
         }
         this.gameView.getChildren().add(game.getBoard().getRoot());
         this.displayedGame = game;
+        this.selectedBoard = game.getBoard();
         System.out.println("Done.");
     }
 
 
     private void onMousePressed(MouseEvent e) {
-        this.selectedBoard = this.displayedGame.getBoard();
 
         if (!this.displayedGame.isIdle() && !this.selectedBoard.isWaitingForPromotion()) {
 
@@ -155,7 +159,16 @@ public class Chess extends Application {
                 this.selectedBoard.getSelectedSquare().reattachImage();
             }
             this.selectedBoard.deselectSquare();
-            this.selectedBoard = null;
+        }
+    }
+
+    private void onKeyPressed(KeyEvent e) {
+        //System.out.println("KEY PRESSED");
+        if (e.getCode() == KeyCode.LEFT) {
+            //System.out.println("LEFT");
+            this.selectedBoard.stepBack();
+        } else if (e.getCode() == KeyCode.RIGHT) {
+            this.selectedBoard.stepForward();
         }
     }
 
