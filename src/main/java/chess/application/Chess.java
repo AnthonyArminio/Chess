@@ -90,8 +90,8 @@ public class Chess extends Application {
 
 
     private void onMousePressed(MouseEvent e) {
-
-        if (!this.displayedGame.isIdle() && !this.selectedBoard.isWaitingForPromotion()) {
+        
+        if (!this.displayedGame.isIdle()) {
 
             int selectedSquareIndex = GridMath.findSquareIndex(e.getX(), e.getY(), 
                                     this.selectedBoard.getOrigin(), this.selectedBoard.getSquareSize(), this.selectedBoard.isFlipped());
@@ -107,7 +107,7 @@ public class Chess extends Application {
                 //System.out.println("Mouse pressed on square " + selectedSquare.getFile() + " " + selectedSquare.getRank());
 
                 ChessPiece piece = selectedSquare.getPiece();
-                if (piece != null && piece.getColor() == this.selectedBoard.getPosition().colorToMove() && this.selectedBoard.isAtHome()) {
+                if (piece != null && piece.getColor() == this.selectedBoard.getPosition().colorToMove() && this.selectedBoard.isAtHome() && !selectedSquare.imageDetached()) {
                     if (this.selectedBoard.getGame().getPlayer(piece.getColor()).isUser()) {
                         this.selectedBoard.setSelectedSquare(selectedSquareIndex);
                         attachImage(selectedSquare.detachImage());
@@ -118,6 +118,8 @@ public class Chess extends Application {
                 //System.out.println("Clicked out of bounds of the chess board.");
             }
         }
+
+        this.selectedBoard.cancelPromotion();
     }
 
     private void onMouseDragged(MouseEvent e) {
@@ -165,7 +167,11 @@ public class Chess extends Application {
         //System.out.println("KEY PRESSED");
         if (e.getCode() == KeyCode.LEFT) {
             //System.out.println("LEFT");
-            this.selectedBoard.stepBack();
+            if (this.selectedBoard.isWaitingForPromotion()) {
+                this.selectedBoard.cancelPromotion();
+            } else {
+                this.selectedBoard.stepBack();
+            }
         } else if (e.getCode() == KeyCode.RIGHT) {
             this.selectedBoard.stepForward();
         }

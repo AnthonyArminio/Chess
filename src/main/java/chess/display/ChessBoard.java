@@ -324,7 +324,7 @@ public class ChessBoard {
     }
 
     public void cancelPromotion() {
-        System.out.println("DEBUG: CANCEL PROMOTION");
+        //System.out.println("DEBUG: CANCEL PROMOTION");
         if (this.waitingForPromotion) {
             closePromotionUI();
             this.waitingForPromotion = false;

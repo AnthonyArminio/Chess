@@ -78,6 +78,7 @@ public class PromotionUI {
 
         // event handling
         this.panel.setOnMouseClicked(e -> onMouseClicked(e));
+        this.panel.setOnMousePressed(e -> onMousePressed(e));
         
     }
 
@@ -186,5 +187,9 @@ public class PromotionUI {
 
             this.chessBoard.submitPromotion(this.move);
         }
+    }
+
+    private void onMousePressed(MouseEvent e) {
+        e.consume();
     }
 }

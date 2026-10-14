@@ -150,6 +150,10 @@ public class Square {
         return this.image;
     }
 
+    public boolean imageDetached() {
+        return this.imageView.getImage() == null;
+    }
+
     public void highlight() {
         if (this.baseSquare != null) {
             this.baseSquare.setFill(this.highlightColor);
