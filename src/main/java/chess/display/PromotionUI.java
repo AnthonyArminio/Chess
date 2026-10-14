@@ -16,7 +16,7 @@ import javafx.scene.shape.Rectangle;
 public class PromotionUI {
 
     private static final String WHITE_PANEL_HEX = "#dddddd";
-    private static final String BLACK_PANEL_HEX = "#222222";
+    private static final String BLACK_PANEL_HEX = "#555555";
     private static final Color WHITE_PANEL_COLOR = (Color) Paint.valueOf(WHITE_PANEL_HEX);
     private static final Color BLACK_PANEL_COLOR = (Color) Paint.valueOf(BLACK_PANEL_HEX);
 
@@ -32,8 +32,6 @@ public class PromotionUI {
     private char color;
     private Color panelColor;
     private VBox panel;
-    private ImageView[] imageViews;
-    private Image[] images;
     private ChessPiece[] promotionCandidates;
     private int numPromotionCandidates;
     private double width;
@@ -68,16 +66,12 @@ public class PromotionUI {
 
         this.numPromotionCandidates = promotionCandidates.length;
 
-        this.imageViews = new ImageView[this.numPromotionCandidates];
-        this.images = new Image[this.numPromotionCandidates];
-
         this.width = this.chessBoard.getSquareSize();
         this.height = this.numPromotionCandidates * this.chessBoard.getSquareSize();
 
         draw();
 
         // event handling
-        this.panel.setOnMouseClicked(e -> onMouseClicked(e));
         this.panel.setOnMousePressed(e -> onMousePressed(e));
         
     }
@@ -111,14 +105,20 @@ public class PromotionUI {
             if (this.chessBoard.isFlipped()) {
                 idx = this.numPromotionCandidates - (idx + 1);
             }
-            this.images[i] = new Image(promotionCandidates[idx].getImagePath());
+            Image im = new Image(promotionCandidates[idx].getImagePath());
 
             ImageView iv = new ImageView();
-            iv.setImage(this.images[i]);
+            iv.setImage(im);
             iv.setFitWidth(width);
             iv.setFitHeight(width);
-            this.imageViews[i] = iv;
-            this.panel.getChildren().add(iv);
+
+            VBox clickBox = new VBox();
+            clickBox.getChildren().add(iv);
+
+            ChessPiece candidate = promotionCandidates[idx];
+            clickBox.setOnMouseClicked(e -> onMouseClicked(e, candidate));
+
+            this.panel.getChildren().add(clickBox);
         }
 
         this.panel.setLayoutX(origin.getX());
@@ -168,22 +168,11 @@ public class PromotionUI {
         }
     }
 
-    private void onMouseClicked(MouseEvent e) {
+    private void onMouseClicked(MouseEvent e, ChessPiece promotionCandidate) {
 
         if (this.chessBoard.isWaitingForPromotion()) {
-
-            int candidateIndex = (int)(e.getY() * this.numPromotionCandidates / height);
-            if (candidateIndex < 0) {
-                candidateIndex = 0;
-            } else if (candidateIndex >= this.numPromotionCandidates) {
-                candidateIndex = this.numPromotionCandidates - 1;
-            }
-
-            if (this.chessBoard.isFlipped()) {
-                candidateIndex = this.numPromotionCandidates - (candidateIndex + 1);
-            }
                 
-            this.move.promoteTo(this.promotionCandidates[candidateIndex].getType());
+            this.move.promoteTo(promotionCandidate.getType());
 
             this.chessBoard.submitPromotion(this.move);
         }
