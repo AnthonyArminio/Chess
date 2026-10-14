@@ -166,7 +166,7 @@ public class ControlPanel {
         strategy.addTechnique(new SingleQueenEndgame());
         strategy.addTechnique(new SingleRookEndgame());
         strategy.addTechnique(new SinglePawnEndgame());
-        return new Agent(strategy, 6, true);
+        return new Agent(strategy, 5, true);
     }
 
 }
