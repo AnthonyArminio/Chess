@@ -7,12 +7,17 @@ import java.util.Set;
 import chess.application.ChessGame;
 import chess.intel.Player;
 import chess.logic.ChessMove;
+import chess.logic.ChessPiece;
 import chess.logic.ChessPosition;
 import chess.logic.util.ChessLogic;
 import chess.logic.util.GridMath;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.layout.GridPane;
+import chess.application.MouseActions;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 
 /**
  * Represents a grid of squares contained within a Pane object. The light square color and dark
@@ -71,6 +76,15 @@ public class ChessBoard {
         drawSquares(this.isFlipped);
 
         this.selectedSquare = -1;
+
+        initializeEventHandlers();
+    }
+
+    private void initializeEventHandlers() {
+        this.chessBoard.setOnMousePressed(e -> onMousePressed(e));
+        this.chessBoard.setOnMouseDragged(e -> onMouseDragged(e));
+        this.chessBoard.setOnMouseReleased(e -> onMouseReleased(e));
+        this.chessBoard.addEventFilter(KeyEvent.KEY_PRESSED, e -> onKeyPressed(e));
     }
 
     /**
@@ -335,12 +349,104 @@ public class ChessBoard {
     public void submitPromotion(ChessMove move) {
         if (this.waitingForPromotion) {
             closePromotionUI();
-            Player player = this.game.getPlayerToMove();
-            if (player.isUser()) {
-                player.makeMove(move);
-            }
+            this.game.getPlayerToMove().makeMove(move);
             this.waitingForPromotion = false;
             this.promotionUI = null;
         }
+    }
+
+    private void onMousePressed(MouseEvent e) {
+
+        this.chessBoard.requestFocus();
+        
+        if (!this.getGame().isIdle()) {
+
+            int selectedSquareIndex = GridMath.findSquareIndex(e.getX(), e.getY(), 
+                                    getOrigin(), getSquareSize(), isFlipped());
+            
+            //System.out.println(e.getX() + " " + e.getY());
+
+            if (selectedSquareIndex >= 0) {
+                Square selectedSquare = getSquareAt(selectedSquareIndex);
+
+                MouseActions.adjustDimensions(selectedSquare.getSize(), selectedSquare.getSize());
+
+                //System.out.println("Mouse pressed on square " + selectedSquare.getFile() + " " + selectedSquare.getRank());
+
+                ChessPiece piece = selectedSquare.getPiece();
+                if (piece != null && piece.getColor() == getPosition().colorToMove() && isAtHome() && !selectedSquare.imageDetached()) {
+                    if (this.game.getPlayer(piece.getColor()).isUser()) {
+                        this.setSelectedSquare(selectedSquareIndex);
+                        MouseActions.attachImage(selectedSquare.detachImage());
+                        moveImageToMouse(e);
+                    }
+                }
+            } else {
+                //System.out.println("Clicked out of bounds of the chess board.");
+            }
+        }
+
+        cancelPromotion();
+    }
+
+    private void onMouseDragged(MouseEvent e) {
+        if (MouseActions.pieceInMouse && !this.game.isIdle() && !isWaitingForPromotion()) {
+            moveImageToMouse(e);
+        }
+    }
+
+    private void onMouseReleased(MouseEvent e) {
+        //System.out.println("Mouse released");
+        if (MouseActions.pieceInMouse && !this.getGame().isIdle() && !isWaitingForPromotion()) {
+            
+            int releaseIndex = GridMath.findSquareIndex(e.getX(), e.getY(), 
+                               getOrigin(), getSquareSize(), isFlipped());
+            int startIndex = getSelectedSquareIndex();
+
+            MouseActions.detachImage();
+
+            if (releaseIndex >= 0) {
+                ChessMove move = new ChessMove(this.game.getCurrentPosition(), startIndex, releaseIndex);
+                Player player = this.game.getPlayerToMove();
+
+                //if (true && move.isLegal()) {
+                if (player.isUser() && move.isLegal()) {
+                    // move attempt succeeded; move the image and make the corresponsing move in the ChessPosition.
+                    if (!move.isPromotion()) {
+                        player.makeMove(move);
+                    } else {
+                        requestPromotion(move);
+                    }
+                    
+                } else {
+                    // move attempt failed; snap the image back.
+                    getSelectedSquare().reattachImage();
+                }
+            } else {
+                // move attempt failed; snap the image back.
+                getSelectedSquare().reattachImage();
+            }
+            deselectSquare();
+        }
+    }
+
+    private void moveImageToMouse(MouseEvent e) {
+        double offset = getSquareSize() / 2;
+        MouseActions.move(e.getX() - offset, e.getY() - offset);
+    }
+
+    private void onKeyPressed(KeyEvent e) {
+        //System.out.println("KEY PRESSED");
+        if (e.getCode() == KeyCode.LEFT) {
+            //System.out.println("LEFT");
+            if (isWaitingForPromotion()) {
+                cancelPromotion();
+            } else {
+                stepBack();
+            }
+        } else if (e.getCode() == KeyCode.RIGHT) {
+            stepForward();
+        }
+        e.consume();
     }
 }
